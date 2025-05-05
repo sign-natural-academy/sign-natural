@@ -8,6 +8,7 @@ import {
   UserGroupIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
+import { ExperientialWorkshops } from "../ExperientialWorkshops";
 
 
 export default function NavbarHero() {
@@ -98,7 +99,7 @@ export default function NavbarHero() {
 
       <section className="bg-[#fdf9f9] py-16 px-4">
   <div className="text-center mb-10">
-    <h2 className="text-3xl font-bold text-green-900">Educational Offerings</h2>
+    <h2 className="text-3xl font-serif text-green-900">Educational Offerings</h2>
     <p className="text-gray-700 max-w-2xl mx-auto mt-2">
       From free tutorials to comprehensive workshops, we offer multiple ways to learn about authentic Ghanaian skincare.
     </p>
@@ -123,7 +124,7 @@ export default function NavbarHero() {
   </div>
 
   <div className="p-4">
-    <h3 className="text-lg font-semibold text-gray-900">Shea Butter Basics</h3>
+    <h3 className="text-lg font-serif font-semibold text-gray-900">Shea Butter Basics</h3>
     <p className="text-sm text-gray-600 mt-1">
       Learn the fundamentals of raw shea butter and its benefits.
     </p>
@@ -152,7 +153,7 @@ export default function NavbarHero() {
   </div>
 
   <div className="p-4">
-    <h3 className="text-lg font-semibold text-gray-900">Shea Butter Basics</h3>
+    <h3 className="text-lg font-serif font-semibold text-gray-900">Shea Butter Basics</h3>
     <p className="text-sm text-gray-600 mt-1">
       Learn the fundamentals of raw shea butter and its benefits.
     </p>
@@ -180,7 +181,7 @@ export default function NavbarHero() {
   </div>
 
   <div className="p-4">
-    <h3 className="text-lg font-semibold text-gray-900">Shea Butter Basics</h3>
+    <h3 className="text-lg font-serif font-semibold text-gray-900">Shea Butter Basics</h3>
     <p className="text-sm text-gray-600 mt-1">
       Learn the fundamentals of raw shea butter and its benefits.
     </p>
@@ -200,8 +201,9 @@ export default function NavbarHero() {
 
   </div>
 </section>
-
+     <ExperientialWorkshops/>
     </div>
+
     
   );
 }

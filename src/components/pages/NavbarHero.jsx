@@ -20,7 +20,7 @@ export default function NavbarHero() {
       {/* Navbar */}
       <nav className="flex items-center justify-between px-4 py-7 shadow-md relative z-10 bg-white">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="h-16 w-auto" />
+          <img src="/logo2.png" alt="Logo" className="h-16 w-auto" />
         </div>
 
         {/* Desktop Nav */}

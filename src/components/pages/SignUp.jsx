@@ -1,0 +1,89 @@
+import React from "react";
+
+function OAuthButton({provider}){
+    const icon = {
+        Google:"/google-icon.svg",
+        LinkedIn:"/linkedin-icon.svg",
+        Facebook:"/facebook-icon.svg",
+    };
+
+    return (
+        <button className="flex-1 border border-gray-300 rounded py-2 flex justify-center items-center hover:bg-gray-100 transition">
+      <img src={icon[provider]} alt={provider} className="h-5 w-5 mr-2" />
+      <span className="text-sm">{provider}</span>
+    </button>
+
+    );
+}
+
+export default function SignUp(){
+    return(
+        <div className="flex flex-col md:flex-row min-h-screen">
+      {/* Left Image */}
+      <div className="hidden md:flex w-1/2 bg-white items-center justify-center">
+        <img
+          src="/woman2.jpg"
+          alt="Sign Naturals"
+          className="object-cover h-full"
+        />
+      </div>
+
+      {/* Right Form */}
+      <div className="w-full md:w-1/2 p-8 flex items-center justify-center">
+        <div className="max-w-md w-full">
+        <div className="flex justify-center mb-6">
+      <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
+    </div>
+          <h2 className="text-2xl font-bold text-green-900 mb-6">SIGN UP</h2>
+
+          <form className="space-y-4">
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+            />
+            <input
+              type="text"
+              placeholder="First name"
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+            />
+            <input
+              type="text"
+              placeholder="Last name"
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+            />
+            <input
+              type="password"
+              placeholder="Repeat Password"
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
+            />
+
+            <div className="flex items-center space-x-2 text-sm">
+              <input type="checkbox" id="terms" className="accent-green-700" />
+              <label htmlFor="terms">
+                I agree to the <a href="#" className="underline">Terms of Use</a>
+              </label>
+            </div>
+
+            <button className="w-full bg-green-800 text-white py-2 rounded hover:bg-green-900">
+              Sign Up
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-gray-600">Or sign up with</div>
+
+          <div className="flex justify-between mt-4 space-x-4">
+            <OAuthButton provider="Google" />
+            <OAuthButton provider="LinkedIn" />
+            <OAuthButton provider="Facebook" />
+          </div>
+        </div>
+      </div>
+    </div>
+    );
+}

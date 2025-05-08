@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 export function Footer() {
     return (
       <footer className="bg-[#455f30] text-gray-300 py-12">
@@ -22,9 +23,26 @@ export function Footer() {
                 <li><a href="/workshops" className="block">Workshops</a></li>
                 <li><a href="/products" className="block">Products</a></li>
                 <li><a href="/testimonials" className="block">Success Stories</a></li>
+                <li><a href="/testimonials" className="block">About us</a></li>
               </ul>
             </div>
-  
+             
+             
+                 
+            <div>
+              <h4 className="text-sm font-serif mb-4"> Policy</h4>
+              <ul className="space-y-2 text-sm">
+              <li>
+  <Link to="/privacy-policy" className="block">Privacy Policy</Link>
+</li>
+<Link to="/refund-policy" className="block">Refund Policy</Link>
+
+                <Link to="/terms" className="block">Terms & Conditions</Link>
+                <li><a href="/products" className="block"></a></li>
+                <li><a href="/testimonials" className="block"></a></li>
+              </ul>
+            </div>
+             
             {/* Contact Info & Socials */}
             <div>
               <h4 className="text-sm font-serif mb-4">Contact Us</h4>
@@ -61,9 +79,13 @@ export function Footer() {
                 </a>
               </div>
             </div>
+
+            
   
             {/* Newsletter */}
             <div>
+
+            
   <h4 className="text-sm font-serif mb-4">Join Our Newsletter</h4>
   <p className="mb-4 text-sm">
     Get tips, updates & skincare stories straight to your inbox.
@@ -86,7 +108,7 @@ export function Footer() {
           </div>
   
           {/* Footer Bottom */}
-          <div className="mt-12 pt-8 border-t border-white/20 text-center">
+          <div className="mt-12 pt-10 border-t border-white/20 text-center">
             <p className="text-sm">{`© ${new Date().getFullYear()} Sign Natural. All rights reserved.`}</p>
           </div>
         </div>

@@ -5,13 +5,15 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="flex items-center justify-between px-4 py-7 shadow-md relative z-10 bg-white">
-      <div className="flex items-center gap-2">
-        <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
+    <nav className="flex items-center justify-between px-4 py-7 shadow-md relative z-10 bg-shea-light">
+       <div className="flex justify-center mb-6">
+        <Link to="/">
+          <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
+        </Link>
       </div>
 
       {/* Desktop Nav */}
-      <div className="hidden md:flex items-center gap-6 text-green-900 font-medium">
+      <div className="hidden md:flex items-center gap-6 text-gray-900 font-medium">
         <a href="/">Home</a>
         <a href="#">Learn</a>
         <a href="#">Workshops</a>
@@ -23,7 +25,7 @@ export default function Navbar() {
         </Link>
         <Link
           to="/signup"
-          className="bg-green-800 text-white px-4 py-2 rounded hover:bg-green-900"
+          className="bg-[#455f30] text-white px-4 py-2 rounded hover:bg-green-900"
         >
           Sign Up
         </Link>
@@ -38,7 +40,7 @@ export default function Navbar() {
       <div className="md:hidden">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="text-green-900 text-2xl w-3 h-3 sm:w-4 sm:h-4 focus:outline-none"
+          className="text-gray-900 text-2xl w-3 h-3 sm:w-4 sm:h-4 focus:outline-none"
         >
           {menuOpen ? "✖" : "☰"}
         </button>
@@ -46,7 +48,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-md py-4 px-6 z-50 flex flex-col gap-4 text-green-900 font-medium md:hidden">
+        <div className="absolute top-full left-0 w-full bg-white shadow-md py-4 px-6 z-50 flex flex-col gap-4 text-gray-900 font-medium md:hidden">
           <a href="/">Home</a>
           <a href="#">Learn</a>
           <a href="#">Workshops</a>
@@ -56,7 +58,7 @@ export default function Navbar() {
           <Link to="/login">Login </Link>
           <Link
             to="/signup"
-            className="bg-green-800 text-white px-4 py-2 rounded text-center"
+            className="bg-[#455f30] text-white px-4 py-2 rounded text-center"
           >
             Sign Up
           </Link>

@@ -1,6 +1,6 @@
 export function ExperientialWorkshops() {
     return (
-      <section className="bg-[#fdf9f9] py-16 px-4">
+      <section className="bg-[#faf8f6*] py-16 px-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-green-900 mb-4">
             Experiential Workshops

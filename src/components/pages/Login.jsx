@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function OAuthButton({ provider }) {
   const icon = {
@@ -19,7 +20,7 @@ export default function Login() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Image */}
-      <div className="hidden md:flex w-1/2 bg-white items-center justify-center">
+      <div className="hidden md:flex w-1/2 bg-[#faf8f6*] items-center justify-center">
         <img
           src="/woman.jpg"
           alt="Sign Natural"
@@ -36,10 +37,12 @@ export default function Login() {
       </div>
         <div className="max-w-md w-full">
              {/* Logo */}
-    <div className="flex justify-center mb-6">
-      <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
-    </div>
-          <h2 className="text-2xl font-bold text-green-900 mb-6">LOGIN</h2>
+             <div className="flex justify-center mb-6">
+  <Link to="/">
+    <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
+  </Link>
+</div>
+          <h2 className="text-2xl font-bold text-[#455f30] mb-6">LOGIN</h2>
          
           <form className="space-y-4">
             <input
@@ -52,7 +55,7 @@ export default function Login() {
               placeholder="Password"
               className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-700"
             />
-            <button className="w-full bg-green-800 text-white py-2 rounded hover:bg-green-900">
+            <button className="w-full bg-[#455f30] text-white py-2 rounded hover:bg-green-900">
               Log In
             </button>
           </form>

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Filters } from "./Filters";
 import { ExperientialWorkshops } from "./ExperientialWorkshops";
 import Navbar from "./Navbar";
+import { Footer } from "./Footer";
+
 
 
 export default function Homepage() {
@@ -9,7 +11,7 @@ export default function Homepage() {
     <div className="w-full min-h-screen flex flex-col bg-white">
       <Navbar/>
       {/* Hero Section */}
-      <section className="flex-1 bg-green-900 text-white px-6 py-10 md:flex md:items-center md:justify-between">
+      <section className="flex-1 bg-[#455f30] text-white px-6 py-10 md:flex md:items-center md:justify-between">
         {/* Left */}
         <div className="md:w-1/2 space-y-6">
           <h1 className="text-3xl md:text-5xl font-light leading-snug">
@@ -40,8 +42,8 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* Educational Offerings */}
-      <section className="bg-[#fdf9f9] py-16 px-4">
+      {/* Educational Offerings  #f8d3be #faf8f6*/}
+      <section className="bg-[#faf8f6*] py-16 px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-serif text-green-900">Educational Offerings</h2>
           <p className="text-gray-700 max-w-2xl mx-auto mt-2">
@@ -127,6 +129,7 @@ export default function Homepage() {
 
       {/* Experiential Workshops */}
       <ExperientialWorkshops />
+      <Footer/>
     </div>
   );
 }

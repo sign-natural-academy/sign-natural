@@ -9,7 +9,7 @@ import {
   export function Filters() {
     return (
       <div className="flex flex-wrap justify-center mb-8 gap-2 bg-[#f6f6f6] p-2 rounded-full max-w-fit mx-auto">
-      <span className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-lime-700 text-white text-xs sm:text-sm font-medium cursor-pointer">
+      <span className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#472B2B] mb-2 text-white text-xs sm:text-sm font-medium cursor-pointer">
         <Squares2X2Icon className="w-3 h-3 sm:w-4 sm:h-4" /> All Classes
       </span>
       <span className="flex items-center gap-1 px-3 py-1.5 rounded-full text-gray-600 text-xs sm:text-sm font-medium hover:bg-gray-100 cursor-pointer">

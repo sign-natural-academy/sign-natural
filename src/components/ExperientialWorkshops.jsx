@@ -2,7 +2,7 @@ export function ExperientialWorkshops() {
     return (
       <section className="bg-[#faf8f6*] py-16 px-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-green-900 mb-4">
+          <h2 className="text-3xl font-bold text-[#472B2B] mb-2">
             Experiential Workshops
           </h2>
           <p className="text-base sm:text-lg text-gray-700 max-w-2xl mx-auto mb-10 sm:mb-12">
@@ -16,7 +16,7 @@ export function ExperientialWorkshops() {
                 <div className="absolute top-4 left-4 bg-[#f8e6b8] rounded-full p-2">
                   🎁
                 </div>
-                <img src="/images/birthday.jpg" alt="Birthday & Celebration" className="w-full h-full object-cover opacity-0" />
+                <img src="/organic.jpg" alt="Birthday & Celebration" className="w-full h-full object-cover opacity-0" />
               </div>
               <div className="p-5 text-left flex-1 flex flex-col">
                 <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-900 mb-2">

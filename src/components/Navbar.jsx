@@ -18,7 +18,7 @@ export default function Navbar() {
         <a href="#">Learn</a>
         <a href="#">Workshops</a>
         <a href="#">Products</a>
-        <a href="#" >About</a>
+        <a href="#" >About us </a>
         <a href="#">Stories</a>
         <Link to="/login" className="hover:underline">
           Login
@@ -32,7 +32,7 @@ export default function Navbar() {
       </div>
 
       {/* Desktop CTA */}
-      <button className="hidden md:block bg-yellow-600 text-white px-4 py-2 rounded">
+      <button className="hidden md:block bg-[#E1AD01] text-gray px-4 py-2 rounded">
         Book a Class
       </button>
 

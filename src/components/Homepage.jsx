@@ -3,6 +3,8 @@ import { Filters } from "./Filters";
 import { ExperientialWorkshops } from "./ExperientialWorkshops";
 import Navbar from "./Navbar";
 import { Footer } from "./Footer";
+import CustomWorkshopPackage from "./CustomWorkshopPackage";
+import ProductsToLearning from "./ProductToLearning";
 
 
 
@@ -23,7 +25,7 @@ export default function Homepage() {
             online masterclasses, and experiential learning.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="bg-yellow-600 px-6 py-3 rounded text-black font-medium">
+            <button className="bg-[#E1AD01] px-6 py-3 rounded text-black font-medium">
               Explore Classes
             </button>
             <button className="bg-white text-black px-6 py-3 rounded border border-white">
@@ -45,7 +47,7 @@ export default function Homepage() {
       {/* Educational Offerings  #f8d3be #faf8f6*/}
       <section className="bg-[#faf8f6*] py-16 px-4">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-serif text-green-900">Educational Offerings</h2>
+          <h2 className="text-3xl font-bold text-[#472B2B] mb-2">Educational Offerings</h2>
           <p className="text-gray-700 max-w-2xl mx-auto mt-2">
             From free tutorials to comprehensive workshops, we offer multiple ways to learn about authentic Ghanaian skincare.
           </p>
@@ -129,6 +131,8 @@ export default function Homepage() {
 
       {/* Experiential Workshops */}
       <ExperientialWorkshops />
+      <CustomWorkshopPackage/>
+      <ProductsToLearning/>
       <Footer/>
     </div>
   );

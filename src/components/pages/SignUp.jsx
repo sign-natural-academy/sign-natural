@@ -85,6 +85,12 @@ export default function SignUp(){
             <OAuthButton provider="LinkedIn" />
             <OAuthButton provider="Facebook" />
           </div>
+         <div className="mt-6 text-center text-sm text-gray-700">
+          Already have an account?{" "}
+         <Link to="/login" className="text-green-700 hover:underline font-medium">
+         Log in
+         </Link>
+         </div>
         </div>
       </div>
     </div>

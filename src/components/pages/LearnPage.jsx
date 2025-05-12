@@ -13,6 +13,8 @@ export default function LearnPage() {
       description: "Learn how to build a simple and effective skincare routine.",
       type: "free",
       image: "/images/glow-up.jpg",
+      price:"Free",
+      duration:"30 mins",
     },
     {
         id: 1,
@@ -20,6 +22,8 @@ export default function LearnPage() {
         description: "Learn how to build a simple and effective skincare routine.",
         type: "free",
         image: "/images/glow-up.jpg",
+        price:"Free",
+        duration:"30 mins",
       },
       {
         id: 1,
@@ -27,6 +31,8 @@ export default function LearnPage() {
         description: "Learn how to build a simple and effective skincare routine.",
         type: "free",
         image: "/images/glow-up.jpg",
+        price:"Free",
+        duration:"30 mins",
       },
     {
       id: 2,
@@ -34,6 +40,8 @@ export default function LearnPage() {
       description: "Join our virtual masterclass with a certified dermatologist.",
       type: "online",
       image: "/images/masterclass.jpg",
+      price:"₵200",
+      duration:"45 mins",
     },
     {
         id: 2,
@@ -41,6 +49,8 @@ export default function LearnPage() {
         description: "Join our virtual masterclass with a certified dermatologist.",
         type: "online",
         image: "/images/masterclass.jpg",
+        price:"₵250",
+        duration:"60 mins",
       },
       {
         id: 2,
@@ -48,6 +58,8 @@ export default function LearnPage() {
         description: "Join our virtual masterclass with a certified dermatologist.",
         type: "online",
         image: "/images/masterclass.jpg",
+        price:"₵500",
+        duration:"120 mins",
       },
     {
       id: 3,
@@ -55,6 +67,8 @@ export default function LearnPage() {
       description: "Get hands-on advice from professionals in your city.",
       type: "in-person",
       image: "/images/consultation.jpg",
+       price:"₵500",
+      duration:"120 mins",
     },
     {
         id: 3,
@@ -62,6 +76,8 @@ export default function LearnPage() {
         description: "Get hands-on advice from professionals in your city.",
         type: "in-person",
         image: "/images/consultation.jpg",
+        price:"₵500",
+        duration:"120 mins",
       },
       {
         id: 3,
@@ -69,6 +85,8 @@ export default function LearnPage() {
         description: "Get hands-on advice from professionals in your city.",
         type: "in-person",
         image: "/images/consultation.jpg",
+        price:"₵500",
+        duration:"120 mins",
       },
     {
       id: 4,
@@ -76,6 +94,8 @@ export default function LearnPage() {
       description: "Watch anytime and learn how to deal with persistent acne.",
       type: "in-demand",
       image: "/images/acne-guide.jpg",
+      price:"₵500",
+      duration:"120 mins",
     },
     {
         id: 4,
@@ -83,6 +103,8 @@ export default function LearnPage() {
         description: "Watch anytime and learn how to deal with persistent acne.",
         type: "in-demand",
         image: "/images/acne-guide.jpg",
+        price:"₵500",
+        duration:"120 mins",
       },
       {
         id: 4,
@@ -90,6 +112,8 @@ export default function LearnPage() {
         description: "Watch anytime and learn how to deal with persistent acne.",
         type: "in-demand",
         image: "/images/acne-guide.jpg",
+        price:"₵500",
+        duration:"120 mins",
       },
   ];
 

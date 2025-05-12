@@ -52,7 +52,7 @@ export default function Navbar() {
       {menuOpen && (
         <div className="absolute top-full left-0 w-full bg-white shadow-md py-4 px-6 z-50 flex flex-col gap-4 text-gray-900 font-medium md:hidden">
           <a href="/">Home</a>
-          <a href="#">Learn</a>
+          <Link to="/learn"> Learn</Link>
           <a href="#">Workshops</a>
           <a href="#">Products</a>
           <a href="#">About</a>

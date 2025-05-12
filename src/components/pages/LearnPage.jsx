@@ -1,0 +1,155 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import CourseCard from "../CourseCard";
+import Filters from "../Filters";
+import Navbar from "../Navbar";
+import { Footer } from "../Footer";
+
+export default function LearnPage() {
+  const dummyCourses = [
+    {
+      id: 1,
+      title: "Glow-Up Skin Routine",
+      description: "Learn how to build a simple and effective skincare routine.",
+      type: "free",
+      image: "/images/glow-up.jpg",
+    },
+    {
+        id: 1,
+        title: "Glow-Up Skin Routine",
+        description: "Learn how to build a simple and effective skincare routine.",
+        type: "free",
+        image: "/images/glow-up.jpg",
+      },
+      {
+        id: 1,
+        title: "Glow-Up Skin Routine",
+        description: "Learn how to build a simple and effective skincare routine.",
+        type: "free",
+        image: "/images/glow-up.jpg",
+      },
+    {
+      id: 2,
+      title: "Online Skincare Masterclass",
+      description: "Join our virtual masterclass with a certified dermatologist.",
+      type: "online",
+      image: "/images/masterclass.jpg",
+    },
+    {
+        id: 2,
+        title: "Online Skincare Masterclass",
+        description: "Join our virtual masterclass with a certified dermatologist.",
+        type: "online",
+        image: "/images/masterclass.jpg",
+      },
+      {
+        id: 2,
+        title: "Online Skincare Masterclass",
+        description: "Join our virtual masterclass with a certified dermatologist.",
+        type: "online",
+        image: "/images/masterclass.jpg",
+      },
+    {
+      id: 3,
+      title: "In-Person Skin Consultation",
+      description: "Get hands-on advice from professionals in your city.",
+      type: "in-person",
+      image: "/images/consultation.jpg",
+    },
+    {
+        id: 3,
+        title: "In-Person Skin Consultation",
+        description: "Get hands-on advice from professionals in your city.",
+        type: "in-person",
+        image: "/images/consultation.jpg",
+      },
+      {
+        id: 3,
+        title: "In-Person Skin Consultation",
+        description: "Get hands-on advice from professionals in your city.",
+        type: "in-person",
+        image: "/images/consultation.jpg",
+      },
+    {
+      id: 4,
+      title: "On-Demand Acne Treatment Guide",
+      description: "Watch anytime and learn how to deal with persistent acne.",
+      type: "in-demand",
+      image: "/images/acne-guide.jpg",
+    },
+    {
+        id: 4,
+        title: "On-Demand Acne Treatment Guide",
+        description: "Watch anytime and learn how to deal with persistent acne.",
+        type: "in-demand",
+        image: "/images/acne-guide.jpg",
+      },
+      {
+        id: 4,
+        title: "On-Demand Acne Treatment Guide",
+        description: "Watch anytime and learn how to deal with persistent acne.",
+        type: "in-demand",
+        image: "/images/acne-guide.jpg",
+      },
+  ];
+
+  const [courses, setCourses] = useState([]);
+  const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(""); // Replace with actual API
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+        setCourses(dummyCourses); // Use dummy data as fallback
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  const handleFilterChange = (selectedFilter) => {
+    setFilter(selectedFilter);
+  };
+
+  const filteredCourses = Array.isArray(courses)
+    ? courses.filter((course) =>
+        filter === "all" ? true : course.type === filter
+      )
+    : [];
+
+  return (
+    <div>
+        <Navbar/>
+
+        <div className="bg-gradient-to-r from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
+  <h2 className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
+    Skincare School
+  </h2>
+  <p className="text-gray-700 max-w-2xl mx-auto text-base sm:text-lg">
+    From free tutorials to comprehensive workshops, we offer multiple ways to learn
+    about authentic Ghanaian skincare. Choose the learning method that works best for you.
+  </p>
+</div>
+
+    <div className="p-4 max-w-screen-lg mx-auto">
+      
+
+
+      {/* Filter bar */}
+      <Filters currentFilter={filter} onFilterChange={handleFilterChange} />
+
+      {/* Course cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredCourses.map((course) => (
+          <CourseCard key={course.id} course={course} />
+        ))}
+      </div>
+    </div>
+    <Footer/>
+    </div>
+  );
+}

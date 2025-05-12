@@ -15,7 +15,9 @@ export default function Navbar() {
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-6 text-gray-900 font-medium">
         <a href="/">Home</a>
-        <a href="#">Learn</a>
+        <Link to="/learn">
+  Learn
+</Link>
         <a href="#">Workshops</a>
         <a href="#">Products</a>
         <a href="#" >About us </a>

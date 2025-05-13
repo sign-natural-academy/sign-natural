@@ -12,6 +12,7 @@ import RefundPolicy from './components/RefundPolicy';
 import AdminDashboard from './components/pages/AdminDashboard';
 import UserDashboard from './components/pages/UserDashboard';
 import LearnPage from './components/pages/LearnPage';
+import ExperientialWorkshopPage from './components/pages/ExperientialWorkshopPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/learn" element={<LearnPage />} />
+        <Route path="/workshop" element={<ExperientialWorkshopPage />} />
 
       </Routes>
     </Router>

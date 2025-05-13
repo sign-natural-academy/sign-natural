@@ -12,7 +12,7 @@ export default function LearnPage() {
       title: "Glow-Up Skin Routine",
       description: "Learn how to build a simple and effective skincare routine.",
       type: "free",
-      image: "/images/glow-up.jpg",
+      image: "/images/birthday.jpeg",
       price:"Free",
       duration:"30 mins",
     },

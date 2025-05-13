@@ -1,30 +1,3 @@
-// import React from "react";
-// import { useNavigate } from "react-router-dom";
-
-// export default function CourseCard({ course }) {
-//   const navigate = useNavigate();
-
-//   const handleActionClick = () => {
-//     // Redirect to signup (or login, if you want to check auth later)
-//     navigate("/signup");
-//   };
-
-//   return (
-//      <div className="border rounded-lg shadow-md p-4 bg-white">
-//       <img
-//         src={course.image}
-//         alt={course.title}
-//         className="w-full h-48 object-cover rounded-md mb-4"
-//       />
-//       <h3 className="text-xl font-semibold">{course.title}</h3>
-//       <p className="text-gray-600 text-sm">{course.description}</p>
-//       <div className="mt-2 text-sm text-[#4b2e20] font-medium">
-//         <p>{course.price}</p>
-//         <p>{course.duration}</p>
-//       </div>
-//     </div>
-//   );
-// }
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +12,7 @@ export default function CourseCard({ course }) {
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
       <img
-        src={course.thumbnailUrl}
+        src={course.image}
         alt={course.title}
         className="w-full h-48 object-cover"
       />

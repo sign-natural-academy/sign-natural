@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import WorkshopFilters from "../WorkshopFilters";
 import Navbar from "../Navbar";
 import { Footer } from "../Footer";
-import WorkshopCard from "../workshopCard";
-
+import WorkshopCard from "./WorkshopCard";
 
 
 

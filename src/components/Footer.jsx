@@ -4,10 +4,10 @@ export function Footer() {
       <footer className="bg-[#455f30] text-gray-300 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
-            
+            cd
             {/* Brand */}
             <div>
-              <h3 className="text-2xl font-serif mb-4">Sign Natural</h3>
+              <h3 className="text-2xl font-serif mb-4">Sign Natural Academy</h3>
               <p className="text-sm">
               Sign Natural Academy is the learning and experience wing of Sign Natural, a proudly
               Ghanaian, women-led skincare brand rooted in tradition, sustainability, and community.

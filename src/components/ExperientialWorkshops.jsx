@@ -16,7 +16,7 @@ export function ExperientialWorkshops() {
                 <div className="absolute top-4 left-4 bg-[#f8e6b8] rounded-full p-2">
                   🎁
                 </div>
-                <img src="/organic.jpg" alt="Birthday & Celebration" className="w-full h-full object-cover opacity-0" />
+                <img src="/images/party4.jpg" alt="Birthday & Celebration" className="w-full h-full object-cover " />
               </div>
               <div className="p-5 text-left flex-1 flex flex-col">
                 <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-900 mb-2">
@@ -37,7 +37,7 @@ export function ExperientialWorkshops() {
                 <div className="absolute top-4 left-4 bg-[#f8e6b8] rounded-full p-2">
                   ✈️
                 </div>
-                <img src="/images/diaspora.jpg" alt="Diasporan Packages" className="w-full h-full object-cover opacity-0" />
+                <img src="/images/group2.jpg" alt="Diasporan Packages" className="w-full h-full object-cover " />
               </div>
               <div className="p-5 text-left flex-1 flex flex-col">
                 <h3 className="text-lg sm:text-xl font-serif font-semibold text-gray-900 mb-2">
@@ -59,7 +59,7 @@ export function ExperientialWorkshops() {
                   👥
                 </div>
                 <img
-                  src="/images/group-events.jpg"
+                  src="/images/party3.jpg"
                   alt="Group Events"
                   className="w-full h-full object-cover"
                 />

@@ -6,6 +6,7 @@ import { Footer } from "./Footer";
 import CustomWorkshopPackage from "./CustomWorkshopPackage";
 import ProductsToLearning from "./ProductToLearning";
 import axios from "axios";
+import SuccessPreview from "./SuccessPreview";
 
 export default function Homepage() {
   const [courses, setCourses] = useState([]);
@@ -166,6 +167,7 @@ export default function Homepage() {
       <ExperientialWorkshops />
       <CustomWorkshopPackage />
       <ProductsToLearning />
+      <SuccessPreview/>
       <Footer />
     </div>
   );

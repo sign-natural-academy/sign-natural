@@ -26,7 +26,7 @@ const products = [
 
 export default function ProductsToLearning() {
   return (
-    <section className="py-12 px-4 text-center bg-[#f8f4f2]">
+    <section className="py-12 px-4 text-center bg-[#FCD28A]">
       <h2 className="text-3xl font-bold text-[#472B2B] mb-2">From Products to Learning</h2>
       <p className="text-[#6b4c4c] mb-10">
         Love our products? Learn how to make your own version in our specialized workshops.

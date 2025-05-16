@@ -1,130 +1,89 @@
 import React, { useState } from 'react';
 
-export default function UpdateProfileForm() {
-  const [profile, setProfile] = useState({
-    name: 'Jane Doe',
-    email: 'jane@example.com',
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-
-  const [profilePicture, setProfilePicture] = useState(null);
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+export default function Testimonials({testimonials = []}) {
+  const [formData,setFormData] = useState({name:'',message:''});
+  const [allTestimonials,setAllTestimonials] =useState(testimonials);
+  const[submitted,setSubmitted] =useState(false);
+   
+  const handleChange =(e) => {
+    const {name,value} =e.target;
+    setFormData(prev =>({...prev,[name]:value}));
   };
 
-  const handleFileChange = e => {
-    const file = e.target.files[0];
-    if (file) {
-      setProfilePicture(URL.createObjectURL(file));
-    }
-  };
+  const handleSubmit =(e) => {
+    e.preventDefault();//prevent page reload
+  
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    // Submit logic here
-    console.log('Updated profile:', profile);
+  const newTestimonial ={
+    id:allTestimonials.length+1,
+    name:formData.name,
+    message:formData.message,
+    date: new Date().toISOString().split('T')[0],//format :"YYYY-MM-DD"
   };
+  
+  setAllTestimonials([newTestimonial,...allTestimonials]);// add new one to top
+  setFormData({name:'',message:''});//reset form
+  setSubmitted(true);//show success message
 
+  //remove sucess message after 3 seconds
+  setTimeout(() => setFormData(false),3000);
+
+}
+
+  
+
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Profile Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="col-span-2 bg-white p-6 rounded-lg shadow"
-      >
-        <h2 className="text-xl font-semibold mb-4">Update Profile</h2>
+    <div className="space-y-8">
+      {/* List of Testimonials */}
+      <div className="bg-white p-6 rounded shadow">
+        <h2 className="text-xl font-bold mb-4">User Testimonials</h2>
+        {allTestimonials.length === 0 ? (
+          <p className="text-gray-500">No testimonials yet.</p>
+        ) : (
+          <ul className="space-y-4">
+            {allTestimonials.map(t => (
+              <li key={t.id} className="border-b pb-4">
+                <p className="text-gray-800">"{t.message}"</p>
+                <div className="text-sm text-gray-600 mt-1">
+                  — {t.name}, {t.date}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Full Name</label>
+        <h3 className="text-lg font-semibold mb-4">Share Your Experience</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             name="name"
-            value={profile.name}
+            placeholder="Your Name"
+            value={formData.name}
             onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded"
+            required
+            className="w-full p-2 border rounded"
           />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Email Address</label>
-          <input
-            type="email"
-            name="email"
-            value={profile.email}
+          <textarea
+            name="message"
+            placeholder="Your Testimonial"
+            value={formData.message}
             onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded"
+            required
+            rows={4}
+            className="w-full p-2 border rounded"
           />
-        </div>
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Submit
+          </button>
 
-        <hr className="my-4" />
-
-        <h3 className="text-md font-semibold mb-2">Change Password</h3>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Current Password</label>
-          <input
-            type="password"
-            name="currentPassword"
-            value={profile.currentPassword}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium">New Password</label>
-          <input
-            type="password"
-            name="newPassword"
-            value={profile.newPassword}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium">Confirm New Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={profile.confirmPassword}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Save Changes
-        </button>
-      </form>
-
-      {/* Profile Picture + Actions */}
-      <div className="col-span-1 flex flex-col items-center bg-white p-6 rounded-lg shadow">
-        <div className="relative w-32 h-32 mb-4">
-          <img
-            src={profilePicture || 'https://via.placeholder.com/150'}
-            alt="Profile"
-            className="rounded-full w-full h-full object-cover border"
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="absolute bottom-0 left-0 text-xs text-gray-600"
-          />
-        </div>
-        <h3 className="text-lg font-semibold mb-1">{profile.name}</h3>
-        <p className="text-sm text-gray-600 mb-4">{profile.email}</p>
-
-        <button className="text-blue-600 mb-2 hover:underline">Login</button>
-        <button className="text-red-500 hover:underline">Logout</button>
+          {submitted && (
+            <p className="text-green-600 mt-2">✅ Thank you for your feedback!</p>
+          )}
+        </form>
       </div>
     </div>
   );

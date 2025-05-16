@@ -12,9 +12,9 @@ export default function BookingGrid({ bookings = [] }) {
   const allBookings = bookings.length ? bookings : dummyBookings;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="mt12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {allBookings.map(booking => (
-        <div key={booking.id} className="border p-2 rounded-xl shadow-sm">
+        <div key={booking.id} className=" p-4 rounded-xl shadow-sm">
           <h4 className="font-semibold text-sm">{booking.title}</h4>
           <p className="text-xs text-gray-500">Date: {booking.date}</p>
         </div>

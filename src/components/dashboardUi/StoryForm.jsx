@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function StoryForm({
   storyForm = { title: '', author: '', text: '' },
@@ -6,6 +6,18 @@ export default function StoryForm({
   onSubmit = () => {},
   userStories = [],
 }) {
+  const [mediaFile, setMediaFile] = useState(null);
+  const [error, setError] = useState('');
+   const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size <= 10 * 1024 * 1024) {
+      setMediaFile(file);
+      setError('');
+    } else {
+      setError('File size must be less than or equal to 10MB.');
+      setMediaFile(null);
+    }
+  };
   return (
     <div className="space-y-2">
       <input
@@ -29,12 +41,42 @@ export default function StoryForm({
         onChange={onChange}
         className="border p-2 w-full rounded h-24"
       />
-      <button
-        onClick={onSubmit}
+      <input
+        type="file"
+        accept="image/*,video/*"
+        onChange={handleFileChange}
+        className="border p-2 w-full rounded"
+      />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+       <button
+        onClick={() => {
+          if (!error) {
+            onSubmit(mediaFile); // Pass file to parent
+          }
+        }}
         className="bg-green-500 text-white px-4 py-2 rounded"
       >
         Submit Story
       </button>
+
+       {mediaFile && (
+        <div className="mt-2">
+          {mediaFile.type.startsWith('image/') ? (
+            <img
+              src={URL.createObjectURL(mediaFile)}
+              alt="preview"
+              className="w-auto h-auto max-h-60 rounded border"
+            />
+          ) : (
+            <video
+              controls
+              src={URL.createObjectURL(mediaFile)}
+              className="w-full h-auto max-h-60 rounded border"
+            />
+          )}
+        </div>
+      )}
+
 
       <div className="mt-4 space-y-2">
         {userStories.map((story) => (

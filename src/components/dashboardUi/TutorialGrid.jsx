@@ -4,7 +4,7 @@ export default function TutorialGrid({ tutorials = [] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {tutorials.map(tut => (
-        <div key={tut.id} className="border rounded-lg p-2 shadow-sm">
+        <div key={tut.id} className=" rounded-lg p-2 shadow-sm">
           <video controls className="w-full h-48 rounded-md object-cover mb-2">
             <source src={tut.url} type="video/mp4" />
             Your browser does not support the video tag.

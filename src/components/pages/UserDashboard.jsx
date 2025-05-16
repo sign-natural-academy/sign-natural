@@ -8,6 +8,7 @@ import Testimonials from '../dashboardUi/Testimonials';
 import TutorialGrid from '../dashboardUi/TutorialGrid';
 import News from '../dashboardUi/News';
 import UpdateProfileForm from '../dashboardUi/UpdateProfileForm';
+import Bill from '../dashboardUi/Bill';
 
 const dummyTutorials = [
   {
@@ -34,19 +35,40 @@ export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState('Free Tutorials');
 
   const tabs = [
+     'User Profile',
+    'Update Profile',
     'Free Tutorials',
     'My Learning',
-    'User Profile',
     'News for Learning',
-    'Update Profile',
     'Post a Story',
+    'Testimonials',
+    'Purchase'
   ];
+
+  
+  const dummyPayments =[
+    {id:1,item:'Workshop Ticket',amount:'GH 50',date:'2024-12-10',status:'Paid'},
+    {id:2,item:'Class ',ampout:'GH 120',date:'2025-01-15',status:'paid'}
+  ];
+
+   const dummyTestimonials=[
+    {id:1,
+      name:'Ama Serwar',
+    message:'This course change my life! I now make and sell my own skincare products.',date:'2024-11-10',},
+    {
+      id:2,
+      name:'Kwame Nkrumah',
+      message:'Fantastic teaching.Highly recommended!',
+      date:'2024-12-01',
+    },
+   ];
+
 
   return (
     <DashboardLayout>
       <div className="flex h-screen">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r shadow-md p-4 space-y-2">
+        <aside className="w-64 bg-white  shadow-md p-4 space-y-2">
           <h2 className="text-lg font-bold mb-4 text-gray-800">My Dashboard</h2>
           {tabs.map(tab => (
             <button
@@ -78,7 +100,8 @@ export default function UserDashboard() {
           {activeTab === 'News for Learning' && <News />}
           {activeTab === 'Update Profile' && <UpdateProfileForm />}
           {activeTab === 'Post a Story' && <StoryForm />}
-          {activeTab === 'Testimonials' && <Testimonials testimonials={[]} />}
+          {activeTab === 'Testimonials' && <Testimonials testimonials={dummyTestimonials} />}
+          {activeTab === 'Purchase' && <Bill payments={dummyPayments}  />}
         </main>
       </div>
     </DashboardLayout>

@@ -107,18 +107,20 @@ export default function UpdateProfileForm() {
 
       {/* Profile Picture + Actions */}
       <div className="col-span-1 flex flex-col items-center bg-white p-6 rounded-lg shadow">
-        <div className="relative w-32 h-32 mb-4">
+        <div className="relative w-40 h-40 mb-4">
           <img
             src={profilePicture || 'https://via.placeholder.com/150'}
             alt="Profile"
             className="rounded-full w-full h-full object-cover border"
           />
+        
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="absolute bottom-0 left-0 text-xs text-gray-600"
+            className=" relative  bottom-0 left-0 text-xs text-gray-600"
           />
+        
         </div>
         <h3 className="text-lg font-semibold mb-1">{profile.name}</h3>
 <p className="text-sm text-gray-600">{profile.email}</p>

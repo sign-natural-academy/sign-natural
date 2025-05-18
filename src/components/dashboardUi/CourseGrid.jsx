@@ -19,9 +19,9 @@ export default function CourseGrid({ courses = [] }) {
   }, [courses]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xlg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xlg:grid-cols-5 gap-4 ">
       {loadedCourses.map(course => (
-        <div key={course.id} className=" rounded-xl p-2 shadow-md">
+        <div key={course.id} className=" rounded-xl p-2 shadow-md shadow-md hover:shadow-xl transition-all">
           <img src={course.image} alt={course.title} className="rounded-lg mb-2 w-full h-60 object-cover" />
           <h3 className="text-sm font-semibold">{course.title}</h3>
           <p className="text-xs text-gray-500">{course.category}</p>

@@ -1,70 +1,74 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+// pages/AdminDashboard.jsx
+import React, { useState } from 'react';
+import DashboardLayout from '../dashboardUi/DashboardLayout';
+import { motion } from 'framer-motion';
+import UserStoriesModeration from '../dashboardUi/UserStoriesModeration';
+import UserManager from '../dashboardUi/UserManager';
+import PaymentReports from '../dashboardUi/PaymentReports';
+import ExperienceManager from '../dashboardUi/ExperienceManager';
+import SiteSettings from '../dashboardUi/SiteSettings';
+import AdminCourseManager from '../dashboardUi/AdminCourseManager';
+import AdminBookingsPanel from '../dashboardUi/AdminBookingsPanel';
+import AdminProfile from '../dashboardUi/AdminProfile';
+
+// Dummy fallback content
+const dummyUsers = [
+  { id: 1, name: 'Ama Boakye', role: 'User', joined: '2024-11-10' },
+  { id: 2, name: 'Kwame Owusu', role: 'Manager', joined: '2025-01-03' },
+];
+
+const dummyPayments = [
+  { id: 1, user: 'Ama Boakye', item: 'Shea Butter Class', amount: '₵100', status: 'Paid' },
+  { id: 2, user: 'Kwame Owusu', item: 'Soap Workshop', amount: '₵200', status: 'Pending' },
+];
+
+const dummyClasses = [
+  { id: 1, title: 'Shea Butter Masterclass', type: 'Online', location: '-', status: 'Active' },
+  { id: 2, title: 'Skincare Workshop Accra', type: 'In-Person', location: 'Accra', status: 'Upcoming' },
+];
 
 export default function AdminDashboard() {
-  const [tutorials, setTutorials] = useState([]);
-  const [stories, setStories] = useState([]);
+  const [activeTab, setActiveTab] = useState('Users');
 
-  useEffect(() => {
-    // Fetch all tutorials and stories from the backend
-    axios.get("/api/tutorials").then((res) => {
-      const data = res.data;
-      setTutorials(Array.isArray(data) ? data : []);
-    });
-
-    axios.get("/api/stories").then((res) => {
-      const data = res.data;
-      setStories(Array.isArray(data) ? data : []);
-    });
-  }, []);
+  const tabs = [
+    'Users',
+    'Payments',
+    'Classes',
+    'Admin Profile',
+  ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-green-900 text-white p-6">
-        <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
-        <nav className="space-y-4">
-          <a href="#tutorials" className="block hover:text-green-300">Tutorials</a>
-          <a href="#stories" className="block hover:text-green-300">Stories</a>
-          <a href="#users" className="block hover:text-green-300">Users</a>
-          <a href="#settings" className="block hover:text-green-300">Settings</a>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-green-800 mb-8">Welcome, Admin</h1>
-
-        {/* Tutorials */}
-        <section id="tutorials" className="mb-12">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Uploaded Tutorials</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.isArray(tutorials) && tutorials.map((tutorial, index) => (
-              <div key={index} className="bg-white rounded shadow p-4">
-                <video controls src={tutorial.videoUrl} className="w-full h-48 rounded mb-2" />
-                <h3 className="text-green-900 font-medium">{tutorial.title}</h3>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Stories */}
-        <section id="stories">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">User-Submitted Stories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.isArray(stories) && stories.map((story, index) => (
-              <div key={index} className="bg-white rounded shadow p-4">
-                {story.type === "video" ? (
-                  <video controls src={story.mediaUrl} className="w-full h-48 rounded mb-2" />
-                ) : (
-                  <img src={story.mediaUrl} alt={story.title} className="w-full h-48 object-cover rounded mb-2" />
-                )}
-                <h3 className="text-green-900 font-medium">{story.title}</h3>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-    </div>
+    <DashboardLayout >
+        <motion.div
+        key={activeTab}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+      <div className="flex h-screen">
+          <aside className="w-64 bg-white shadow-md p-4 space-y-2">
+    <h2 className="text-lg font-bold mb-4 text-gray-800">Admin</h2>
+    {tabs.map(tab => (
+      <button
+        key={tab}
+        onClick={() => setActiveTab(tab)}
+        className={`block w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm font-medium ${
+          activeTab === tab ? 'bg-blue-100 text-blue-700' : 'text-gray-700'
+        }`}
+      >
+        {tab}
+      </button>
+    ))}
+  </aside>
+    <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+  {activeTab === 'Users' && <UserManager Users={dummyUsers}/> }
+  {activeTab === 'Payments' && <PaymentReports Payments={dummyPayments}/> }
+  {activeTab === 'Classes' && <AdminCourseManager Classes={dummyClasses}/> }
+  {activeTab === 'Admin Profile' && <AdminProfile/>}
+</main>
+      
+      </div>
+      </motion.div>
+    </DashboardLayout>
   );
 }

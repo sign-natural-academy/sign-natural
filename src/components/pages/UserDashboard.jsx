@@ -36,7 +36,6 @@ export default function UserDashboard() {
 
   const tabs = [
      'User Profile',
-    'Update Profile',
     'Free Tutorials',
     'My Learning',
     'News for Learning',
@@ -98,7 +97,6 @@ export default function UserDashboard() {
           )}
           {activeTab === 'User Profile' && <UserProfile />}
           {activeTab === 'News for Learning' && <News />}
-          {activeTab === 'Update Profile' && <UpdateProfileForm />}
           {activeTab === 'Post a Story' && <StoryForm />}
           {activeTab === 'Testimonials' && <Testimonials testimonials={dummyTestimonials} />}
           {activeTab === 'Purchase' && <Bill payments={dummyPayments}  />}

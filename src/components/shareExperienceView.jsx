@@ -1,5 +1,6 @@
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function ShareExperienceView() {
   return (
@@ -14,10 +15,12 @@ export default function ShareExperienceView() {
             products? We’d love to hear about your experience! Your story could
             inspire others on their natural skincare journey.
           </p>
+          <Link to="/signup">
           <button className="mt-4 px-4 py-2 bg-[#7d4c35] text-white rounded-xl text-sm">
             <UserGroupIcon className="inline-block w-5 h-5 mr-2" />
             Share Your Story
           </button>
+          </Link>
         </div>
         <div className="md:w-1/2">
           <img

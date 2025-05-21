@@ -80,14 +80,14 @@ export default function StoryForm({
             placeholder="Story Title"
             value={storyForm.title}
             onChange={onChange}
-            className="border p-3 w-full rounded-md focus:ring-2 focus:ring-green-500"
+            className="shadow p-3 w-full rounded-md focus:ring-2 focus:ring-green-500"
           />
           <input
             name="author"
             placeholder="Your Name"
             value={storyForm.author}
             onChange={onChange}
-            className="border p-3 w-full rounded-md focus:ring-2 focus:ring-green-500"
+            className="shadow p-3 w-full rounded-md focus:ring-2 focus:ring-green-500"
           />
 
           <div className="flex flex-col md:flex-row gap-4">
@@ -95,7 +95,7 @@ export default function StoryForm({
               name="type"
               value={storyForm.type}
               onChange={onChange}
-              className="border p-3 rounded-md w-full md:w-1/2"
+              className="shadow p-3 rounded-md w-full md:w-1/2"
             >
               <option value="">Select Type</option>
               <option value="class">Class</option>
@@ -106,7 +106,7 @@ export default function StoryForm({
               name="referenceId"
               value={storyForm.referenceId}
               onChange={onChange}
-              className="border p-3 rounded-md w-full md:w-1/2"
+              className="shadow p-3 rounded-md w-full md:w-1/2"
               disabled={!storyForm.type}
             >
               <option value="">Select {storyForm.type || 'option'}</option>
@@ -123,7 +123,7 @@ export default function StoryForm({
             placeholder="Share your experience..."
             value={storyForm.text}
             onChange={onChange}
-            className="border p-3 w-full rounded-md h-24 focus:ring-2 focus:ring-green-500"
+            className="shadow p-3 w-full rounded-md h-24 focus:ring-2 focus:ring-green-500"
           />
 
           <div className="flex items-center gap-3">
@@ -135,7 +135,7 @@ export default function StoryForm({
             type="file"
             accept="image/*,video/*"
             onChange={handleFileChange}
-            className="border p-3 w-full rounded-md"
+            className="shadow p-3 w-full rounded-md"
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function CustomWorkshopPackage() {
   return (
@@ -15,9 +16,11 @@ export default function CustomWorkshopPackage() {
             activity, a fun bridal shower experience, or a memorable birthday
             celebration, we'll work with you to create the perfect package.
           </p>
+          <Link to="/signup">
           <button className="bg-[#E1AD01] text-black px-6 py-3 rounded-md shadow hover:bg-[#8b685c] transition duration-300">
             Request Custom Package
           </button>
+          </Link>
         </div>
 
         {/* Image Section */}

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export function ExperientialWorkshops() {
     return (
       <section className="bg-[#faf8f6*] py-16 px-4">
@@ -25,9 +27,11 @@ export function ExperientialWorkshops() {
                 <p className="text-sm text-gray-700 mb-4 flex-1">
                   Create personalized skincare products with custom labels as memorable party activities.
                 </p>
+                <Link to="/signup">
                 <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                   Book This Experience
                 </button>
+                </Link>
               </div>
             </div>
   
@@ -46,9 +50,11 @@ export function ExperientialWorkshops() {
                 <p className="text-sm text-gray-700 mb-4 flex-1">
                   Take a piece of Ghana home by creating authentic skincare products using traditional ingredients.
                 </p>
+                <Link to="/signup">
                 <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                   Book This Experience
                 </button>
+                </Link>
               </div>
             </div>
   
@@ -71,9 +77,11 @@ export function ExperientialWorkshops() {
                 <p className="text-sm text-gray-700 mb-4 flex-1">
                   Corporate wellness, bridal showers, women's groups and team-building through collaborative creation.
                 </p>
+                <Link to="/signup">
                 <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                   Book This Experience
                 </button>
+                </Link>
               </div>
             </div>
           </div>

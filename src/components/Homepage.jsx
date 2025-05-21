@@ -7,6 +7,7 @@ import CustomWorkshopPackage from "./CustomWorkshopPackage";
 import ProductsToLearning from "./ProductToLearning";
 import axios from "axios";
 import SuccessPreview from "./SuccessPreview";
+import { Link } from 'react-router-dom';
 
 export default function Homepage() {
   const [courses, setCourses] = useState([]);
@@ -42,12 +43,15 @@ export default function Homepage() {
             online masterclasses, and experiential learning.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="bg-[#E1AD01] px-6 py-3 rounded text-black font-medium">
-              Explore Classes
-            </button>
+            <Link to="/learn">
+  <button className="bg-[#E1AD01] px-6 py-3 rounded text-black font-medium">
+    Explore Classes
+  </button>
+</Link>      <Link to="/signup">
             <button className="bg-white text-black px-6 py-3 rounded border border-white">
               Book an Experience
             </button>
+            </Link>
           </div>
         </div>
 
@@ -88,9 +92,11 @@ export default function Homepage() {
                     <span>⏱ {course.duration}</span>
                     <span>💰 {course.price}</span>
                   </div>
+                  <Link to="/learn">
                   <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                     Learn More
                   </button>
+                  </Link>
                 </div>
               </div>
             ))
@@ -112,9 +118,11 @@ export default function Homepage() {
                     <span>⏱ 45 mins</span>
                     <span>💰 Free</span>
                   </div>
+                  <Link to="/learn">
                   <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                     Learn More
                   </button>
+                  </Link>
                 </div>
               </div>
 
@@ -133,9 +141,11 @@ export default function Homepage() {
                     <span>⏱ 90 mins</span>
                     <span>💰 GHS 50</span>
                   </div>
+                  <Link to="/learn">
                   <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                     Learn More
                   </button>
+                  </Link>
                 </div>
               </div>
 
@@ -154,9 +164,11 @@ export default function Homepage() {
                     <span>⏱ 60 mins</span>
                     <span>💰 GHS 80</span>
                   </div>
+                  <Link to="/learn">
                   <button className="mt-4 w-full border border-gray-700 text-gray-900 py-2 rounded-md hover:bg-gray-100 transition">
                     Learn More
                   </button>
+                  </Link>
                 </div>
               </div>
             </>

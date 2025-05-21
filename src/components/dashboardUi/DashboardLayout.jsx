@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AdminAlerts from './AdminAlerts';
 
 export default function DashboardLayout({ children, activeTab, setActiveTab, tabs }) {
   const user = {
@@ -14,10 +15,11 @@ export default function DashboardLayout({ children, activeTab, setActiveTab, tab
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Bar */}
-      <header className="flex justify-between items-center bg-white shadow px-4 py-3">
+      <header className="flex justify-between items-center bg-white shadow px-4 py-3 " >
         <Link to="/">
           <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
         </Link>
+          <AdminAlerts/>
         <div className="flex items-center gap-3">
           <img
             src={user.profilePicture}
@@ -25,6 +27,7 @@ export default function DashboardLayout({ children, activeTab, setActiveTab, tab
             className="w-10 h-10 rounded-full object-cover border"
           />
           <span className="text-gray-700 font-medium">{user.name}</span>
+           
           <button
             onClick={handleLogout}
             className="ml-3 text-sm text-red-500 hover:underline"

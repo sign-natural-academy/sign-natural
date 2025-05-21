@@ -93,12 +93,14 @@ export default function SuccessPreview() {
 
       {/* Read More Button */}
       <div className="text-center mt-8">
+      
         <button
           onClick={() => navigate("/stories")}
           className="px-5 py-2 bg-[#4b2e20] text-white text-sm rounded-full shadow hover:bg-[#6d3a2d] transition duration-200"
         >
           Read More Stories
         </button>
+        
       </div>
 
       <div className="mt-12">

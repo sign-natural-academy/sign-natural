@@ -9,6 +9,7 @@ import axios from "axios";
 import SuccessPreview from "./SuccessPreview";
 import { Link } from 'react-router-dom';
 
+
 export default function Homepage() {
   const [courses, setCourses] = useState([]);
 
@@ -32,7 +33,7 @@ export default function Homepage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="flex-1 bg-[#455f30] text-white px-6 py-10 md:flex md:items-center md:justify-between">
+      <section className="flex-1 bg-[#455f30] text-white px-6 py-10 md:flex md:items-center md:justify-between transition">
         <div className="md:w-1/2 space-y-6">
           <h1 className="text-3xl md:text-5xl font-light leading-snug">
             Learn the Art of Organic Skincare with <br />

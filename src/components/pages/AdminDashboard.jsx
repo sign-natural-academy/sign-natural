@@ -10,6 +10,7 @@ import SiteSettings from '../dashboardUi/SiteSettings';
 import AdminCourseManager from '../dashboardUi/AdminCourseManager';
 import AdminBookingsPanel from '../dashboardUi/AdminBookingsPanel';
 import AdminProfile from '../dashboardUi/AdminProfile';
+import DashboardAnalytics from '../DashBoardAnalytics';
 
 // Dummy fallback content
 const dummyUsers = [
@@ -35,6 +36,8 @@ export default function AdminDashboard() {
     'Payments',
     'Classes',
     'Admin Profile',
+    'Analytics'
+    
   ];
 
   return (
@@ -65,6 +68,7 @@ export default function AdminDashboard() {
   {activeTab === 'Payments' && <PaymentReports Payments={dummyPayments}/> }
   {activeTab === 'Classes' && <AdminCourseManager Classes={dummyClasses}/> }
   {activeTab === 'Admin Profile' && <AdminProfile/>}
+   {activeTab === 'Analytics' && <DashboardAnalytics  />}
 </main>
       
       </div>

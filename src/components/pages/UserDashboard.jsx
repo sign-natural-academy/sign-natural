@@ -9,7 +9,8 @@ import TutorialGrid from '../dashboardUi/TutorialGrid';
 import News from '../dashboardUi/News';
 import UpdateProfileForm from '../dashboardUi/UpdateProfileForm';
 import Bill from '../dashboardUi/Bill';
- '../dashboardUi/ScheduleMeeting';
+
+
 
 const dummyTutorials = [
   {
@@ -41,7 +42,8 @@ export default function UserDashboard() {
     'My Learning',
     'Post a Story',
     'Testimonials',
-    'Purchase'
+    'Purchase',
+    'Analytics'
   ];
 
   
@@ -99,6 +101,8 @@ export default function UserDashboard() {
           {activeTab === 'Post a Story' && <StoryForm />}
           {activeTab === 'Testimonials' && <Testimonials testimonials={dummyTestimonials} />}
           {activeTab === 'Purchase' && <Bill payments={dummyPayments}  />}
+          
+          
         </main>
       </div>
     </DashboardLayout>

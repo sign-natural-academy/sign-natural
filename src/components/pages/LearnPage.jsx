@@ -4,6 +4,7 @@ import CourseCard from "../CourseCard";
 import Filters from "../Filters";
 import Navbar from "../Navbar";
 import { Footer } from "../Footer";
+import { motion } from "framer-motion";
 
 export default function LearnPage() {
   const dummyCourses = [
@@ -150,13 +151,20 @@ export default function LearnPage() {
         <Navbar/>
 
         <div className="bg-gradient-to-r from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
-  <h2 className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
+  <motion.h2 
+  initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
     Skincare School
-  </h2>
-  <p className="text-gray-700 max-w-2xl mx-auto text-base sm:text-lg">
+  </motion.h2>
+  <motion.p 
+  initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}className="text-gray-700 max-w-2xl mx-auto text-base sm:text-lg">
     From free tutorials to comprehensive workshops, we offer multiple ways to learn
     about authentic Ghanaian skincare. Choose the learning method that works best for you.
-  </p>
+  </motion.p>
 </div>
 
     <div className="p-4 max-w-screen-lg mx-auto">

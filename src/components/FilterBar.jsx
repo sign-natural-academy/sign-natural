@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const filters = [
   { key: "all", label: "All Stories" },
@@ -10,7 +11,12 @@ const filters = [
 // FilterBar.jsx
 export default function FilterBar({ currentFilter, onFilterChange }) {
   return (
-    <div className="flex flex-wrap justify-center mb-8 gap-2 bg-[#f6f6f6] p-2 rounded-full max-w-fit mx-auto">
+    <>
+    <motion.div 
+    initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+    className="flex flex-wrap justify-center mb-8 gap-2 bg-[#f6f6f6] p-2 rounded-full max-w-fit mx-auto">
       {filters.map(({ key, label }) => (
         <span
           key={key}
@@ -24,7 +30,8 @@ export default function FilterBar({ currentFilter, onFilterChange }) {
           {label}
         </span>
       ))}
-    </div>
+    </motion.div>
+    </>
   );
 }
 

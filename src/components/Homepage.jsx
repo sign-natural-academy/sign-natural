@@ -8,7 +8,7 @@ import ProductsToLearning from "./ProductToLearning";
 import axios from "axios";
 import SuccessPreview from "./SuccessPreview";
 import { Link } from 'react-router-dom';
-
+import { motion } from "framer-motion";
 
 export default function Homepage() {
   const [courses, setCourses] = useState([]);
@@ -33,7 +33,11 @@ export default function Homepage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="flex-1 bg-[#455f30] text-white px-6 py-10 md:flex md:items-center md:justify-between transition">
+      <motion.section
+      initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+             className="flex-1 bg-[#455f30] text-white px-6 py-10 md:flex md:items-center md:justify-between transition">
         <div className="md:w-1/2 space-y-6">
           <h1 className="text-3xl md:text-5xl font-light leading-snug">
             Learn the Art of Organic Skincare with <br />
@@ -63,16 +67,20 @@ export default function Homepage() {
             className="rounded-xl w-full max-w-xl mx-auto"
           />
         </div>
-      </section>
+      </motion.section>
 
       {/* Educational Offerings */}
       <section className="bg-[#faf8f6] py-16 px-4">
-        <div className="text-center mb-10">
+        <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-10">
           <h2 className="text-3xl font-bold text-[#472B2B] mb-2">Educational Offerings</h2>
           <p className="text-gray-700 max-w-2xl mx-auto mt-2">
             From free tutorials to comprehensive workshops, we offer multiple ways to learn about authentic Ghanaian skincare.
           </p>
-        </div>
+        </motion.div>
 
         <Filters />
 
@@ -128,7 +136,10 @@ export default function Homepage() {
               </div>
 
               {/* Online Card */}
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden min-w-3xs">
+              <motion.div
+              initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }} className="bg-white rounded-xl shadow-lg overflow-hidden min-w-3xs">
                 <div className="relative">
                   <img src="/lab.jpg" alt="Course" className="w-full h-56 object-cover" />
                   <span className="absolute top-3 right-3 bg-white text-xs font-medium px-3 py-1 rounded-full shadow">
@@ -148,10 +159,14 @@ export default function Homepage() {
                   </button>
                   </Link>
                 </div>
-              </div>
+              </motion.div>
 
               {/* In-Person Card */}
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden min-w-3xs">
+              <motion.div
+              initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+             className="bg-white rounded-xl shadow-lg overflow-hidden min-w-3xs">
                 <div className="relative">
                   <img src="/organic-essense.jpg" alt="Course" className="w-full h-56 object-cover" />
                   <span className="absolute top-3 right-3 bg-white text-xs font-medium px-3 py-1 rounded-full shadow">
@@ -171,7 +186,7 @@ export default function Homepage() {
                   </button>
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             </>
           )}
         </div>

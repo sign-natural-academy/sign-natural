@@ -3,7 +3,7 @@ import WorkshopFilters from "../WorkshopFilters";
 import Navbar from "../Navbar";
 import { Footer } from "../Footer";
 import WorkshopCard from "./WorkshopCard";
-
+import { motion } from "framer-motion";
 
 
 export default function ExperientialWorkshopPage (){
@@ -109,12 +109,20 @@ export default function ExperientialWorkshopPage (){
      <Navbar/>
     
             <div className="bg-gradient-to-r from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
-      <h2 className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
+      <motion.h2 
+      initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
        Experiential Workshops
-      </h2>
-      <p className="text-gray-700 max-w-2xl mx-auto text-base sm:text-lg">
+      </motion.h2>
+      <motion.p 
+      initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+      className="text-gray-700 max-w-2xl mx-auto text-base sm:text-lg">
         Turn skincare education into memorable experiences with our specialized workshops. Perfect for celebrations, cultural experiences, and group events.
-      </p>
+      </motion.p>
     </div>
     
         <div className="p-4 max-w-screen-lg mx-auto">
@@ -125,12 +133,18 @@ export default function ExperientialWorkshopPage (){
           <WorkshopFilters currentFilter={filter} onFilterChange={handleFilterChange} />
     
           {/* workshopCard  */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <>
+          <motion.div 
+           initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredWorkshops.map((workshops) => (
 
             <WorkshopCard key={workshops.id} workshops={workshops}/>
             ))}
-          </div>
+          </motion.div>
+          </>
         </div>
         <Footer/>
     </div>

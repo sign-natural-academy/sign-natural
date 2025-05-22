@@ -1,6 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function CourseCard({ course }) {
   const navigate = useNavigate();
@@ -10,7 +11,11 @@ export default function CourseCard({ course }) {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
+    <motion.div 
+    initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
       <img
         src={course.image}
         alt={course.title}
@@ -32,6 +37,6 @@ export default function CourseCard({ course }) {
           {course.type === "free" ? "Start Learning" : "Book Now"}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

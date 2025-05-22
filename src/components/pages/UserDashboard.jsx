@@ -43,7 +43,7 @@ export default function UserDashboard() {
     'Post a Story',
     'Testimonials',
     'Purchase',
-    'Analytics'
+    
   ];
 
   

@@ -36,7 +36,8 @@ export default function AdminDashboard() {
     'Payments',
     'Classes',
     'Admin Profile',
-    'Analytics'
+    'Analytics',
+    'Stories and Testimonial'
     
   ];
 
@@ -69,6 +70,7 @@ export default function AdminDashboard() {
   {activeTab === 'Classes' && <AdminCourseManager Classes={dummyClasses}/> }
   {activeTab === 'Admin Profile' && <AdminProfile/>}
    {activeTab === 'Analytics' && <DashboardAnalytics  />}
+   {activeTab === 'Stories and Testimonial' && <UserStoriesModeration/>}
 </main>
       
       </div>

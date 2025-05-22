@@ -8,6 +8,7 @@ import {
   UserGroupIcon,
   
 } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
 
 
 
@@ -111,8 +112,12 @@ export default function SuccessStoriesPage() {
   return (
     <div>
       <Navbar />
-
-      <div className="bg-gradient-to-r from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
+        <>
+      <motion.div
+       initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+             className="bg-gradient-to-r from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
         <h2 className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
           Success Stories
         </h2>
@@ -123,12 +128,18 @@ export default function SuccessStoriesPage() {
         <button className="mt-4 px-4 py-2 bg-[#7d4c35] text-white rounded-full text-sm">
            <UserGroupIcon className="inline-block w-5 h-5 mr-2" /> Share Your Story
         </button>
-      </div>
-
-      <div className="p-4 max-w-screen-lg mx-auto">
+      </motion.div>
+      </>
+      <>
+      <motion.div 
+       initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            className="p-4 max-w-screen-lg mx-auto">
        <FilterBar currentFilter={selectedFilter} onFilterChange={setSelectedFilter} />
        <StoryGrid stories={filteredStories} />
-      </div>
+      </motion.div>
+      </>
 
       <ShareExperience />
       <Footer />

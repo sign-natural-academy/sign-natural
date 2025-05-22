@@ -20,6 +20,7 @@ const ExperientialWorkshopPage = lazy(() => import('./components/pages/Experient
 const SuccessStoriesPage = lazy(() => import('./components/pages/SuccessStoriesPaage'));
 const NotFound = lazy(() => import('./components/pages/NotFound'));
 import ScrollToTop from './components/ScrollToTop';
+import AboutPage from './components/pages/AboutPage';
 
 
 
@@ -40,6 +41,7 @@ function App() {
           <Route path="/learn" element={<LearnPage />} />
           <Route path="/workshop" element={<ExperientialWorkshopPage />} />
           <Route path="/stories" element={<SuccessStoriesPage />} />
+          <Route path="/About us" element={<AboutPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

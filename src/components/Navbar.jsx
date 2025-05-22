@@ -20,7 +20,7 @@ export default function Navbar() {
         <Link to="/learn">Learn</Link>
         <Link to="/workshop">Workshop</Link>
         <a href="#">Products</a>
-        <a href="#">About us</a>
+        <Link to="/About us">About us</Link>
         <Link to="/Stories">Stories</Link>
         <Link to="/login" className="hover:underline">
           Login
@@ -55,7 +55,7 @@ export default function Navbar() {
           <Link to="/learn">Learn</Link>
           <Link to="/workshop">Workshop</Link>
           <a href="#">Products</a>
-          <a href="#">About</a>
+          <a href="/About us">About</a>
           <Link to="/Stories">Stories</Link>
           <Link to="/login">Login</Link>
           <Link

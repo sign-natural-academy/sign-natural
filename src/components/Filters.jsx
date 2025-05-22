@@ -5,6 +5,7 @@ import {
   UserGroupIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
 
 export default function Filters({ currentFilter, onFilterChange }) {
   const filters = [
@@ -16,7 +17,11 @@ export default function Filters({ currentFilter, onFilterChange }) {
   ];
 
   return (
-    <div className="flex flex-wrap justify-center mb-8 gap-2 bg-[#f6f6f6] p-2 rounded-full max-w-fit mx-auto">
+    <motion.div 
+    initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-wrap justify-center mb-8 gap-2 bg-[#f6f6f6] p-2 rounded-full max-w-fit mx-auto">
       {filters.map(({ label, value, icon: Icon }) => (
         <span
           key={value}
@@ -31,6 +36,6 @@ export default function Filters({ currentFilter, onFilterChange }) {
           {label}
         </span>
       ))}
-    </div>
+    </motion.div>
   );
 }

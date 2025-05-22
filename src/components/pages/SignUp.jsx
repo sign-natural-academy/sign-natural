@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function OAuthButton({provider}){
     const icon = {
@@ -19,18 +20,26 @@ function OAuthButton({provider}){
 
 export default function SignUp(){
     return(
+      <>
         <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Image */}
-      <div className="hidden md:flex w-1/2 bg-[#faf8f6*] items-center justify-center">
+      <motion.div 
+       initial={{ opacity: 0, y: -80 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}className="hidden md:flex w-1/2 bg-[#faf8f6*] items-center justify-center">
         <img
           src="/woman2.jpg"
           alt="Sign Naturals"
           className="object-cover h-full"
         />
-      </div>
+      </motion.div>
 
       {/* Right Form */}
-      <div className="w-full md:w-1/2 p-8 flex items-center justify-center">
+      <motion.div
+       initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+             className="w-full md:w-1/2 p-8 flex items-center justify-center">
         <div className="max-w-md w-full">
         <div className="flex justify-center mb-6">
   <Link to="/">
@@ -92,7 +101,8 @@ export default function SignUp(){
          </Link>
          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
+    </>
     );
 }

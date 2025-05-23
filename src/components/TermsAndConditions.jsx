@@ -6,7 +6,7 @@ export default function TermsAndConditions() {
   return (
     <div>
         <Navbar/>
-    <div className="max-w-4xl mx-auto px-4 py-12 text-gray-800">
+    <div className="max-w-4xl mx-auto px-4 pt-40 py-12 text-gray-800">
       <h1 className="text-3xl font-bold mb-6 text-green-900">Terms and Conditions</h1>
 
       <div className="space-y-6 text-sm leading-relaxed">

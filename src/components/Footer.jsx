@@ -18,12 +18,11 @@ export function Footer() {
             <div>
               <h4 className="text-sm font-serif mb-4">Quick Links</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/" className="block">Home</a></li>
+                <Link to="/" className="block">Home</Link>
                <Link to="/learn" className="block"> Learn</Link>
-                <li><a href="/workshops" className="block">Workshops</a></li>
-                <li><a href="/products" className="block">Products</a></li>
-                <li><a href="/testimonials" className="block">Success Stories</a></li>
-                <li><a href="/testimonials" className="block">About us</a></li>
+                <Link to="/products" className="block">Products</Link>
+                <Link to="/stories" className="block">Success Stories</Link>
+                <Link to="/About us" className="block">About us</Link>
               </ul>
             </div>
              

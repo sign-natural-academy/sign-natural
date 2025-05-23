@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function AboutHero() {
   return (
-    <section className="relative w-full bg-green-50 py-16">
+    <section className="relative w-full bg-green-50 pt-40 py-16">
         <div className="max-w-6xl mx-auto px-4 flex flex-col-reverse lg:flex-row items-center gap-10">
           <motion.div
             initial={{ opacity: 0, x: -50 }}

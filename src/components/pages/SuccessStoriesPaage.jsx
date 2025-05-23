@@ -117,7 +117,7 @@ export default function SuccessStoriesPage() {
        initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9 }}
-             className="bg-gradient-to-r from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
+             className="bg-gradient-to-r pt-40 from-[#fdf6ee] to-[#fcf9f4] py-12 text-center px-4">
         <h2 className="text-3xl font-serif font-semibold text-[#4b2e20] mb-4">
           Success Stories
         </h2>

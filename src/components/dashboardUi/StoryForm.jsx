@@ -148,7 +148,7 @@ export default function StoryForm({
 
           {submitted && (
             <p className="text-green-600 animate-pulse mt-2">
-              ✅ Story submitted!
+              Story submitted!
             </p>
           )}
 

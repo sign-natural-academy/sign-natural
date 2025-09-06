@@ -38,7 +38,7 @@ export default function App() {
           <Route path="/terms" element={<TermsAndConditions />} />
 
           <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard  />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

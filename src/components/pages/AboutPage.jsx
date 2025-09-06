@@ -1,22 +1,22 @@
-import React from 'react'
-import AboutHero from '../AboutHero'
-import MissionVision from '../MissionVision'
-import CoreValalues from '../CoreValues'
-import BeaconAcronynm from '../BeaconAcronynm'
-import Navbar from '../Navbar'
-import { Footer } from '../Footer'
+import React from "react";
+import AboutHero from "../ui/AboutHero";
+import BeaconAcronynm from "../ui/BeaconAcronynm";
+import CoreValues from "../ui/CoreValues";
+import MissionVision from "../ui/MissionVision";
+import Navbar from "../ui/Navbar";
+import Footer from "../ui/Footer";
 
 export default function AboutPage() {
   return (
-    <div> 
-        
-        <Navbar/>
-        <AboutHero/>
-        <MissionVision/>
-        <CoreValalues/>
-        <BeaconAcronynm/>
-        <Footer/>
-    </div>
-  )
+    <>
+      <Navbar />
+      <main className="pt-24">
+        <AboutHero />
+        <MissionVision />
+        <BeaconAcronynm />
+        <CoreValues />
+      </main>
+      <Footer />
+    </>
+  );
 }
-

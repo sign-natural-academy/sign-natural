@@ -1,80 +1,34 @@
-// pages/AdminDashboard.jsx
-import React, { useState } from 'react';
-import DashboardLayout from '../dashboardUi/DashboardLayout';
-import { motion } from 'framer-motion';
-import UserStoriesModeration from '../dashboardUi/UserStoriesModeration';
-import UserManager from '../dashboardUi/UserManager';
-import PaymentReports from '../dashboardUi/PaymentReports';
-import ExperienceManager from '../dashboardUi/ExperienceManager';
-import SiteSettings from '../dashboardUi/SiteSettings';
-import AdminCourseManager from '../dashboardUi/AdminCourseManager';
-import AdminBookingsPanel from '../dashboardUi/AdminBookingsPanel';
-import AdminProfile from '../dashboardUi/AdminProfile';
-import DashboardAnalytics from '../DashBoardAnalytics';
+import React from "react";
 
-// Dummy fallback content
-const dummyUsers = [
-  { id: 1, name: 'Ama Boakye', role: 'User', joined: '2024-11-10' },
-  { id: 2, name: 'Kwame Owusu', role: 'Manager', joined: '2025-01-03' },
-];
+import SystemAlerts from "../ui/SystemAlerts";
 
-const dummyPayments = [
-  { id: 1, user: 'Ama Boakye', item: 'Shea Butter Class', amount: '₵100', status: 'Paid' },
-  { id: 2, user: 'Kwame Owusu', item: 'Soap Workshop', amount: '₵200', status: 'Pending' },
-];
-
-const dummyClasses = [
-  { id: 1, title: 'Shea Butter Masterclass', type: 'Online', location: '-', status: 'Active' },
-  { id: 2, title: 'Skincare Workshop Accra', type: 'In-Person', location: 'Accra', status: 'Upcoming' },
-];
+function DashboardCard({ title, description }) {
+  return (
+    <div className="p-6 bg-white shadow rounded-lg hover:shadow-md transition duration-200">
+      <h2 className="text-lg font-semibold text-green-700">{title}</h2>
+      <p className="text-gray-600 mt-2 text-sm">{description}</p>
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('Users');
-
-  const tabs = [
-    'Users',
-    'Payments',
-    'Classes',
-    'Admin Profile',
-    'Analytics',
-    'Stories and Testimonial'
-    
-  ];
-
   return (
-    <DashboardLayout >
-        <motion.div
-        key={activeTab}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-      <div className="flex h-screen">
-          <aside className="w-64 bg-white shadow-md p-4 space-y-2">
-    <h2 className="text-lg font-bold mb-4 text-gray-800">Admin</h2>
-    {tabs.map(tab => (
-      <button
-        key={tab}
-        onClick={() => setActiveTab(tab)}
-        className={`block w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-sm font-medium ${
-          activeTab === tab ? 'bg-blue-100 text-blue-700' : 'text-gray-700'
-        }`}
-      >
-        {tab}
-      </button>
-    ))}
-  </aside>
-    <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
-  {activeTab === 'Users' && <UserManager Users={dummyUsers}/> }
-  {activeTab === 'Payments' && <PaymentReports Payments={dummyPayments}/> }
-  {activeTab === 'Classes' && <AdminCourseManager Classes={dummyClasses}/> }
-  {activeTab === 'Admin Profile' && <AdminProfile/>}
-   {activeTab === 'Analytics' && <DashboardAnalytics  />}
-   {activeTab === 'Stories and Testimonial' && <UserStoriesModeration/>}
-</main>
-      
+    <>
+    
+      <div className="min-h-screen bg-gray-50 pt-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-green-800 mb-6">Admin Dashboard</h1>
+
+          <div className="mb-8"><SystemAlerts /></div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <DashboardCard title="User Management" description="View, add, or remove users and manage permissions." />
+            <DashboardCard title="Content Control" description="Publish, edit, or delete courses and workshops." />
+            <DashboardCard title="Reports & Analytics" description="Monitor performance and view user activity." />
+          </div>
+        </div>
       </div>
-      </motion.div>
-    </DashboardLayout>
+     
+    </>
   );
 }

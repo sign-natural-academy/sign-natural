@@ -1,12 +1,57 @@
-# React + Vite
+# Sign Natural Academy — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive React frontend for Sign Natural Academy.
+Built with Vite, React, Tailwind (via PostCSS), Framer Motion, and React Router.
 
-Currently, two official plugins are available:
+> This repo contains only the frontend. Backend endpoints are referenced via `VITE_API_URL`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Key features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Public pages: Home, Learn, Workshops, Products, Stories, About.
+- Authentication pages (signup, login) — OAuth placeholders included.
+- Filters for courses and workshops.
+- User dashboard (tutorials, bookings, upload story/testimonial).
+- Admin dashboard placeholders (approve testimonials, add course/workshop).
+- Framer Motion animations and icon libraries preserved.
+- Privacy / Terms / Refund pages included exactly as provided.
+
+---
+
+## Tech stack
+
+- React 18 (Functional components + hooks)
+- Vite
+- Tailwind utility classes (via PostCSS)
+- Framer Motion
+- React Router v6
+- Heroicons + lucide-react
+- Axios (for future API calls)
+
+---
+
+## Prerequisites
+
+- Node.js 18+ (recommended)
+- npm 8+ (or yarn/pnpm)
+- Git
+
+---
+
+## Quick start (dev)
+
+```bash
+# clone
+git clone <your-repo-url>
+cd <repo-name>
+
+# install
+npm install
+
+# copy example env (create .env with your API url)
+cp .env.example .env
+# edit .env as needed
+
+# start dev server
+npm run dev

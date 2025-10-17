@@ -1,3 +1,5 @@
+// src/components/pages/Homepage.jsx
+
 import React from "react";
 import ExperientialWorkshops from "../ui/ExperientialWorkshops";
 import CustomWorkshopPackage from "../ui/CustomWorkshopPackage";

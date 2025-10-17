@@ -1,4 +1,4 @@
-// src/components/dashboardUi/SettingsPanel.jsx
+// src/components/dashboard/admin/SettingsPanel.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 

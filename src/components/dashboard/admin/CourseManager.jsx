@@ -1,3 +1,4 @@
+// src/components/dashboard/admin/CourseManager.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import CourseForm from "./CourseForm";

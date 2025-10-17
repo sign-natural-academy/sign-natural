@@ -1,3 +1,5 @@
+//src/components/dashboardUi/UserProfile.jsx
+
 import React from "react";
 
 export default function UserProfile({ user = {} }) {

@@ -1,4 +1,4 @@
-// src/components/dashboardUi/SupportTickets.jsx
+// src/components/dashboard/admin/SupportTickets.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 

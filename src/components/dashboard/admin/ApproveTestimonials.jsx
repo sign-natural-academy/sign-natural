@@ -1,4 +1,5 @@
-// src/components/dashboardUi/ApproveTestimonials.jsx
+// src/components/dashboard/admin/ApproveTestimonials.jsx
+ApproveTestimonials.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import ConfirmModal from "../../dashboardUi/ConfirmModal";

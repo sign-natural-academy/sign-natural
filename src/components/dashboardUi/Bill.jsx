@@ -1,3 +1,4 @@
+//src/components/dashboardUi/Bill.jsx
 import React from "react";
 
 export default function Bill({ payments = [] }) {

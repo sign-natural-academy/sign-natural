@@ -1,4 +1,4 @@
-// src/components/dashboardUi/AuditLog.jsx
+// src/components/dashboard/admin/AuditLog.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 

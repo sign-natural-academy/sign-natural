@@ -1,3 +1,5 @@
+//src/components/ui/SystemAlerts.jsx
+
 import React from "react";
 
 export default function SystemAlerts() {

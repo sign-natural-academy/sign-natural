@@ -1,4 +1,4 @@
-// src/components/dashboardUi/MediaLibrary.jsx
+// src/components/dashboard/admin/MediaLibrary.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import ConfirmModal from "../../dashboardUi/ConfirmModal";

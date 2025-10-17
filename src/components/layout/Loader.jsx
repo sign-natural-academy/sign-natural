@@ -1,3 +1,4 @@
+//src/layout/Loader.jsx
 import React from "react";
 
 export default function Loader() {

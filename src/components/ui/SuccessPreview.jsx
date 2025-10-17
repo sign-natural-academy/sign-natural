@@ -1,3 +1,5 @@
+//src/components/ui/SuccessPreview.jsx
+
 import React, { useEffect, useState } from "react";
 import StoryGrid from "./StoryGrid";
 import ShareExperience from "./ShareExperience";

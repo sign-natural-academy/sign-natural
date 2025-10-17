@@ -1,3 +1,4 @@
+//src/pages/AboutPage.jsx
 import React from "react";
 import AboutHero from "../ui/AboutHero";
 import BeaconAcronynm from "../ui/BeaconAcronynm";

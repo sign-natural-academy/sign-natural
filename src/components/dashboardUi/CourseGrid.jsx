@@ -1,3 +1,5 @@
+//src/components/dashboardUi/CourseGrid.jsx
+
 import React from "react";
 
 export default function CourseGrid({ courses = [] }) {

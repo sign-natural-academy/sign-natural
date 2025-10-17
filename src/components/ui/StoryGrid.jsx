@@ -1,3 +1,5 @@
+//src/components/ui/StoryGrid.jsx
+
 import React from "react";
 
 export default function StoryGrid({ stories = [] }) {

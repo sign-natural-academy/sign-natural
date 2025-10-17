@@ -1,3 +1,4 @@
+// src/components/dashboard/admin/WorkShopManager.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import WorkshopForm from "./WorkshopForm";

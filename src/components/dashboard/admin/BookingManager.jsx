@@ -1,3 +1,4 @@
+// src/components/dashboard/admin/BookingManager.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import ConfirmModal from "../../dashboardUi/ConfirmModal";

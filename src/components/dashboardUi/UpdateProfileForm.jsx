@@ -1,3 +1,5 @@
+//src/components/dashboardUi/UpdateProfileForm.jsx
+
 import React, { useState } from "react";
 
 export default function UpdateProfileForm({ initial = {}, onSave }) {

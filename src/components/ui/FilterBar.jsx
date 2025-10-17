@@ -1,3 +1,5 @@
+//src/components/ui/FilterBar.jsx
+
 import React from "react";
 
 const filters = [

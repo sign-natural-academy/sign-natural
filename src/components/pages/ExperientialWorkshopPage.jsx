@@ -1,3 +1,5 @@
+// src/components/pages/ExperientialWorkshopPage.jsx
+
 import React, { useEffect, useMemo, useState } from "react";
 import WorkshopFilters from "../ui/WorkshopFilters";
 import WorkshopCard from "../ui/WorkshopCard";

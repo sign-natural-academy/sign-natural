@@ -1,4 +1,4 @@
-// src/components/dashboardUi/UsersManager.jsx
+// src/components/dashboard/admin/UsersManager.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import ConfirmModal from "../../dashboardUi/ConfirmModal";

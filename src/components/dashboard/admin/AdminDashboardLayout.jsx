@@ -1,20 +1,10 @@
 // src/components/dashboard/admin/AdminDashboardLayout.jsx
 import React, { useEffect, useState } from "react";
 import AdminSidebar from "./AdminSidebar";
-import { isAdminRole, getUserRole } from "../../../lib/auth";
+import { isAdminRole, getUserRole, signOut } from "../../../lib/auth";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 
-/**
- * AdminDashboardLayout
- * - Decoupled admin layout and guard.
- * - Use this to wrap all admin pages.
- *
- * Usage:
- * <AdminDashboardLayout title="Manage Courses">
- *   <YourAdminComponent />
- * </AdminDashboardLayout>
- */
 export default function AdminDashboardLayout({ children, title = "Admin Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState(null);
@@ -25,7 +15,8 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
     setRole(getUserRole());
   }, [location.pathname]);
 
-  // UI-level guard. Server must still enforce RBAC.
+  const roleStr = typeof role === "string" ? role : null;
+
   if (!isAdminRole()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
@@ -45,8 +36,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
             <button
               onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
+                signOut();
                 window.location.href = "/";
               }}
               className="px-4 py-2 border rounded"
@@ -61,12 +51,9 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Sidebar (desktop + mobile drawer) */}
       <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Page content */}
       <div className="lg:pl-72">
-        {/* Topbar */}
         <header className="bg-white border-b">
           <div className="flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
@@ -86,14 +73,12 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600">
-                Signed in as <span className="font-medium ml-1">{role ?? "Admin"}</span>
+                Signed in as <span className="font-medium ml-1">{roleStr ?? "Admin"}</span>
               </div>
 
               <button
                 onClick={() => {
-                  // basic sign out helper for dev
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("user");
+                  signOut();
                   navigate("/");
                 }}
                 className="px-3 py-1 border rounded"
@@ -105,12 +90,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
         </header>
 
         <main className="px-4 py-6 max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
-            className="space-y-6"
-          >
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="space-y-6">
             {children}
           </motion.div>
         </main>

@@ -1,4 +1,4 @@
-// src/components/dashboardUi/ProductManager.jsx
+// src/components/dashboard/admin/ProductManager.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 import ConfirmModal from "../../dashboardUi/ConfirmModal";

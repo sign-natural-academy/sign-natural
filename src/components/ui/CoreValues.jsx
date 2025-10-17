@@ -1,3 +1,5 @@
+//src/components/ui/CoreValues.jsx
+
 import React from "react";
 
 const coreValues = [

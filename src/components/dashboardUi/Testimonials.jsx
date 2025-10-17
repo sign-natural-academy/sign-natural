@@ -1,3 +1,5 @@
+//src/components/dashboardUi/Testimonials.jsx
+
 import React from "react";
 
 export default function Testimonials({ testimonials = [] }) {

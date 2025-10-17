@@ -1,3 +1,5 @@
+//src/components/ui/MissionVision.jsx
+
 import React from "react";
 
 export default function MissionVision() {

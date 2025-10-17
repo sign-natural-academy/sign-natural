@@ -1,4 +1,4 @@
-// src/components/dashboardUi/ReportsExport.jsx
+// src/components/dashboard/admin/ReportsExport.jsx
 import React, { useEffect, useState } from "react";
 import api, { authHeaders } from "../../../lib/api";
 

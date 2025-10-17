@@ -13,7 +13,7 @@ import {
 import SidebarShell from "./shared/SidebarShell";
 import { getActiveKey } from "./shared/navUtils";
 
-export default function Sidebar({ open = false, onClose = () => {}, role = "Learner" }) {
+export default function Sidebar({ open = false, onClose = () => {} }) {
   const location = useLocation();
   const active = getActiveKey(location, "overview");
 
@@ -33,9 +33,8 @@ export default function Sidebar({ open = false, onClose = () => {}, role = "Lear
       onClose={onClose}
       navItems={nav}
       activeKey={active}
-      sectionLabel="Navigation"
+      sectionLabel="User menu"
       widthClass="lg:w-64"
-      footer={{ name: "You", role, avatar: "/avatar-placeholder.png" }}
     />
   );
 }

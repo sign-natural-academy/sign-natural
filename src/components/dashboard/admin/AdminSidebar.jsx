@@ -44,7 +44,6 @@ export default function AdminSidebar({ open = false, onClose = () => {} }) {
       activeKey={active}
       sectionLabel="Admin menu"
       widthClass="lg:w-72"
-      footer={{ name: "Samuel", role: "Administrator", avatar: "/avatar-placeholder.png" }}
     />
   );
 }

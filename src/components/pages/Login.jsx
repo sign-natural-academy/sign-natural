@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/services/auth";
 import { signIn } from "../../lib/auth";
+import AuthWithGoogle from "../auth/AuthWithGoogle";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ export default function Login() {
               {loading ? "Logging in..." : "Log In"}
             </button>
           </form>
+          <AuthWithGoogle/>
 
           <div className="mt-6 text-center text-sm text-gray-700">
             Don&apos;t have an account?{" "}

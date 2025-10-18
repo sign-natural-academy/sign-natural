@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../ui/Navbar";
 import Footer from "../ui/Footer";
 import { signupUser } from "../../api/services/auth";
+import AuthWithGoogle from "../auth/AuthWithGoogle";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -67,6 +68,8 @@ export default function SignUp() {
 
               <button type="submit" disabled={loading} className="w-full bg-[#455f30] text-white py-2 rounded">{loading ? "Signing up..." : "Sign Up"}</button>
             </form>
+
+            <AuthWithGoogle/>
 
             <div className="mt-6 text-center text-sm text-gray-700">Already have an account? <Link to="/login" className="text-green-700 hover:underline font-medium">Log in</Link></div>
           </div>

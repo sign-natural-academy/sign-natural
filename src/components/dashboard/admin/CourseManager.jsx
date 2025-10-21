@@ -1,106 +1,163 @@
 // src/components/dashboard/admin/CourseManager.jsx
 import React, { useEffect, useState } from "react";
-import api, { authHeaders } from "../../../lib/api";
+import { getCourses, deleteCourse } from "../../../api/services/courses";
 import CourseForm from "./CourseForm";
-import ConfirmModal from "../../dashboardUi/ConfirmModal";
 
-/**
- * CourseManager - list courses, create/edit/delete
- */
+// Optional: if you installed react-hot-toast. If not, the code still works.
+let toast;
+try {
+  // lazy import to avoid hard dependency
+  // eslint-disable-next-line global-require
+  toast = require("react-hot-toast").toast;
+} catch (_) {
+  toast = { success: console.log, error: console.error, loading: console.log, dismiss: () => {} };
+}
+
 export default function CourseManager() {
   const [courses, setCourses] = useState([]);
+  const [selected, setSelected] = useState(null); // null = nothing, {} = create, obj = edit
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(null); // course object or null
-  const [showForm, setShowForm] = useState(false);
-  const [confirm, setConfirm] = useState({ open: false, id: null });
-  const [msg, setMsg] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  const load = async () => {
+  const loadCourses = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/api/courses", { headers: authHeaders() });
-      setCourses(Array.isArray(res.data) ? res.data : res.data?.courses ?? []);
+      const res = await getCourses();
+      setCourses(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("Failed to fetch courses:", err);
-      setCourses([
-        { id: "c-1", title: "Shea Butter Basics", description: "Learn the fundamentals", price: "Free", duration: "45 mins", image: "/body.jpg", type: "free" },
-      ]);
+      console.error("Error loading courses:", err);
+      toast.error(err?.response?.data?.message || "Failed to load courses");
     } finally {
       setLoading(false);
     }
   };
 
-  const openCreate = () => { setEditing(null); setShowForm(true); };
-  const openEdit = (c) => { setEditing(c); setShowForm(true); };
+  useEffect(() => {
+    loadCourses();
+  }, []);
 
-  const handleSaved = () => {
-    setShowForm(false);
-    load();
-  };
-
-  const confirmDelete = (id) => setConfirm({ open: true, id });
-  const cancelDelete = () => setConfirm({ open: false, id: null });
-
-  const doDelete = async () => {
-    const id = confirm.id;
-    if (!id) return;
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this course? This cannot be undone.")) return;
+    setDeletingId(id);
+    const tId = toast.loading("Deleting course…");
     try {
-      await api.delete(`/api/courses/${id}`, { headers: authHeaders() });
-      setMsg("Course deleted.");
-      setCourses((s) => s.filter((c) => c.id !== id));
+      await deleteCourse(id);
+      toast.success("Course deleted", { id: tId });
+      await loadCourses();
+      // If the deleted one was being edited, close the form
+      if (selected && selected._id === id) setSelected(null);
     } catch (err) {
       console.error(err);
-      setMsg("Failed to delete.");
+      toast.error(err?.response?.data?.message || "Delete failed", { id: tId });
     } finally {
-      cancelDelete();
+      setDeletingId(null);
     }
   };
 
+  const isCreating = selected && !selected._id;
+  const isEditing = selected && !!selected._id;
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Courses Management</h2>
-        <div>
-          <button onClick={openCreate} className="px-3 py-1 bg-[#7d4c35] text-white rounded">Add Course</button>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* LEFT: list */}
+      <div className="bg-white shadow rounded-lg p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-lg">Courses</h3>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadCourses}
+              disabled={loading}
+              className="px-3 py-1 border rounded disabled:opacity-60"
+              title="Refresh list"
+            >
+              {loading ? "Loading…" : "Refresh"}
+            </button>
+            <button
+              onClick={() => setSelected({})}
+              className="px-3 py-1 bg-green-700 text-white rounded"
+            >
+              + New Course
+            </button>
+          </div>
         </div>
+
+        {/* List */}
+        {loading ? (
+          <div className="space-y-2">
+            <div className="h-10 bg-gray-100 animate-pulse rounded" />
+            <div className="h-10 bg-gray-100 animate-pulse rounded" />
+            <div className="h-10 bg-gray-100 animate-pulse rounded" />
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="text-gray-500 py-6 text-center">No courses found.</div>
+        ) : (
+          <ul className="divide-y">
+            {courses.map((c) => (
+              <li key={c._id} className="py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={c.image || "/images/placeholder.jpg"}
+                    alt={c.title}
+                    className="w-16 h-10 object-cover rounded border"
+                  />
+                  <div>
+                    <div className="font-medium">{c.title}</div>
+                    <div className="text-xs text-gray-500">
+                      {c.type} • {c.duration || "—"} • {c.price > 0 ? `₵${c.price}` : "Free"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelected(c)}
+                    className="px-3 py-1 text-sm border rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(c._id)}
+                    className="px-3 py-1 text-sm bg-red-600 text-white rounded disabled:opacity-60"
+                    disabled={deletingId === c._id}
+                  >
+                    {deletingId === c._id ? "Deleting…" : "Delete"}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      {msg && <div className="mb-3 text-sm text-green-700">{msg}</div>}
-
-      {showForm && (
-        <div className="mb-6 p-4 bg-white rounded shadow">
-          <CourseForm course={editing} onSaved={handleSaved} onCancel={() => setShowForm(false)} />
+      {/* RIGHT: form panel */}
+      <div className="bg-white shadow rounded-lg p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold">
+            {isEditing ? "Edit Course" : isCreating ? "Create Course" : "Create / Edit"}
+          </h3>
+          {selected && (
+            <button onClick={() => setSelected(null)} className="text-sm underline">
+              Close
+            </button>
+          )}
         </div>
-      )}
 
-      {loading ? (
-        <div className="py-8 text-center">Loading courses…</div>
-      ) : courses.length === 0 ? (
-        <div className="py-8 text-center text-gray-500">No courses yet</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {courses.map((c) => (
-            <div key={c.id} className="bg-white rounded-lg shadow p-4 flex flex-col">
-              <img src={c.image || "/body.jpg"} alt={c.title} className="w-full h-36 object-cover rounded mb-3" />
-              <div className="flex-1">
-                <h3 className="font-semibold">{c.title}</h3>
-                <p className="text-sm text-gray-600 mt-1">{c.description}</p>
-                <div className="mt-3 text-sm text-gray-700">⏱ {c.duration || "-" } • {c.type}</div>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <button onClick={() => openEdit(c)} className="px-3 py-1 bg-yellow-500 text-white rounded text-sm">Edit</button>
-                <button onClick={() => confirmDelete(c.id)} className="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <ConfirmModal open={confirm.open} title="Delete course" message="Are you sure you want to delete this course?" onConfirm={doDelete} onCancel={cancelDelete} />
+        {/* Render the form only when creating/editing */}
+        {selected ? (
+          <CourseForm
+            selected={selected}
+            onSuccess={async () => {
+              setSelected(null);
+              await loadCourses();
+            }}
+            onCancel={() => setSelected(null)}
+          />
+        ) : (
+          <div className="text-gray-500 text-sm">
+            Select a course to edit or click <span className="font-medium">“New Course”</span> to create one.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

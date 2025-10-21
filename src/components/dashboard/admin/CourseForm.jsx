@@ -1,106 +1,218 @@
 // src/components/dashboard/admin/CourseForm.jsx
 import React, { useEffect, useState } from "react";
-import api, { authHeaders } from "../../../lib/api";
+import { createCourse, updateCourse } from "../../../api/services/courses";
 
-/**
- * CourseForm - used for create and edit inside CourseManager
- * props: course (optional), onSaved callback
- */
-export default function CourseForm({ course = null, onSaved = () => {}, onCancel = () => {} }) {
+const TYPE_OPTIONS = [
+  { value: "free", label: "Free" },
+  { value: "online", label: "Online (Live)" },
+  { value: "in-person", label: "In-Person" },
+  { value: "in-demand", label: "On-Demand" },
+];
+
+export default function CourseForm({ selected, onSuccess }) {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    type: "free",
     price: "",
     duration: "",
+    category: "",
+    type: "free",
+    image: null,
   });
-  const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (course) {
+    if (selected) {
       setForm({
-        title: course.title || "",
-        description: course.description || "",
-        type: course.type || "free",
-        price: course.price || "",
-        duration: course.duration || "",
+        title: selected.title || "",
+        description: selected.description || "",
+        price: selected.price ?? "",
+        duration: selected.duration || "",
+        category: selected.category || "",
+        type: selected.type || "free",
+        image: null,
       });
-      setPreview(course.image || null);
+      setPreview(selected.image || null);
+    } else {
+      resetForm();
     }
-  }, [course]);
+  }, [selected]);
 
-  const onFile = (e) => {
-    const f = e.target.files[0];
-    setImage(f);
-    setPreview(f ? URL.createObjectURL(f) : null);
+  const resetForm = () => {
+    setForm({
+      title: "",
+      description: "",
+      price: "",
+      duration: "",
+      category: "",
+      type: "free",
+      image: null,
+    });
+    setPreview(null);
   };
 
-  const submit = async (e) => {
-    e.preventDefault();
-    setBusy(true);
-    setMsg("");
-    try {
-      const fd = new FormData();
-      fd.append("title", form.title);
-      fd.append("description", form.description);
-      fd.append("type", form.type);
-      fd.append("price", form.price);
-      fd.append("duration", form.duration);
-      if (image) fd.append("image", image);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-      if (course && course.id) {
-        await api.put(`/api/courses/${course.id}`, fd, { headers: { ...authHeaders(), "Content-Type": "multipart/form-data" } });
-        setMsg("Course updated.");
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setForm((prev) => ({ ...prev, image: file || null }));
+    if (file) setPreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const fd = new FormData();
+    fd.append("title", form.title);
+    fd.append("description", form.description);
+    fd.append("price", form.price);
+    fd.append("duration", form.duration);
+    fd.append("category", form.category);
+    fd.append("type", form.type);
+    if (form.image) fd.append("image", form.image);
+
+    try {
+      if (selected?._id) {
+        await updateCourse(selected._id, fd);
+        alert("✅ Course updated successfully!");
       } else {
-        await api.post("/api/courses", fd, { headers: { ...authHeaders(), "Content-Type": "multipart/form-data" } });
-        setMsg("Course created.");
+        await createCourse(fd);
+        alert("✅ New course added successfully!");
       }
-      onSaved();
+      resetForm();
+      onSuccess?.();
     } catch (err) {
-      console.error(err);
-      setMsg("Failed to save course.");
+      console.error("Error saving course:", err);
+      alert(err.response?.data?.message || "❌ Failed to save course.");
     } finally {
-      setBusy(false);
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={submit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
+      <h3 className="text-lg font-semibold text-gray-800">
+        {selected ? "Edit Course" : "Add New Course"}
+      </h3>
+
+      {/* Title */}
       <div>
-        <label className="text-sm block mb-1">Title</label>
-        <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full border px-3 py-2 rounded" required />
+        <label className="block text-sm font-medium mb-1 text-gray-700">Course Title</label>
+        <input
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          type="text"
+          placeholder="Enter course title"
+          required
+          className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+        />
       </div>
 
+      {/* Description */}
       <div>
-        <label className="text-sm block mb-1">Description</label>
-        <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full border px-3 py-2 rounded h-28" required />
+        <label className="block text-sm font-medium mb-1 text-gray-700">Description</label>
+        <textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          placeholder="Enter course description"
+          rows="4"
+          className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+        />
       </div>
 
-      <div className="flex gap-2">
-        <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="border px-3 py-2 rounded">
-          <option value="free">Free</option>
-          <option value="online">Online</option>
-          <option value="in-person">In-Person</option>
-          <option value="on-demand">On-Demand</option>
+      {/* Price, Duration, Category */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-700">Price (₵)</label>
+          <input
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+            type="number"
+            min="0"
+            placeholder="0 for free"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-700">Duration</label>
+          <input
+            name="duration"
+            value={form.duration}
+            onChange={handleChange}
+            type="text"
+            placeholder="e.g. 2 hours"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-700">Category</label>
+          <input
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            type="text"
+            placeholder="e.g. Skincare Basics"
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          />
+        </div>
+      </div>
+
+      {/* Type */}
+      <div>
+        <label className="block text-sm font-medium mb-1 text-gray-700">Type</label>
+        <select
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+        >
+          {TYPE_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
         </select>
-        <input placeholder="Price" value={form.price} onChange={(e)=>setForm({...form,price:e.target.value})} className="border px-3 py-2 rounded" />
-        <input placeholder="Duration" value={form.duration} onChange={(e)=>setForm({...form,duration:e.target.value})} className="border px-3 py-2 rounded" />
+        <p className="text-xs text-gray-500 mt-1">
+          Choose how this course is delivered (free/online/in-person/on-demand).
+        </p>
       </div>
 
+      {/* Image Upload */}
       <div>
-        <label className="text-sm block mb-1">Cover image (optional)</label>
-        <input type="file" accept="image/*" onChange={onFile} />
-        {preview && <img src={preview} alt="preview" className="w-32 mt-2 rounded" />}
+        <label className="block text-sm font-medium mb-1 text-gray-700">Course Image</label>
+        <input type="file" accept="image/*" onChange={handleFileChange} className="block w-full text-sm text-gray-700" />
+        {preview && (
+          <div className="mt-3">
+            <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded border" />
+          </div>
+        )}
       </div>
 
-      {msg && <div className="text-sm text-gray-600">{msg}</div>}
+      {/* Actions */}
+      <div className="flex items-center justify-between mt-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-green-700 text-white py-2 px-4 rounded hover:bg-green-800 transition disabled:opacity-50"
+        >
+          {loading ? (selected ? "Updating..." : "Saving...") : selected ? "Update Course" : "Add Course"}
+        </button>
 
-      <div className="flex gap-2">
-        <button type="submit" disabled={busy} className="px-4 py-2 bg-[#7d4c35] text-white rounded">{busy ? "Saving..." : "Save"}</button>
-        <button type="button" onClick={onCancel} className="px-4 py-2 border rounded">Cancel</button>
+        {selected && (
+          <button type="button" onClick={resetForm} className="text-sm text-gray-600 hover:underline">
+            Cancel Edit
+          </button>
+        )}
       </div>
     </form>
   );

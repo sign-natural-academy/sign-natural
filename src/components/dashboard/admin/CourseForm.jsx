@@ -1,5 +1,5 @@
 // src/components/dashboard/admin/CourseForm.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { createCourse, updateCourse } from "../../../api/services/courses";
 
 const TYPE_OPTIONS = [
@@ -10,6 +10,7 @@ const TYPE_OPTIONS = [
 ];
 
 export default function CourseForm({ selected, onSuccess }) {
+  const fileInputRef = useRef(null);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -95,14 +96,19 @@ export default function CourseForm({ selected, onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white p-6 rounded-lg shadow-md space-y-4"
+    >
       <h3 className="text-lg font-semibold text-gray-800">
         {selected ? "Edit Course" : "Add New Course"}
       </h3>
 
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">Course Title</label>
+        <label className="block text-sm font-medium mb-1 text-gray-700">
+          Course Title
+        </label>
         <input
           name="title"
           value={form.title}
@@ -116,7 +122,9 @@ export default function CourseForm({ selected, onSuccess }) {
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">Description</label>
+        <label className="block text-sm font-medium mb-1 text-gray-700">
+          Description
+        </label>
         <textarea
           name="description"
           value={form.description}
@@ -130,7 +138,9 @@ export default function CourseForm({ selected, onSuccess }) {
       {/* Price, Duration, Category */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700">Price (₵)</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">
+            Price (₵)
+          </label>
           <input
             name="price"
             value={form.price}
@@ -143,7 +153,9 @@ export default function CourseForm({ selected, onSuccess }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700">Duration</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">
+            Duration
+          </label>
           <input
             name="duration"
             value={form.duration}
@@ -155,7 +167,9 @@ export default function CourseForm({ selected, onSuccess }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700">Category</label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">
+            Category
+          </label>
           <input
             name="category"
             value={form.category}
@@ -169,7 +183,9 @@ export default function CourseForm({ selected, onSuccess }) {
 
       {/* Type */}
       <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">Type</label>
+        <label className="block text-sm font-medium mb-1 text-gray-700">
+          Type
+        </label>
         <select
           name="type"
           value={form.type}
@@ -187,13 +203,32 @@ export default function CourseForm({ selected, onSuccess }) {
         </p>
       </div>
 
-      {/* Image Upload */}
+      {/* Image Upload (Improved UI) */}
       <div>
-        <label className="block text-sm font-medium mb-1 text-gray-700">Course Image</label>
-        <input type="file" accept="image/*" onChange={handleFileChange} className="block w-full text-sm text-gray-700" />
+        <label className="block text-sm font-medium mb-1 text-gray-700">
+          Course Image
+        </label>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current.click()}
+          className="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 transition"
+        >
+          Upload Image
+        </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
         {preview && (
           <div className="mt-3">
-            <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded border" />
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full h-40 object-cover rounded border"
+            />
           </div>
         )}
       </div>
@@ -205,11 +240,21 @@ export default function CourseForm({ selected, onSuccess }) {
           disabled={loading}
           className="bg-green-700 text-white py-2 px-4 rounded hover:bg-green-800 transition disabled:opacity-50"
         >
-          {loading ? (selected ? "Updating..." : "Saving...") : selected ? "Update Course" : "Add Course"}
+          {loading
+            ? selected
+              ? "Updating..."
+              : "Saving..."
+            : selected
+            ? "Update Course"
+            : "Add Course"}
         </button>
 
         {selected && (
-          <button type="button" onClick={resetForm} className="text-sm text-gray-600 hover:underline">
+          <button
+            type="button"
+            onClick={resetForm}
+            className="text-sm text-gray-600 hover:underline"
+          >
             Cancel Edit
           </button>
         )}

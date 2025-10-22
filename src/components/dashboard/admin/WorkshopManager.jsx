@@ -1,106 +1,135 @@
-// src/components/dashboard/admin/WorkShopManager.jsx
+// src/components/dashboard/admin/WorkshopManager.jsx
 import React, { useEffect, useState } from "react";
-import api, { authHeaders } from "../../../lib/api";
+import { getWorkshops, deleteWorkshop } from "../../../api/services/workshops";
 import WorkshopForm from "./WorkshopForm";
-import ConfirmModal from "../../dashboardUi/ConfirmModal";
+import ListItemCard from "./common/ListItemCard";
 
-/**
- * WorkshopManager - list, create, edit, delete workshops
- */
+let toast;
+try {
+  toast = require("react-hot-toast").toast;
+} catch (_) {
+  toast = { success: console.log, error: console.error, loading: console.log, dismiss: () => {} };
+}
+
 export default function WorkshopManager() {
   const [workshops, setWorkshops] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing] = useState(null);
-  const [confirm, setConfirm] = useState({ open: false, id: null });
-  const [msg, setMsg] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  const load = async () => {
+  const loadWorkshops = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/api/workshops", { headers: authHeaders() });
-      setWorkshops(Array.isArray(res.data) ? res.data : res.data?.workshops ?? []);
+      const res = await getWorkshops();
+      setWorkshops(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error(err);
-      setWorkshops([
-        { id: "w-1", title: "Glow-Up Celebration", description: "Celebrate with a guided skincare pampering session.", location: "Accra", dateTime: new Date().toISOString(), capacity: 12, price: "₵150", image: "/images/party4.jpg" },
-      ]);
+      console.error("Error loading workshops:", err);
+      toast.error(err?.response?.data?.message || "Failed to load workshops");
     } finally {
       setLoading(false);
     }
   };
 
-  const openCreate = () => { setEditing(null); setShowForm(true); };
-  const openEdit = (w) => { setEditing(w); setShowForm(true); };
-  const confirmDelete = (id) => setConfirm({ open: true, id });
-  const cancelDelete = () => setConfirm({ open: false, id: null });
+  useEffect(() => {
+    loadWorkshops();
+  }, []);
 
-  const doDelete = async () => {
-    const id = confirm.id;
-    if (!id) return;
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this workshop?")) return;
+    setDeletingId(id);
+    const tId = toast.loading("Deleting workshop…");
     try {
-      await api.delete(`/api/workshops/${id}`, { headers: authHeaders() });
-      setWorkshops((s) => s.filter((x) => x.id !== id));
-      setMsg("Workshop deleted.");
+      await deleteWorkshop(id);
+      toast.success("Workshop deleted", { id: tId });
+      await loadWorkshops();
+      if (selected && selected._id === id) setSelected(null);
     } catch (err) {
-      console.error(err);
-      setMsg("Failed to delete.");
+      toast.error(err?.response?.data?.message || "Delete failed", { id: tId });
     } finally {
-      cancelDelete();
+      setDeletingId(null);
     }
   };
 
-  const handleSaved = () => {
-    setShowForm(false);
-    load();
-  };
+  const isCreating = selected && !selected._id;
+  const isEditing = selected && !!selected._id;
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Workshops Management</h2>
-        <div>
-          <button onClick={openCreate} className="px-3 py-1 bg-[#7d4c35] text-white rounded">Add Workshop</button>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-white shadow rounded-lg p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-lg">Workshops</h3>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadWorkshops}
+              disabled={loading}
+              className="px-3 py-1 border rounded disabled:opacity-60"
+            >
+              {loading ? "Loading…" : "Refresh"}
+            </button>
+            <button
+              onClick={() => setSelected({})}
+              className="px-3 py-1 bg-green-700 text-white rounded"
+            >
+              + New Workshop
+            </button>
+          </div>
         </div>
+
+        {loading ? (
+          <div className="space-y-2">
+            <div className="h-10 bg-gray-100 animate-pulse rounded" />
+            <div className="h-10 bg-gray-100 animate-pulse rounded" />
+            <div className="h-10 bg-gray-100 animate-pulse rounded" />
+          </div>
+        ) : workshops.length === 0 ? (
+          <div className="text-gray-500 py-6 text-center">No workshops found.</div>
+        ) : (
+          <ul className="divide-y">
+            {workshops.map((w) => (
+              <ListItemCard
+                key={w._id}
+                item={{
+                  ...w,
+                  meta: `${w.type || "—"} • ${w.duration || "—"} • ${w.location || "—"} • ${
+                    w.price > 0 ? `₵${w.price}` : "Free"
+                  }`,
+                }}
+                onEdit={setSelected}
+                onDelete={handleDelete}
+                deleting={deletingId === w._id}
+              />
+            ))}
+          </ul>
+        )}
       </div>
 
-      {msg && <div className="mb-3 text-sm text-green-700">{msg}</div>}
-
-      {showForm && (
-        <div className="mb-6 p-4 bg-white rounded shadow">
-          <WorkshopForm workshop={editing} onSaved={handleSaved} onCancel={() => setShowForm(false)} />
+      <div className="bg-white shadow rounded-lg p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold">
+            {isEditing ? "Edit Workshop" : isCreating ? "Create Workshop" : "Create / Edit"}
+          </h3>
+          {selected && (
+            <button onClick={() => setSelected(null)} className="text-sm underline">
+              Close
+            </button>
+          )}
         </div>
-      )}
 
-      {loading ? (
-        <div className="py-8 text-center">Loading workshops…</div>
-      ) : workshops.length === 0 ? (
-        <div className="py-8 text-center text-gray-500">No workshops yet</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {workshops.map((w) => (
-            <div key={w.id} className="bg-white rounded-lg shadow p-4 flex flex-col">
-              <img src={w.image || "/images/group1.jpg"} alt={w.title} className="w-full h-36 object-cover rounded mb-3" />
-              <div className="flex-1">
-                <h3 className="font-semibold">{w.title}</h3>
-                <p className="text-sm text-gray-600 mt-1">{w.description}</p>
-                <div className="mt-2 text-sm text-gray-700">📍 {w.location} • {w.dateTime ? new Date(w.dateTime).toLocaleString() : "-"}</div>
-                <div className="mt-1 text-sm text-gray-700">Capacity: {w.capacity ?? "-"}</div>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <button onClick={() => openEdit(w)} className="px-3 py-1 bg-yellow-500 text-white rounded text-sm">Edit</button>
-                <button onClick={() => confirmDelete(w.id)} className="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <ConfirmModal open={confirm.open} title="Delete workshop" message="Are you sure you want to delete this workshop?" onConfirm={doDelete} onCancel={cancelDelete} />
+        {selected ? (
+          <WorkshopForm
+            selected={selected}
+            onSuccess={async () => {
+              setSelected(null);
+              await loadWorkshops();
+            }}
+            onCancel={() => setSelected(null)}
+          />
+        ) : (
+          <div className="text-gray-500 text-sm">
+            Select a workshop to edit or click <span className="font-medium">“New Workshop”</span> to create one.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

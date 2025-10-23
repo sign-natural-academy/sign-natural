@@ -2,11 +2,25 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { getWorkshop } from "../../api/services/workshops";
+import { useNavigate } from "react-router-dom";
+import { isAuthed } from "../../lib/auth";
+import { bookNowOrRedirect } from "../../lib/bookNow";
+import useBook from "../../hooks/useBook";
 
 export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   const [loading, setLoading] = useState(false);
   const [workshop, setWorkshop] = useState(null);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const { bookItem } = useBook();
+  const handleBook = () =>
+    workshop &&
+    bookItem({
+      itemType: "Workshop",
+      itemId: workshop._id,
+      price: workshop.price,
+    });
 
   useEffect(() => {
     let active = true;
@@ -19,14 +33,17 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
         const res = await getWorkshop(workshopId);
         if (active) setWorkshop(res.data);
       } catch (e) {
-        if (active) setError(e?.response?.data?.message || "Failed to load workshop");
+        if (active)
+          setError(e?.response?.data?.message || "Failed to load workshop");
       } finally {
         if (active) setLoading(false);
       }
     }
 
     load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [open, workshopId]);
 
   return (
@@ -66,7 +83,9 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
             </div>
 
             {loading && <div className="p-6">Loading…</div>}
-            {!loading && error && <div className="p-6 text-red-600">{error}</div>}
+            {!loading && error && (
+              <div className="p-6 text-red-600">{error}</div>
+            )}
 
             {!loading && !error && workshop && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
@@ -87,7 +106,9 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                   </div>
 
                   {workshop.duration && (
-                    <div className="text-sm text-gray-600">⏱ Duration: {workshop.duration}</div>
+                    <div className="text-sm text-gray-600">
+                      ⏱ Duration: {workshop.duration}
+                    </div>
                   )}
                   {workshop.participants && (
                     <div className="text-sm text-gray-600">
@@ -106,12 +127,13 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                         : "Free"}
                     </div>
                     <div className="flex gap-2">
-                      <a
-                        href="/signup"
+                      <button
+                        onClick={handleBook}
                         className="px-4 py-2 rounded bg-[#455f30] text-white text-sm"
                       >
                         Book / Enroll
-                      </a>
+                      </button>
+
                       <button
                         onClick={onClose}
                         className="px-4 py-2 rounded border text-sm"

@@ -2,10 +2,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import useBook from "../../hooks/useBook";
 
 export default function CourseCard({ course, onView }) {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const {bookItem} = useBook();
   const handleActionClick = () => navigate("/signup");
+
+  const handleBook = () =>
+    bookItem({ itemType: "Course", itemId: course._id, price: course.price });
 
   return (
     <motion.div
@@ -37,20 +42,35 @@ export default function CourseCard({ course, onView }) {
         </div>
 
         <div className="flex items-center gap-2 mt-4">
-          <button
+          {/* <button
             onClick={() => onView?.(course._id)}
             className="w-full border border-gray-300 py-2 rounded text-sm hover:bg-gray-50"
           >
             View Details
-          </button>
-          <button
+          </button> */}
+          {/* <button
             onClick={handleActionClick}
             className={`w-full py-2 rounded text-white font-medium ${
               course.type === "free" ? "bg-[#455f30]" : "bg-yellow-600"
             }`}
           >
             {course.type === "free" ? "Start Learning" : "Book Now"}
-          </button>
+          </button> */}
+          <button
+      onClick={() => onView?.(course._id)}
+      className="w-full border border-gray-300 py-2 rounded text-sm hover:bg-gray-50"
+    >
+      View Details
+    </button>
+    <button
+      onClick={handleBook}
+      className={`w-full py-2 rounded text-white font-medium ${
+        course.type === "free" ? "bg-[#455f30]" : "bg-yellow-600"
+      }`}
+    >
+      {course.type === "free" ? "Start Learning" : "Book Now"}
+    </button>
+           
         </div>
       </div>
     </motion.div>

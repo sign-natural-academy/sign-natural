@@ -1,10 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import useBook from "../../hooks/useBook";
 
 export default function WorkshopCard({ workshop, onView }) {
   const navigate = useNavigate();
   const handleActionClick = () => navigate("/signup");
+  const {bookItem} =useBook()
+
+  const handleBook = () =>
+    bookItem({itemType:"Workshop",itemId:workshop._id ,price:workshop.price});
 
   const imgSrc = workshop.image || "/images/placeholder.jpg";
   const priceText =
@@ -61,18 +66,17 @@ export default function WorkshopCard({ workshop, onView }) {
         <div className="flex items-center gap-2 mt-4">
           {/* The ONLY visible View Details button */}
           <button
-            onClick={() => onView?.(workshop._id)}
-            className="w-full border border-gray-300 py-2 rounded text-sm hover:bg-gray-50"
-          >
-            View Details
-          </button>
-
-          <button
-            onClick={handleActionClick}
-            className="w-full py-2 rounded text-white font-medium bg-yellow-600"
-          >
-            Book Now
-          </button>
+      onClick={() => onView?.(workshop._id)}
+      className="w-full border border-gray-300 py-2 rounded text-sm hover:bg-gray-50"
+    >
+      View Details
+    </button>
+    <button
+      onClick={handleBook}
+      className="w-full py-2 rounded text-white font-medium bg-yellow-600"
+    >
+      Book Now
+    </button>
         </div>
       </div>
     </motion.div>

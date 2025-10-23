@@ -19,11 +19,11 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
 
   const nav = [
     { key: "overview", label: "Overview", to: "/user-dashboard", icon: HomeIcon },
-    { key: "free-tutorials", label: "Free Tutorials", to: "/user-dashboard?tab=Free%20Tutorials", icon: BookOpenIcon },
-    { key: "my-bookings", label: "My Bookings", to: "/user-dashboard?tab=My%20Bookings", icon: CalendarIcon },
-    { key: "my-stories", label: "My Stories", to: "/user-dashboard?tab=Post%20a%20Story", icon: PhotoIcon },
-    { key: "profile", label: "Profile", to: "/user-dashboard?tab=User%20Profile", icon: UserCircleIcon },
-    { key: "settings", label: "Settings", to: "/user-dashboard?tab=Settings", icon: Cog6ToothIcon },
+    { key: "free-tutorials", label: "Free Tutorials", to: "/user-dashboard?tab=tutorials", icon: BookOpenIcon },
+    { key: "my-bookings", label: "My Bookings", to: "/user-dashboard?tab=bookings", icon: CalendarIcon },
+    { key: "my-stories", label: "My Stories", to: "/user-dashboard?tab=stories", icon: PhotoIcon },
+    { key: "profile", label: "Profile", to: "/user-dashboard?tab=profile", icon: UserCircleIcon },
+    { key: "settings", label: "Settings", to: "/user-dashboard?tab=settings", icon: Cog6ToothIcon },
     { key: "help", label: "Help", to: "/support", icon: QuestionMarkCircleIcon },
   ];
 

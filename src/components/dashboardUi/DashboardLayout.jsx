@@ -1,10 +1,9 @@
 // src/components/dashboardUi/DashboardLayout.jsx
 import React, { useState, useEffect } from "react";
-import Sidebar from "./Sidebar";
 import { motion } from "framer-motion";
 import { getUserRole } from "../../lib/auth";
 import { useNavigate } from "react-router-dom";
-
+import Sidebar from "./SideBar";
 export default function DashboardLayout({ children, title = "My Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState(null);

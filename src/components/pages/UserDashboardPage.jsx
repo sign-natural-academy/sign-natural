@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../dashboardUi/DashboardLayout";
 import TutorialGrid from "../dashboardUi/TutorialGrid";
-import BookingGrid from "../dashboardUi/BookingGrid";
+import BookingGrid from "../dashboard/user/BookingGrid";
 import StoryForm from "../dashboardUi/StoryForm";
 import UserTestimonials from "../dashboardUi/UserTestimonials";
 import { motion } from "framer-motion";

@@ -10,8 +10,8 @@ import {
   Cog6ToothIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
-import SidebarShell from "./shared/SidebarShell";
-import { getActiveKey } from "./shared/navUtils";
+import SidebarShell from "../../dashboardUi/shared/SidebarShell";
+import { getActiveKey } from "../../dashboardUi/shared/navUtils";
 
 export default function Sidebar({ open = false, onClose = () => {} }) {
   const location = useLocation();

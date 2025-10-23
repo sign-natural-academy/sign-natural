@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getUserRole } from "../../lib/auth";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "./SideBar";
+import Sidebar from "../dashboard/user/Sidebar";
 export default function DashboardLayout({ children, title = "My Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState(null);

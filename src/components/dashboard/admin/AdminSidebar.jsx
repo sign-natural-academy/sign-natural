@@ -22,7 +22,7 @@ export default function AdminSidebar({ open = false, onClose = () => {} }) {
   const active = getActiveKey(location, "overview");
 
   const nav = [
-    { key: "overview", label: "Overview", to: "/admin-dashboard", icon: ChartBarIcon },
+    { key: "overview", label: "Overview", to: "/admin-dashboard?tab=overview", icon: ChartBarIcon },
     { key: "bookings", label: "Bookings", to: "/admin-dashboard?tab=bookings", icon: CalendarIcon },
     { key: "courses", label: "Courses", to: "/admin-dashboard?tab=courses", icon: BookOpenIcon },
     { key: "workshops", label: "Workshops", to: "/admin-dashboard?tab=workshops", icon: HomeIcon },

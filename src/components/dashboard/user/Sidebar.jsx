@@ -9,6 +9,7 @@ import {
   UserCircleIcon,
   Cog6ToothIcon,
   QuestionMarkCircleIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
 import SidebarShell from "../../dashboardUi/shared/SidebarShell";
 import { getActiveKey } from "../../dashboardUi/shared/navUtils";
@@ -21,6 +22,8 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
     { key: "overview", label: "Overview", to: "/user-dashboard", icon: HomeIcon },
     { key: "free-tutorials", label: "Free Tutorials", to: "/user-dashboard?tab=tutorials", icon: BookOpenIcon },
     { key: "my-bookings", label: "My Bookings", to: "/user-dashboard?tab=bookings", icon: CalendarIcon },
+    { key: "post", label: "Post a Story", to: "/user-dashboard?tab=post", icon: PencilIcon },
+
     { key: "my-stories", label: "My Stories", to: "/user-dashboard?tab=stories", icon: PhotoIcon },
     { key: "profile", label: "Profile", to: "/user-dashboard?tab=profile", icon: UserCircleIcon },
     { key: "settings", label: "Settings", to: "/user-dashboard?tab=settings", icon: Cog6ToothIcon },

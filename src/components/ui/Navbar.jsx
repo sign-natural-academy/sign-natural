@@ -92,7 +92,7 @@ export default function Navbar() {
           <Link to="/">Home</Link>
           <Link to="/learn">Learn</Link>
           <Link to="/workshop">Workshops</Link>
-          <Link to="/products">Products</Link>
+          <Link to="https://signnatural.keepup.store/" target="_blank">Products</Link>
           <Link to="/about">About</Link>
           <Link to="/stories">Stories</Link>
 
@@ -193,7 +193,7 @@ export default function Navbar() {
           <Link to="/workshop" className="block py-2">
             Workshops
           </Link>
-          <Link to="/products" className="block py-2">
+          <Link to="https://signnatural.keepup.store/" target="_blank" className="block py-2">
             Products
           </Link>
           <Link to="/about" className="block py-2">

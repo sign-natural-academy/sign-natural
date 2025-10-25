@@ -1,15 +1,23 @@
 // src/components/dashboard/admin/AdminDashboardLayout.jsx
 import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 import AdminSidebar from "./AdminSidebar";
 import { isAdminRole, getUserRole, signOut } from "../../../lib/auth";
-import { motion } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
+
+// 🔔 notifications
+import useNotifications from "../../../hooks/useNotifications";
+import NotificationBell from "../../ui/NotificationBell";
 
 export default function AdminDashboardLayout({ children, title = "Admin Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // SSE notifications for ADMIN scope
+  const { items, unread, markAllRead } = useNotifications({ scope: "admin" });
 
   useEffect(() => {
     setRole(getUserRole());
@@ -25,7 +33,6 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
           <p className="text-sm text-gray-600 mb-6">
             You don't have permission to view this page.
           </p>
-
           <div className="flex justify-center gap-3">
             <button
               onClick={() => navigate("/user-dashboard")}
@@ -33,7 +40,6 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
             >
               Go to My Dashboard
             </button>
-
             <button
               onClick={() => {
                 signOut();
@@ -51,9 +57,12 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Sidebar */}
       <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
+      {/* Page content */}
       <div className="lg:pl-72">
+        {/* Topbar */}
         <header className="bg-white border-b">
           <div className="flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
@@ -71,7 +80,23 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {/* Home link */}
+              <Link
+                to="/"
+                className="px-3 py-1 border rounded text-sm hover:bg-gray-50"
+                title="Go to homepage"
+              >
+                Home
+              </Link>
+
+              {/* 🔔 Notifications */}
+              <NotificationBell
+                items={items}
+                unread={unread}
+                markAllRead={markAllRead}
+              />
+
               <div className="text-sm text-gray-600">
                 Signed in as <span className="font-medium ml-1">{roleStr ?? "Admin"}</span>
               </div>
@@ -90,7 +115,12 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
         </header>
 
         <main className="px-4 py-6 max-w-7xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }} className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.18 }}
+            className="space-y-6"
+          >
             {children}
           </motion.div>
         </main>

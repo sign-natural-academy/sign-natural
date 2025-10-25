@@ -1,11 +1,12 @@
 // src/components/dashboard/admin/ApproveTestimonials.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ConfirmModal from "../../dashboardUi/ConfirmModal";
 import {
   getPendingTestimonials,
   approveTestimonial,
   deleteTestimonial,
 } from "../../../api/services/testimonials";
+import useNotificationSSE from "../../../hooks/useNotificationSSE";
 
 // optional toast (works if react-hot-toast is installed)
 let toast;
@@ -19,7 +20,7 @@ export default function ApproveTestimonials() {
   const [msg, setMsg] = useState("");
   const [workingId, setWorkingId] = useState(null); // disable per-card buttons while acting
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setMsg("");
     try {
@@ -33,9 +34,25 @@ export default function ApproveTestimonials() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
+
+  // 🔴 LIVE: refresh pending list whenever testimonial events occur
+  useNotificationSSE({
+    onEvent: (payload) => {
+      const t = payload?.type;
+      if (!t) return;
+      if (
+        t === "testimonial_pending_created" ||
+        t === "testimonial_approved" ||
+        t === "testimonial_deleted"
+      ) {
+        // Re-pull list; stays in sync with server state
+        load();
+      }
+    },
+  });
 
   const toggle = (id) => {
     setSelected((s) => {
@@ -51,15 +68,14 @@ export default function ApproveTestimonials() {
   const doConfirm = async () => {
     const { id, action } = confirm;
     setWorkingId(id);
-    const t = toast ? toast.loading(action === "approve" ? "Approving…" : "Deleting…") : null;
+    const tId = toast ? toast.loading(action === "approve" ? "Approving…" : "Deleting…") : null;
     try {
       if (action === "approve") {
         await approveTestimonial(id);
       } else {
-        // "reject" maps to delete on our backend
-        await deleteTestimonial(id);
+        await deleteTestimonial(id); // "reject" path
       }
-      toast ? toast.success("Done", { id: t }) : setMsg("Done");
+      toast ? toast.success("Done", { id: tId }) : setMsg("Done");
       await load();
       setSelected((prev) => {
         const n = new Set(prev);
@@ -68,7 +84,7 @@ export default function ApproveTestimonials() {
       });
     } catch (err) {
       const m = err?.response?.data?.message || "Action failed.";
-      toast ? toast.error(m, { id: t }) : setMsg(m);
+      toast ? toast.error(m, { id: tId }) : setMsg(m);
       console.error(err);
     } finally {
       setWorkingId(null);
@@ -80,19 +96,19 @@ export default function ApproveTestimonials() {
   const bulkAction = async (action) => {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
-    const t = toast ? toast.loading(action === "approve" ? "Approving selected…" : "Deleting selected…") : null;
+    const tId = toast ? toast.loading(action === "approve" ? "Approving selected…" : "Deleting selected…") : null;
 
     try {
       for (const id of ids) {
         if (action === "approve") await approveTestimonial(id);
         else await deleteTestimonial(id);
       }
-      toast ? toast.success("Bulk action complete", { id: t }) : setMsg("Bulk action complete.");
+      toast ? toast.success("Bulk action complete", { id: tId }) : setMsg("Bulk action complete.");
       await load();
       setSelected(new Set());
     } catch (err) {
       const m = err?.response?.data?.message || "Bulk action failed.";
-      toast ? toast.error(m, { id: t }) : setMsg(m);
+      toast ? toast.error(m, { id: tId }) : setMsg(m);
       console.error(err);
     }
   };
@@ -102,23 +118,13 @@ export default function ApproveTestimonials() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Testimonials / Stories (Pending)</h2>
         <div className="flex gap-2">
-          <button
-            onClick={() => bulkAction("approve")}
-            className="px-3 py-1 bg-green-600 text-white rounded text-sm"
-          >
+          <button onClick={() => bulkAction("approve")} className="px-3 py-1 bg-green-600 text-white rounded text-sm">
             Approve selected
           </button>
-          <button
-            onClick={() => bulkAction("reject")}
-            className="px-3 py-1 bg-red-600 text-white rounded text-sm"
-          >
+          <button onClick={() => bulkAction("reject")} className="px-3 py-1 bg-red-600 text-white rounded text-sm">
             Reject selected
           </button>
-          <button
-            onClick={load}
-            disabled={loading}
-            className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-          >
+          <button onClick={load} disabled={loading} className="px-3 py-1 border rounded text-sm disabled:opacity-50">
             {loading ? "Loading…" : "Refresh"}
           </button>
         </div>
@@ -133,17 +139,13 @@ export default function ApproveTestimonials() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {stories.map((s) => {
-            const id = s._id; // backend id field
+            const id = s._id;
             const title = s.tag || "Story";
             const date = s.createdAt ? new Date(s.createdAt).toLocaleString() : "";
             return (
               <div key={id} className="bg-white rounded shadow p-3 flex flex-col">
                 {s.imageUrl && (
-                  <img
-                    src={s.imageUrl}
-                    alt={title}
-                    className="w-full h-40 object-cover rounded mb-3"
-                  />
+                  <img src={s.imageUrl} alt={title} className="w-full h-40 object-cover rounded mb-3" />
                 )}
 
                 <div className="flex items-center justify-between mb-2">
@@ -159,9 +161,7 @@ export default function ApproveTestimonials() {
                   />
                 </div>
 
-                <p className="text-sm text-gray-700 whitespace-pre-line">
-                  {s.text}
-                </p>
+                <p className="text-sm text-gray-700 whitespace-pre-line">{s.text}</p>
 
                 <div className="mt-3 flex gap-2">
                   <button

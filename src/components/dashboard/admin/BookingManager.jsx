@@ -1,6 +1,7 @@
 // src/components/dashboard/admin/BookingManager.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getAllBookings, updateBookingStatus } from "../../../api/services/bookings";
+import useNotificationSSE from "../../../hooks/useNotificationSSE";
 
 const statuses = ["pending", "confirmed", "cancelled", "completed"];
 
@@ -9,7 +10,7 @@ export default function BookingManager() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await getAllBookings();
@@ -21,9 +22,20 @@ export default function BookingManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
+
+  // 🔴 LIVE: refresh bookings table on new/updated bookings
+  useNotificationSSE({
+    onEvent: (payload) => {
+      const t = payload?.type;
+      if (!t) return;
+      if (t === "booking_created" || t === "booking_updated") {
+        load();
+      }
+    },
+  });
 
   const updateStatus = async (id, status) => {
     setUpdatingId(id);

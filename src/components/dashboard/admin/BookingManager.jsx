@@ -1,8 +1,7 @@
 // src/components/dashboard/admin/BookingManager.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { getAllBookings, updateBookingStatus } from "../../../api/services/bookings";
-import useNotificationSSE from "../../../hooks/useNotificationSSE";
-
+import useNotifications from "../../../hooks/useNotifications";
 const statuses = ["pending", "confirmed", "cancelled", "completed"];
 
 export default function BookingManager() {
@@ -27,7 +26,7 @@ export default function BookingManager() {
   useEffect(() => { load(); }, [load]);
 
   // 🔴 LIVE: refresh bookings table on new/updated bookings
-  useNotificationSSE({
+  useNotifications({
     onEvent: (payload) => {
       const t = payload?.type;
       if (!t) return;

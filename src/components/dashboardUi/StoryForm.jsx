@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
+// src/components/dashboardUi/StoryForm.jsx
+import React, { useState } from "react";
 import { createTestimonial } from "../../api/services/testimonials";
-import { getUser } from "../../lib/auth";
 
 const CATEGORY_OPTIONS = [
   { value: "", label: "Select category (optional)" },
@@ -10,14 +10,11 @@ const CATEGORY_OPTIONS = [
 ];
 
 export default function StoryForm() {
-  const me = useMemo(() => getUser(), []);
-  const displayName = me?.name || "You";
-
   const [form, setForm] = useState({
     text: "",
     tag: "",
-    rating: 5,      // NEW default rating
     image: null,
+    rating: "5", // <-- add this
   });
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -35,7 +32,7 @@ export default function StoryForm() {
   };
 
   const reset = () => {
-    setForm({ text: "", tag: "", rating: 5, image: null });
+    setForm({ text: "", tag: "", image: null, rating: "5" });
     setPreview(null);
   };
 
@@ -48,8 +45,8 @@ export default function StoryForm() {
       const fd = new FormData();
       fd.append("text", form.text);
       if (form.tag) fd.append("tag", form.tag);
-      if (form.rating) fd.append("rating", String(form.rating)); // NEW
       if (form.image) fd.append("image", form.image);
+      if (form.rating) fd.append("rating", String(form.rating)); // <-- include
 
       await createTestimonial(fd);
       setMsg("✅ Story submitted! It will appear publicly once approved by an admin.");
@@ -64,14 +61,9 @@ export default function StoryForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Share your story</h3>
-        <div className="text-sm text-gray-500">
-          Posting as <span className="font-medium">{displayName}</span>
-        </div>
-      </div>
+      <h3 className="text-lg font-semibold">Share your story</h3>
 
-      {/* Category */}
+      {/* Category (maps to tag) */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
         <select
@@ -84,9 +76,6 @@ export default function StoryForm() {
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-        <p className="text-xs text-gray-500 mt-1">
-          Choose what your story relates to (used for filters on the Stories page).
-        </p>
       </div>
 
       {/* Rating */}
@@ -96,11 +85,9 @@ export default function StoryForm() {
           name="rating"
           value={form.rating}
           onChange={handleChange}
-          className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          className="w-32 border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
         >
-          {[5,4,3,2,1].map((r) => (
-            <option key={r} value={r}>{`${r} ${r === 1 ? "star" : "stars"}`}</option>
-          ))}
+          {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} ★</option>)}
         </select>
       </div>
 
@@ -125,15 +112,11 @@ export default function StoryForm() {
           type="file"
           accept="image/*"
           onChange={handleFile}
-          className="file:mr-4 file:rounded-full file:text-white file:border-0 file:bg-green-600 file:px-4 file:py-2 transition disabled:opacity-50"
+          className="file:mr-4 file:rounded-full file:text-white file:border-0 file:bg-green-600 file:px-4 file:py-2"
         />
         {preview && (
           <div className="mt-3">
-            <img
-              src={preview}
-              alt="Preview"
-              className="w-full h-40 object-cover rounded border"
-            />
+            <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded border" />
           </div>
         )}
       </div>
@@ -153,9 +136,7 @@ export default function StoryForm() {
       </div>
 
       {msg && <div className="text-sm mt-2">{msg}</div>}
-      <p className="text-xs text-gray-500">
-        Note: Admin approval is required before your story appears publicly.
-      </p>
+      <p className="text-xs text-gray-500">Note: Admin approval is required before your story appears publicly.</p>
     </form>
   );
 }

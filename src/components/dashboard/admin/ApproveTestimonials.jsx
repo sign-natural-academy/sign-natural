@@ -6,7 +6,7 @@ import {
   approveTestimonial,
   deleteTestimonial,
 } from "../../../api/services/testimonials";
-import useNotificationSSE from "../../../hooks/useNotificationSSE";
+import useNotifications from "../../../hooks/useNotifications";
 
 // optional toast (works if react-hot-toast is installed)
 let toast;
@@ -39,7 +39,7 @@ export default function ApproveTestimonials() {
   useEffect(() => { load(); }, [load]);
 
   // 🔴 LIVE: refresh pending list whenever testimonial events occur
-  useNotificationSSE({
+  useNotifications({
     onEvent: (payload) => {
       const t = payload?.type;
       if (!t) return;

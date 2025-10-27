@@ -1,91 +1,133 @@
-// src/components/ui/NotificationBell.jsx
 import React, { useEffect, useRef, useState } from "react";
-import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
-function timeAgo(iso) {
-  try {
-    const diff = Date.now() - new Date(iso).getTime();
-    const m = Math.floor(diff / 60000);
-    if (m < 1) return "just now";
-    if (m < 60) return `${m}m ago`;
-    const h = Math.floor(m / 60);
-    if (h < 24) return `${h}h ago`;
-    const d = Math.floor(h / 24);
-    return `${d}d ago`;
-  } catch {
-    return "";
-  }
+function fmtAgo(ts) {
+  if (!ts) return "";
+  const d = new Date(ts);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return d.toLocaleString();
 }
 
-/**
- * Props:
- * - items: [{ id, title, body, at, read, kind }]
- * - unread: number
- * - onOpen(): void
- * - onClose(): void
- * - markAllRead(): void
- * - className?: string
- */
-export default function NotificationBell({
-  items = [],
-  unread = 0,
-  markAllRead,
-  className = "",
-}) {
+function TypeBadge({ type }) {
+  const map = {
+    testimonial_pending_created: { label: "New Story", cls: "bg-amber-100 text-amber-800" },
+    testimonial_approved:        { label: "Story Approved", cls: "bg-green-100 text-green-800" },
+    testimonial_deleted:         { label: "Story Deleted", cls: "bg-red-100 text-red-800" },
+    new_booking:                 { label: "Booking", cls: "bg-blue-100 text-blue-800" },
+    booking_updated:             { label: "Booking Update", cls: "bg-purple-100 text-purple-800" },
+    booking_status:              { label: "Booking Update", cls: "bg-purple-100 text-purple-800" },
+  };
+  const m = map[type] || { label: type || "Notice", cls: "bg-gray-100 text-gray-800" };
+  return <span className={`text-[10px] px-2 py-0.5 rounded-full ${m.cls}`}>{m.label}</span>;
+}
+
+export default function NotificationBell({ items = [], unread = 0, markAllRead = () => {} }) {
   const [open, setOpen] = useState(false);
-  const boxRef = useRef(null);
+  const panelRef = useRef(null);
+  const btnRef = useRef(null);
+  const list = Array.isArray(items) ? [...items] : [];
 
+  const toggle = () => setOpen(o => !o);
+  const close = () => setOpen(false);
+
+  // Close on outside click & on Esc
   useEffect(() => {
+    if (!open) return;
     const onDoc = (e) => {
-      if (!boxRef.current) return;
-      if (!boxRef.current.contains(e.target)) setOpen(false);
+      const t = e.target;
+      if (panelRef.current?.contains(t) || btnRef.current?.contains(t)) return;
+      setOpen(false);
     };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
     document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, []);
-
-  const toggle = () => setOpen((v) => !v);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   return (
-    <div ref={boxRef} className={`relative ${className}`}>
+    <div className="relative">
       <button
+        ref={btnRef}
+        type="button"
         onClick={toggle}
-        className="relative p-2 rounded hover:bg-gray-100"
+        className="relative p-2 rounded hover:bg-gray-100 focus:outline-none"
         aria-label="Notifications"
       >
-        <BellIcon className="w-6 h-6 text-gray-700" />
+        <BellIcon className="w-5 h-5 text-gray-700" />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-semibold bg-red-600 text-white rounded-full">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border z-50">
+        <div
+          ref={panelRef}
+          className="absolute right-0 mt-2 w-80 bg-white border rounded-lg shadow-lg z-50"
+        >
           <div className="flex items-center justify-between px-3 py-2 border-b">
             <div className="text-sm font-semibold">Notifications</div>
             {unread > 0 && (
-              <button onClick={markAllRead} className="text-xs text-blue-600 hover:underline">
+              <button
+                onClick={() => { markAllRead?.(); }}
+                className="text-xs text-blue-600 hover:underline"
+              >
                 Mark all read
               </button>
             )}
           </div>
+
           <div className="max-h-80 overflow-auto">
-            {items.length === 0 ? (
-              <div className="p-4 text-sm text-gray-500">No notifications</div>
+            {list.length === 0 ? (
+              <div className="px-4 py-6 text-sm text-gray-500 text-center">
+                No notifications
+              </div>
             ) : (
-              items.map((n) => (
-                <div
-                  key={n.id}
-                  className={`px-3 py-2 border-b last:border-b-0 ${!n.read ? "bg-blue-50" : ""}`}
-                >
-                  <div className="text-sm font-medium">{n.title}</div>
-                  {n.body && <div className="text-xs text-gray-600 mt-0.5">{n.body}</div>}
-                  <div className="text-[11px] text-gray-400 mt-1">{timeAgo(n.at)}</div>
-                </div>
-              ))
+              <ul className="divide-y">
+                {list.map((n, idx) => {
+                  const type = n?.type || "";
+                  const msg  = n?.message || n?.title || "(no message)"; // ← ensure detail text
+                  const link = n?.link || "";
+                  const time = n?.createdAt || n?.created_at || null;
+
+                  return (
+                    <li key={idx} className="px-3 py-3 hover:bg-gray-50">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5">
+                          <TypeBadge type={type} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-sm text-gray-800">{msg}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">{fmtAgo(time)}</div>
+                        </div>
+                        {link && (
+                          <a
+                            href={link}
+                            className="shrink-0 p-1 text-gray-500 hover:text-gray-700"
+                            title="Open"
+                          >
+                            <ChevronRightIcon className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
+          </div>
+
+          <div className="px-3 py-2 border-t text-right">
+            <button onClick={close} className="text-xs text-gray-600 hover:underline">
+              Close
+            </button>
           </div>
         </div>
       )}

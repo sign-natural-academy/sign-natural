@@ -6,17 +6,16 @@ import { motion } from "framer-motion";
 import Sidebar from "../dashboard/user/Sidebar";
 import { getUserRole, signOut } from "../../lib/auth";
 
-// 🔔 notifications
-import useNotifications from "../../hooks/useNotifications";
+
 import NotificationBell from "../ui/NotificationBell";
+import useNotifications from "../../hooks/useNotifications";
 
 export default function DashboardLayout({ children, title = "My Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
-  // SSE notifications for USER scope
-  const { items, unread, markAllRead } = useNotifications({ scope: "user" });
+  const { items, unread, markAllRead } = useNotifications({ scope:"user"});
 
   useEffect(() => { setRole(getUserRole()); }, []);
 
@@ -54,9 +53,9 @@ export default function DashboardLayout({ children, title = "My Dashboard" }) {
 
               {/* 🔔 Notifications */}
               <NotificationBell
-                items={items}
-                unread={unread}
-                markAllRead={markAllRead}
+              items={items}
+              unread={unread}
+              markAllRead={markAllRead}
               />
 
               <div className="text-sm text-gray-600">

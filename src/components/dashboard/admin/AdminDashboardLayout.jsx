@@ -6,9 +6,9 @@ import { motion } from "framer-motion";
 import AdminSidebar from "./AdminSidebar";
 import { isAdminRole, getUserRole, signOut } from "../../../lib/auth";
 
-// 🔔 notifications
-import useNotifications from "../../../hooks/useNotifications";
+// 🔔 SSE notifications (admin audience)
 import NotificationBell from "../../ui/NotificationBell";
+import useNotifications from "../../../hooks/useNotifications";
 
 export default function AdminDashboardLayout({ children, title = "Admin Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,8 +16,8 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
   const location = useLocation();
   const navigate = useNavigate();
 
-  // SSE notifications for ADMIN scope
-  const { items, unread, markAllRead } = useNotifications({ scope: "admin" });
+  // Subscribe to admin notifications
+  const { items, unread, markAllRead } = useNotifications({ scope:"admin"});
 
   useEffect(() => {
     setRole(getUserRole());

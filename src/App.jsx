@@ -5,6 +5,7 @@ import Loader from "./components/layout/Loader";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import RequireAuth from "./components/RequireAuth";
 import RequireAdmin from "./components/RequireAdmin";
+import ProductGallery from "./components/pages/ProductGallery";
 
 /* Lazy load pages for performance */
 const Homepage = lazy(() => import("./components/pages/Homepage"));
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/learn" element={<LearnPage />} />
+          <Route path="/product" element={<ProductGallery/>} />
           <Route path="/workshop" element={<ExperientialWorkshopPage />} />
           <Route path="/stories" element={<SuccessStoriesPage />} />
           <Route path="/login" element={<Login />} />

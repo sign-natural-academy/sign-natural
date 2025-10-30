@@ -5,12 +5,9 @@ export function initGoogle({ clientId, onCredential }) {
 
   google.accounts.id.initialize({
     client_id: clientId,
-    callback: (response) => {
-      // response.credential is the ID token
-      onCredential?.(response.credential);
-    },
+    callback: (response) => onCredential?.(response.credential),
     auto_select: false,
-    ux_mode: 'popup', // keeps SPA smooth
+    ux_mode: "popup",
   });
 }
 
@@ -21,12 +18,12 @@ export function renderGoogleButton(containerId) {
   if (!el) return;
 
   google.accounts.id.renderButton(el, {
-    theme: 'outline',
-    size: 'large',
-    type: 'standard',
-    shape: 'pill',
-    text: 'signin_with',
-    logo_alignment: 'left',
+    theme: "outline",
+    size: "large",
+    type: "standard",
+    shape: "pill",
+    text: "signin_with",
+    logo_alignment: "left",
     width: 260,
   });
 }

@@ -1,19 +1,14 @@
-// src/components/RequireAdmin.jsx
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { isAuthed, isAdminRole, isSuperuserRole } from "../lib/auth";
+import { isAuthed, getUserRole } from "../lib/auth";
 
-export default function RequireAdmin({ children }) {
+export default function RequireSuperuser({ children }) {
   const location = useLocation();
-
   if (!isAuthed()) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
-
-  // ✅ accept either admin OR superuser
-  if (!isAdminRole() && !isSuperuserRole()) {
+  if (getUserRole() !== "superuser") {
     return <Navigate to="/user-dashboard" replace />;
   }
-
   return children;
 }

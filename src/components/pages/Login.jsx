@@ -13,6 +13,18 @@ export default function Login() {
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
+  // Centralized, explicit role routing
+  const routeAfterLogin = (user) => {
+    const role = user?.role;
+    if (role === "superuser") {
+      navigate("/super-dashboard");
+    } else if (role === "admin") {
+      navigate("/admin-dashboard");
+    } else {
+      navigate("/user-dashboard");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -20,16 +32,17 @@ export default function Login() {
       const res = await loginUser(form);
       const { token, user } = res.data || {};
       if (!token || !user) throw new Error("Invalid login response");
+
       if (!user.emailVerified) {
-        // Optional: force verification step if needed
         alert("Please verify your email before logging in.");
         navigate("/verify-email");
         return;
       }
+
       signIn(token, user);
-      navigate(user.role === "admin" ? "/admin-dashboard" : "/user-dashboard");
+      routeAfterLogin(user);
     } catch (err) {
-      alert(err.response?.data?.message || err.message || "Login failed");
+      alert(err?.response?.data?.message || err.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -75,7 +88,16 @@ export default function Login() {
               {loading ? "Logging in..." : "Log In"}
             </button>
           </form>
-          <AuthWithGoogle/>
+
+          {/* Google sign-in mirrors the same routing */}
+          <AuthWithGoogle
+            onSignedIn={({ token, user }) => {
+              if (token && user) {
+                signIn(token, user);
+                routeAfterLogin(user);
+              }
+            }}
+          />
 
           <div className="mt-6 text-center text-sm text-gray-700">
             Don&apos;t have an account?{" "}

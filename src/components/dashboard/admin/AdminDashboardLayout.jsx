@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import AdminSidebar from "./AdminSidebar";
-import { isAdminRole, getUserRole, signOut } from "../../../lib/auth";
+import { isAdminRole, getUserRole, signOut,isSuperuserRole } from "../../../lib/auth";
 
 // 🔔 SSE notifications (admin audience)
 import NotificationBell from "../../ui/NotificationBell";
@@ -25,7 +25,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
   const roleStr = typeof role === "string" ? role : null;
 
-  if (!isAdminRole()) {
+ if (!isAdminRole() && !isSuperuserRole()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
         <div className="max-w-lg w-full bg-white p-8 rounded shadow text-center">

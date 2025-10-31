@@ -24,6 +24,17 @@ export function useGoogleButton({
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Centralized post-login routing (superuser > admin > user)
+  const routeAfterLogin = useCallback(
+    (user) => {
+      const role = user?.role;
+      if (role === "superuser") return navigate("/super-dashboard");
+      if (role === "admin") return navigate("/admin-dashboard");
+      return navigate("/user-dashboard");
+    },
+    [navigate]
+  );
+
   // -- handle Google response --
   const handleCredentialResponse = useCallback(
     async (resp) => {
@@ -32,42 +43,41 @@ export function useGoogleButton({
         const credential = resp?.credential;
         if (!credential) throw new Error("No Google credential received");
 
+        // api/services/auth.googleLogin expects the raw credential
         const { data } = await googleLogin(credential);
         const { token, user } = data || {};
         if (!token || !user) throw new Error("Invalid response from server");
 
+        // (Optional) If you require verified emails even for Google:
+        // if (!user.emailVerified) { ...navigate("/verify-email"); return; }
+
         signIn(token, user);
         onSuccess?.(user);
-        navigate(user.role === "admin" ? "/admin-dashboard" : "/user-dashboard");
+        routeAfterLogin(user);
       } catch (err) {
         const message =
-          err.response?.data?.message ||
-          err.message ||
-          "Google sign-in failed";
+          err?.response?.data?.message || err?.message || "Google sign-in failed";
         setError(message);
         onError?.(message);
       } finally {
         setLoading(false);
       }
     },
-    [onSuccess, onError, navigate]
+    [onSuccess, onError, routeAfterLogin]
   );
 
   // -- initialize button rendering function --
-  const renderButton = useCallback(
-    (element, options = {}) => {
-      if (!window.google?.accounts?.id || !element) return;
-      window.google.accounts.id.renderButton(element, {
-        theme: "outline",
-        size: "large",
-        text: "continue_with",
-        shape: "pill",
-        width: 320,
-        ...options,
-      });
-    },
-    []
-  );
+  const renderButton = useCallback((element, options = {}) => {
+    if (!window.google?.accounts?.id || !element) return;
+    window.google.accounts.id.renderButton(element, {
+      theme: "outline",
+      size: "large",
+      text: "continue_with",
+      shape: "pill",
+      width: 320,
+      ...options,
+    });
+  }, []);
 
   // -- initialize Google Identity on mount --
   useEffect(() => {
@@ -76,21 +86,20 @@ export function useGoogleButton({
       return;
     }
 
-    if (window.google?.accounts?.id) {
+    const init = () =>
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: handleCredentialResponse,
         ux_mode: "popup",
       });
+
+    if (window.google?.accounts?.id) {
+      init();
       setReady(true);
     } else {
       const interval = setInterval(() => {
         if (window.google?.accounts?.id) {
-          window.google.accounts.id.initialize({
-            client_id: clientId,
-            callback: handleCredentialResponse,
-            ux_mode: "popup",
-          });
+          init();
           setReady(true);
           clearInterval(interval);
         }

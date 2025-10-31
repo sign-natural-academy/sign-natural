@@ -22,6 +22,9 @@ const AdminDashboard = lazy(() => import("./components/pages/AdminDashboard"));
 const AboutPage = lazy(() => import("./components/pages/AboutPage"));
 const NotFound = lazy(() => import("./components/pages/NotFound"));
 const VerifyEmail = lazy(() => import("./components/pages/VerifyEmail"));
+const SuperuserDashboard = lazy(() => import("./components/pages/SuperuserDashboard"));
+const RequireSuperuser   = lazy(() => import("./components/RequireSuperuser"));
+
 
 export default function App() {
   return (
@@ -62,6 +65,15 @@ export default function App() {
               </RequireAdmin>
             }
           />
+
+          <Route
+  path="/super-dashboard"
+  element={
+    <RequireSuperuser>
+      <SuperuserDashboard />
+    </RequireSuperuser>
+  }
+/>
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

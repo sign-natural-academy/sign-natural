@@ -8,33 +8,48 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [menuOpen, setMenuOpen] = useState(false);     // mobile nav
+  const [menuOpen, setMenuOpen] = useState(false); // Mobile nav
   const [scrolled, setScrolled] = useState(false);
   const [authed, setAuthed] = useState(isAuthed());
   const [user, setUser] = useState(getUser());
-
-  const [userMenuOpen, setUserMenuOpen] = useState(false); // <-- user dropdown
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
 
   const firstName = user?.name?.split(" ")[0] || "User";
   const role = user?.role || "user";
-  const isAdmin = role === "admin";
-  const dashboardPath = isAdmin ? "/admin-dashboard" : "/user-dashboard";
 
-  // close mobile menu on route change
+  // 🧭 Define roles and dashboard paths
+  const isAdmin = role === "admin";
+  const isSuperuser = role === "superuser";
+  const isAdminish = isAdmin || isSuperuser;
+
+  const roleLabel = isSuperuser
+    ? "Superuser"
+    : isAdmin
+    ? "Admin"
+    : "User";
+
+  const dashboardPath =
+    isSuperuser
+      ? "/super-dashboard"
+      : isAdmin
+      ? "/admin-dashboard"
+      : "/user-dashboard";
+
+  // Close menus on route change
   useEffect(() => {
     setMenuOpen(false);
     setUserMenuOpen(false);
   }, [location.pathname]);
 
-  // scroll effect
+  // Scroll background effect
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // keep auth in sync across tabs
+  // Keep auth state in sync across tabs
   useEffect(() => {
     const onStorage = () => {
       setAuthed(isAuthed());
@@ -44,7 +59,7 @@ export default function Navbar() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // close user menu on outside click or Esc
+  // Close user menu on outside click / Escape
   useEffect(() => {
     if (!userMenuOpen) return;
     const onClick = (e) => {
@@ -52,9 +67,7 @@ export default function Navbar() {
         setUserMenuOpen(false);
       }
     };
-    const onKey = (e) => {
-      if (e.key === "Escape") setUserMenuOpen(false);
-    };
+    const onKey = (e) => e.key === "Escape" && setUserMenuOpen(false);
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -92,7 +105,13 @@ export default function Navbar() {
           <Link to="/">Home</Link>
           <Link to="/learn">Learn</Link>
           <Link to="/workshop">Workshops</Link>
-          <Link to="https://signnatural.keepup.store/" target="_blank">Products</Link>
+          <a
+            href="https://signnatural.keepup.store/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Products
+          </a>
           <Link to="/about">About</Link>
           <Link to="/stories">Stories</Link>
 
@@ -109,7 +128,7 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
-            // Controlled dropdown (click to open)
+            // User dropdown
             <div className="relative" ref={userMenuRef}>
               <button
                 type="button"
@@ -125,12 +144,12 @@ export default function Navbar() {
                   </span>
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wide ${
-                      isAdmin
+                      isAdminish
                         ? "bg-red-100 text-red-700"
                         : "bg-green-100 text-green-700"
                     }`}
                   >
-                    {isAdmin ? "Admin" : "User"}
+                    {roleLabel}
                   </span>
                 </div>
               </button>
@@ -169,7 +188,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Toggle */}
+        {/* Mobile Menu Toggle */}
         <div className="lg:hidden">
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
@@ -193,9 +212,14 @@ export default function Navbar() {
           <Link to="/workshop" className="block py-2">
             Workshops
           </Link>
-          <Link to="https://signnatural.keepup.store/" target="_blank" className="block py-2">
+          <a
+            href="https://signnatural.keepup.store/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block py-2"
+          >
             Products
-          </Link>
+          </a>
           <Link to="/about" className="block py-2">
             About
           </Link>
@@ -223,12 +247,12 @@ export default function Navbar() {
                   <div className="text-sm font-medium">{firstName}</div>
                   <span
                     className={`text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wide ${
-                      isAdmin
+                      isAdminish
                         ? "bg-red-100 text-red-700"
                         : "bg-green-100 text-green-700"
                     }`}
                   >
-                    {isAdmin ? "Admin" : "User"}
+                    {roleLabel}
                   </span>
                 </div>
               </div>
@@ -238,7 +262,10 @@ export default function Navbar() {
               <Link to="/profile" className="block py-2">
                 Profile
               </Link>
-              <button onClick={handleLogout} className="block w-full text-left py-2">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left py-2"
+              >
                 Logout
               </button>
             </>

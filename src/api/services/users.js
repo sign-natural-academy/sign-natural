@@ -2,41 +2,46 @@
 import api from "../../lib/api";
 
 /**
- * List users (admin)
- * Supports query params: search, role, page, limit
- * Example: listUsers({ search: "sam", role: "admin", page: 1, limit: 50 })
+ * GET /api/auth/users
+ * Query: ?search=&role=&page=&limit=
  */
-export function listUsers(params = {}) {
-  return api.get("/api/auth/users", { params });
+export function listUsers({ search = "", role = "", page = 1, limit = 50 } = {}) {
+  return api.get("/api/auth/users", {
+    params: {
+      ...(search ? { search } : {}),
+      ...(role ? { role } : {}),
+      page,
+      limit,
+    },
+  });
 }
 
 /**
- * Update a user's role (admin)
- * body: { role: "user" | "admin" }
+ * PATCH /api/auth/users/:id/role
+ * Body: { role: "user" | "admin" }
+ * NOTE: only SUPERUSER is allowed (per backend guards)
  */
 export function updateUserRole(userId, role) {
-  return api.patch(`/api/auth/users/${userId}/role`, { role });
+  // accept either updateUserRole(id, "admin") or updateUserRole(id, { role: "admin" })
+  const nextRole = typeof role === "string" ? role : role?.role;
+  return api.patch(`/api/auth/users/${userId}/role`, { role: nextRole });
 }
 
 /**
- * Update a user's active status (admin)
- * body: { isActive: boolean }
+ * PATCH /api/auth/users/:id/status
+ * Body: { isActive: boolean }
+ * Admin can change USERS; Superuser can change USER/ADMIN (not superuser)
  */
 export function updateUserStatus(userId, isActive) {
-  return api.patch(`/api/auth/users/${userId}/status`, { isActive });
+  // accept either updateUserStatus(id, true) or updateUserStatus(id, { isActive: true })
+  const next = typeof isActive === "boolean" ? isActive : Boolean(isActive?.isActive);
+  return api.patch(`/api/auth/users/${userId}/status`, { isActive: next });
 }
 
 /**
- * Soft delete a user (admin)
- * (sets isActive=false)
+ * DELETE /api/auth/users/:id
+ * Soft delete (marks inactive). Same guard rules as status.
  */
 export function softDeleteUser(userId) {
   return api.delete(`/api/auth/users/${userId}`);
-}
-
-/**
- * (Optional) Get a single user (admin)
- */
-export function getUserById(userId) {
-  return api.get(`/api/auth/users/${userId}`);
 }

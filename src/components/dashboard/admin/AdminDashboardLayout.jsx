@@ -63,7 +63,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
       {/* Page content */}
       <div className="lg:pl-72">
         {/* Topbar */}
-        <header className="bg-white border-b">
+        <header className="bg-white shadow">
           <div className="flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
               <button

@@ -42,7 +42,7 @@ export default function SuperuserDashboardLayout({ children, title = "Superuser 
 
       <div className="lg:pl-72">
         {/* ⬆️ SAME top bar structure as Admin */}
-        <header className="bg-white border-b">
+        <header className="bg-white ">
           <div className="flex items-center justify-between px-4 py-3 max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
               <button

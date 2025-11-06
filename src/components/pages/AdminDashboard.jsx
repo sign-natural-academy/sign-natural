@@ -1,7 +1,12 @@
 // src/components/pages/AdminDashboard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 import AdminDashboardLayout from "../dashboard/admin/AdminDashboardLayout";
+
+// Admin modules
+import Overview from "../dashboard/admin/Overview";
 import BookingManager from "../dashboard/admin/BookingManager";
 import CourseManager from "../dashboard/admin/CourseManager";
 import WorkshopManager from "../dashboard/admin/WorkshopManager";
@@ -13,41 +18,41 @@ import ReportsExport from "../dashboard/admin/ReportsExport";
 import SettingsPanel from "../dashboard/admin/SettingsPanel";
 import SupportTickets from "../dashboard/admin/SupportTickets";
 import AuditLog from "../dashboard/admin/AuditLog";
-import { motion } from "framer-motion";
 
 /**
  * Admin Dashboard page.
  * - Uses AdminDashboardLayout (handles admin guard + sidebar).
  * - Reads `?tab=` query param and renders the corresponding admin manager component.
+ * - Default tab is "overview" to match the sidebar.
  */
 export default function AdminDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // derive active tab from query param (fallback to "bookings")
+  // Derive active tab from query param (fallback to "overview")
   const queryTab = useMemo(() => {
     const p = new URLSearchParams(location.search);
-    return p.get("tab") ? decodeURIComponent(p.get("tab")) : "bookings";
+    return p.get("tab") ? decodeURIComponent(p.get("tab")) : "overview";
   }, [location.search]);
 
   const [activeTab, setActiveTab] = useState(queryTab);
 
-  // update local active when URL changes
+  // Keep local state in sync with URL
   useEffect(() => {
     setActiveTab(queryTab);
   }, [queryTab]);
 
-  // helper to change tab (if you want to programmatically navigate later)
+  // Programmatic navigation helper (kept for future use)
   const goToTab = (tabKey) => {
     const tabParam = tabKey ? `?tab=${encodeURIComponent(tabKey)}` : "";
     navigate(`/admin-dashboard${tabParam}`, { replace: false });
     setActiveTab(tabKey);
   };
 
-  // map tab key => component
+  // Map tab key -> component
   const TabContent = useMemo(() => {
-    return {
-      overview: () => <div className="text-gray-600">Overview — analytics and recent activity will appear here.</div>,
+    const map = {
+      overview: () => <Overview />,
       bookings: () => <BookingManager />,
       courses: () => <CourseManager />,
       workshops: () => <WorkshopManager />,
@@ -59,13 +64,20 @@ export default function AdminDashboard() {
       support: () => <SupportTickets />,
       audit: () => <AuditLog />,
       settings: () => <SettingsPanel />,
-    }[activeTab] || (() => <div className="text-gray-600">Select a section from the admin menu.</div>);
+    };
+    return map[activeTab] || (() => <Overview />);
   }, [activeTab]);
 
   const ActiveComponent = TabContent;
 
+  // Pretty title
+  const title = useMemo(() => {
+    const t = (activeTab || "").replace(/_/g, " ");
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  }, [activeTab]);
+
   return (
-    <AdminDashboardLayout title="Admin Dashboard">
+    <AdminDashboardLayout title={title || "Admin Dashboard"}>
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,7 +86,7 @@ export default function AdminDashboard() {
         <div className="bg-white p-6 rounded shadow">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold capitalize">{activeTab}</h2>
+            <h2 className="text-lg font-semibold capitalize">{title}</h2>
             <div className="text-sm text-gray-500">Admin controls</div>
           </div>
 

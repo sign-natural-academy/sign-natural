@@ -12,7 +12,7 @@ import {
   Cog6ToothIcon,
   ChatBubbleBottomCenterTextIcon,
   ShieldCheckIcon,
-  ChartBarIcon,
+  ChartBarIcon,BellIcon
 } from "@heroicons/react/24/outline";
 import SidebarShell from "../../dashboardUi/shared/SidebarShell";
 import { getActiveKey } from "../../dashboardUi/shared/navUtils";
@@ -34,6 +34,8 @@ export default function AdminSidebar({ open = false, onClose = () => {} }) {
     { key: "support", label: "Support", to: "/admin-dashboard?tab=support", icon: ChatBubbleBottomCenterTextIcon },
     { key: "audit", label: "Audit", to: "/admin-dashboard?tab=audit", icon: ShieldCheckIcon },
     { key: "settings", label: "Settings", to: "/admin-dashboard?tab=settings", icon: Cog6ToothIcon },
+    { key: "notifications", label: "Notifications", to: "/admin-dashboard?tab=notifications", icon: BellIcon }
+
   ];
 
   return (

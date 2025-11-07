@@ -18,6 +18,7 @@ import ReportsExport from "../dashboard/admin/ReportsExport";
 import SettingsPanel from "../dashboard/admin/SettingsPanel";
 import SupportTickets from "../dashboard/admin/SupportTickets";
 import AuditLog from "../dashboard/admin/AuditLog";
+import NotificationsPanel from "../dashboard/admin/NotificationsPanel";
 
 /**
  * Admin Dashboard page.
@@ -53,6 +54,7 @@ export default function AdminDashboard() {
   const TabContent = useMemo(() => {
     const map = {
       overview: () => <Overview />,
+      notifications: () => <NotificationsPanel />,
       bookings: () => <BookingManager />,
       courses: () => <CourseManager />,
       workshops: () => <WorkshopManager />,
@@ -91,7 +93,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Active panel */}
-          <div className="min-h-[240px]">
+          <div className="min-h-60">
             <ActiveComponent />
           </div>
         </div>

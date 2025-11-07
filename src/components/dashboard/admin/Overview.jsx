@@ -178,7 +178,7 @@ function KpiCard({ title, value }) {
   return (
     <div className="bg-white p-3 sm:p-4 rounded shadow">
       <div className="text-[11px] sm:text-xs text-gray-500">{title}</div>
-      <div className="text-xl sm:text-2xl font-semibold break-words">{value}</div>
+      <div className="text-xl sm:text-2xl font-semibold wrap-break-words">{value}</div>
     </div>
   );
 }

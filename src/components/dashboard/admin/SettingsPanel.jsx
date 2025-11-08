@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { getSettings, updateSettings } from '../../../api/services/settings';
 import { getMe, updateMyProfile, changeMyPassword, updateMyAvatar } from '../../../api/services/auth';
+import MediaPicker from '../../Media/MediaPicker'; // ✅ added
 
 export default function SettingsPanel() {
-  const [tab, setTab] = useState('site');                         // 'site' | 'profile'        (1)
+  const [tab, setTab] = useState('site');                         // 'site' | 'profile'
 
   // --- Site settings (Day 10) ---
   const [loadingSite, setLoadingSite] = useState(true);
@@ -18,11 +19,15 @@ export default function SettingsPanel() {
   const [logoPreview, setLogoPreview] = useState('');
   const [logoFile, setLogoFile] = useState(null);
 
+  // ✅ NEW: library option for logo
+  const [logoAsset, setLogoAsset] = useState(null);         // { secure_url, public_id }
+  const [logoPickerOpen, setLogoPickerOpen] = useState(false);
+
   // --- My profile (Day 11) ---
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [profileError, setProfileError] = useState('');
   const [profileMsg, setProfileMsg] = useState('');
-  const [me, setMe] = useState(null);                              // current user              (2)
+  const [me, setMe] = useState(null);
   const [profileForm, setProfileForm] = useState({ name: '', email: '' });
   const [avatarPreview, setAvatarPreview] = useState('');
   const [avatarFile, setAvatarFile] = useState(null);
@@ -41,7 +46,11 @@ export default function SettingsPanel() {
           facebook: s.socials?.facebook || '', instagram: s.socials?.instagram || '', youtube: s.socials?.youtube || '', tiktok: s.socials?.tiktok || '',
         });
         setLogoPreview(s.logoUrl || '');
-      } catch (e) { setSiteError('Failed to load settings'); } finally { setLoadingSite(false); }
+      } catch (e) {
+        setSiteError('Failed to load settings');
+      } finally {
+        setLoadingSite(false);
+      }
     })();
 
     // load my profile
@@ -52,7 +61,11 @@ export default function SettingsPanel() {
         setMe(u);
         setProfileForm({ name: u.name || '', email: u.email || '' });
         setAvatarPreview(u.avatar || '');
-      } catch (e) { setProfileError('Failed to load profile'); } finally { setLoadingProfile(false); }
+      } catch (e) {
+        setProfileError('Failed to load profile');
+      } finally {
+        setLoadingProfile(false);
+      }
     })();
   }, []);
 
@@ -60,20 +73,33 @@ export default function SettingsPanel() {
   const onSiteChange = (e) => setSiteForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   const onLogo = (e) => {
     const file = e.target.files?.[0]; setLogoFile(file || null);
+    setLogoAsset(null); // file overrides library
     setLogoPreview(file ? URL.createObjectURL(file) : '');
   };
   const saveSite = async (e) => {
     e.preventDefault(); setSiteMsg(''); setSiteError('');
     try {
-      const payload = { ...siteForm, logo: logoFile || undefined };
-      const s = await updateSettings(payload);
+      // Keep your service contract: send FormData (file if present; else library values)
+      const fd = new FormData();
+      Object.entries(siteForm).forEach(([k, v]) => fd.append(k, v ?? ""));
+
+      if (logoFile) {
+        fd.append("logo", logoFile);
+      } else if (logoAsset?.secure_url) {
+        fd.append("logoUrl", logoAsset.secure_url);
+        if (logoAsset.public_id) fd.append("logoPublicId", logoAsset.public_id);
+      }
+
+      const s = await updateSettings(fd); // your service handles multipart/FormData
       setSiteMsg('Settings saved');
       if (s.logoUrl) setLogoPreview(s.logoUrl);
-    } catch { setSiteError('Save failed'); }
+    } catch {
+      setSiteError('Save failed');
+    }
   };
 
-  // --- handlers: profile ---
-  const onProfileChange = (e) => setProfileForm((f) => ({ ...f, [e.target.name]: e.target.value })); // (3)
+  // --- handlers: profile (unchanged) ---
+  const onProfileChange = (e) => setProfileForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   const onAvatar = (e) => {
     const f = e.target.files?.[0]; setAvatarFile(f || null);
     setAvatarPreview(f ? URL.createObjectURL(f) : '');
@@ -81,7 +107,7 @@ export default function SettingsPanel() {
   const saveProfile = async (e) => {
     e.preventDefault(); setProfileMsg(''); setProfileError('');
     try {
-      const u = await updateMyProfile(profileForm);                    // (4)
+      const u = await updateMyProfile(profileForm);
       setMe(u); setProfileMsg('Profile updated');
     } catch { setProfileError('Update failed'); }
   };
@@ -89,7 +115,7 @@ export default function SettingsPanel() {
     if (!avatarFile) return;
     setProfileMsg(''); setProfileError('');
     try {
-      const u = await updateMyAvatar(avatarFile);                      // (5)
+      const u = await updateMyAvatar(avatarFile);
       setMe(u); setProfileMsg('Avatar updated');
       setAvatarPreview(u.avatar || avatarPreview);
       setAvatarFile(null);
@@ -98,7 +124,7 @@ export default function SettingsPanel() {
   const savePassword = async (e) => {
     e.preventDefault(); setProfileMsg(''); setProfileError('');
     try {
-      await changeMyPassword(pwForm.currentPassword, pwForm.newPassword); // (6)
+      await changeMyPassword(pwForm.currentPassword, pwForm.newPassword);
       setProfileMsg('Password changed');
       setPwForm({ currentPassword: '', newPassword: '' });
     } catch (err) {
@@ -162,8 +188,31 @@ export default function SettingsPanel() {
 
               <div>
                 <label className="text-xs block mb-1">Logo</label>
-                <input type="file" accept="image/*" onChange={onLogo} />
-                {logoPreview && <img src={logoPreview} alt="logo preview" className="mt-2 h-16 object-contain" />}
+                <div className="flex flex-wrap gap-2">
+                  <input type="file" accept="image/*" onChange={onLogo} />
+                  <button
+                    type="button"
+                    className="px-3 py-2 border rounded text-sm"
+                    onClick={() => setLogoPickerOpen(true)}
+                  >
+                    Choose from Library
+                  </button>
+                  {(logoPreview || logoAsset?.secure_url) && (
+                    <button
+                      type="button"
+                      className="px-3 py-2 border rounded text-sm"
+                      onClick={() => { setLogoFile(null); setLogoAsset(null); setLogoPreview(''); }}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                {(logoPreview || logoAsset?.secure_url) && (
+                  <img src={logoPreview || logoAsset.secure_url} alt="logo preview" className="mt-2 h-16 object-contain" />
+                )}
+                {logoAsset?.public_id && (
+                  <div className="text-xs text-gray-500 break-all mt-1">public_id: {logoAsset.public_id}</div>
+                )}
               </div>
 
               <button className="px-4 py-2 bg-[#7d4c35] text-white rounded">Save Settings</button>
@@ -172,7 +221,7 @@ export default function SettingsPanel() {
         </>
       )}
 
-      {/* MY PROFILE */}
+      {/* MY PROFILE (unchanged) */}
       {tab === 'profile' && (
         <>
           {loadingProfile && <div className="text-gray-600 text-sm">Loading…</div>}
@@ -218,6 +267,18 @@ export default function SettingsPanel() {
           )}
         </>
       )}
+
+      {/* ✅ Media Picker for logo */}
+      <MediaPicker
+        open={logoPickerOpen}
+        onClose={() => setLogoPickerOpen(false)}
+        initialFolder="signnatural/logos"
+        onSelect={(asset) => {
+          setLogoAsset(asset);
+          setLogoFile(null);                  // ensure we don't send both
+          setLogoPreview(asset.secure_url);   // show selected logo
+        }}
+      />
     </div>
   );
 }

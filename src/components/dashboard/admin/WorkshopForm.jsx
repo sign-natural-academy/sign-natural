@@ -1,7 +1,7 @@
 // src/components/dashboard/admin/WorkshopForm.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { createWorkshop, updateWorkshop } from "../../../api/services/workshops";
-import MediaPicker from "../../Media/MediaPicker"; // ✅ added
+import MediaPicker from "../../Media/MediaPicker"; // added
 
 const TYPE_OPTIONS = [
   { value: "celebration", label: "Celebration" },
@@ -25,7 +25,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // ✅ NEW: media library selection state
+  //  NEW: media library selection state
   const [libAsset, setLibAsset] = useState(null);        // { secure_url, public_id }
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -42,7 +42,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
         image: null,
       });
       setPreview(selected.image || null);
-      setLibAsset(null); // ✅ reset library selection when editing an item
+      setLibAsset(null); //  reset library selection when editing an item
     } else {
       resetForm();
     }
@@ -60,7 +60,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
       image: null,
     });
     setPreview(null);
-    setLibAsset(null); // ✅
+    setLibAsset(null); // 
   };
 
   const handleChange = (e) => {
@@ -73,7 +73,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
     setForm((prev) => ({ ...prev, image: file || null }));
     if (file) {
       setPreview(URL.createObjectURL(file));
-      setLibAsset(null); // ✅ choosing a file overrides library pick
+      setLibAsset(null); //  choosing a file overrides library pick
     }
   };
 
@@ -90,7 +90,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
     fd.append("participants", form.participants);
     fd.append("type", form.type);
 
-    // ✅ Prefer file if provided; otherwise send library URL + public_id
+    //  Prefer file if provided; otherwise send library URL + public_id
     if (form.image) {
       fd.append("image", form.image);
     } else if (libAsset?.secure_url) {
@@ -101,10 +101,10 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
     try {
       if (selected?._id) {
         await updateWorkshop(selected._id, fd);
-        alert("✅ Workshop updated successfully!");
+        alert("Workshop updated successfully!");
       } else {
         await createWorkshop(fd);
-        alert("✅ New workshop added successfully!");
+        alert("New workshop added successfully!");
       }
       resetForm();
       onSuccess?.();
@@ -258,7 +258,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               Upload Image
             </button>
 
-            {/* ✅ New: open media library */}
+            {/* New: open media library */}
             <button
               type="button"
               onClick={() => setPickerOpen(true)}
@@ -341,7 +341,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
         </div>
       </form>
 
-      {/* ✅ Media Picker modal */}
+      {/* Media Picker modal */}
       <MediaPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSettings, updateSettings } from '../../../api/services/settings';
 import { getMe, updateMyProfile, changeMyPassword, updateMyAvatar } from '../../../api/services/auth';
-import MediaPicker from '../../Media/MediaPicker'; // ✅ added
+import MediaPicker from '../../Media/MediaPicker'; // added
 
 export default function SettingsPanel() {
   const [tab, setTab] = useState('site');                         // 'site' | 'profile'
@@ -19,7 +19,7 @@ export default function SettingsPanel() {
   const [logoPreview, setLogoPreview] = useState('');
   const [logoFile, setLogoFile] = useState(null);
 
-  // ✅ NEW: library option for logo
+  // NEW: library option for logo
   const [logoAsset, setLogoAsset] = useState(null);         // { secure_url, public_id }
   const [logoPickerOpen, setLogoPickerOpen] = useState(false);
 
@@ -268,7 +268,7 @@ export default function SettingsPanel() {
         </>
       )}
 
-      {/* ✅ Media Picker for logo */}
+      {/* Media Picker for logo */}
       <MediaPicker
         open={logoPickerOpen}
         onClose={() => setLogoPickerOpen(false)}

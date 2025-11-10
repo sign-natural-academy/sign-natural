@@ -8,6 +8,9 @@ import UserTestimonials from "../dashboardUi/UserTestimonials";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 
+// ⬇ NEW: real Overview (keeps architecture; just a component swap)
+import Overview from "../dashboard/user/Overview";
+
 const TAB_DEFAULT = "overview";
 const USER_TABS = [
   { key: "overview", label: "Overview" },
@@ -39,22 +42,9 @@ export default function UserDashboardPage() {
 
   const TabContent = useMemo(() => {
     return {
-      overview: () => (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Total Tutorials</div>
-            <div className="text-2xl font-semibold">12</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Your Bookings</div>
-            <div className="text-2xl font-semibold">3</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-sm text-gray-500">Stories Shared</div>
-            <div className="text-2xl font-semibold">1</div>
-          </div>
-        </div>
-      ),
+      //  Swap the placeholder grid for the real Overview component
+      overview: () => <Overview />,
+
       tutorials: () => <TutorialGrid />,
       bookings: () => <BookingGrid />,
       post: () => <StoryForm />,
@@ -71,10 +61,12 @@ export default function UserDashboardPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
         <div className="bg-white p-6 rounded shadow">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold capitalize">{USER_TABS.find(t => t.key === activeTab)?.label || "Overview"}</h2>
+            <h2 className="text-lg font-semibold capitalize">
+              {USER_TABS.find((t) => t.key === activeTab)?.label || "Overview"}
+            </h2>
             <div className="text-sm text-gray-500">User controls</div>
           </div>
-          <div className="min-h-[240px]">
+          <div className="min-h-60">
             <ActiveComponent />
           </div>
         </div>

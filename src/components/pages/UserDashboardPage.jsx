@@ -7,6 +7,8 @@ import StoryForm from "../dashboardUi/StoryForm";
 import UserTestimonials from "../dashboardUi/UserTestimonials";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
+import Profile from "../dashboard/user/Profile";
+import Settings from "../dashboard/user/Settings";
 
 // ⬇ NEW: real Overview (keeps architecture; just a component swap)
 import Overview from "../dashboard/user/Overview";
@@ -49,8 +51,8 @@ export default function UserDashboardPage() {
       bookings: () => <BookingGrid />,
       post: () => <StoryForm />,
       stories: () => <UserTestimonials />,
-      profile: () => <div className="text-gray-600">Profile coming soon.</div>,
-      settings: () => <div className="text-gray-600">Settings coming soon.</div>,
+      profile: () => <Profile />,
+      settings: () => <Settings />,
     }[activeTab] || (() => <div className="text-gray-600">Select an item from the menu.</div>);
   }, [activeTab]);
 

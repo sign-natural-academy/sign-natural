@@ -33,7 +33,7 @@ export default function Overview() {
         const [bRes, nRes, tRes, cRes] = await Promise.all([
           api.get("/api/bookings/me"),
           api.get("/api/notifications"),         // initial pull; SSE keeps unread live
-          api.get("/api/testimonials/mine"),
+          api.get("/api/testimonials/me"),
           api.get("/api/courses", { params: { type: "free", limit: 5 } }),
         ]);
 

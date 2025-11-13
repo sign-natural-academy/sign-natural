@@ -93,7 +93,7 @@ export default function Profile() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">My Profile</h3>
+      <h3 className="text-lg font-semibold"></h3>
 
       {loading ? (
         <div className="text-gray-600">Loading…</div>
@@ -166,7 +166,7 @@ export default function Profile() {
                   )}
                 </div>
                 <div className="text-xs text-gray-500">
-                  Use a clear square image (JPG/PNG). Uploads are optimized via Cloudinary.
+                  {/* Use a clear square image (JPG/PNG). Uploads are optimized via Cloudinary. */}
                 </div>
               </div>
             </div>

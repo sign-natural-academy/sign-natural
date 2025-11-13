@@ -20,7 +20,7 @@ const USER_TABS = [
   { key: "bookings", label: "My Bookings" },
   { key: "post", label: "Post a Story" },
   { key: "stories", label: "My Stories" },
-  { key: "profile", label: "User Profile" },
+  { key: "profile", label: "Profile" },
   { key: "settings", label: "Settings" },
 ];
 

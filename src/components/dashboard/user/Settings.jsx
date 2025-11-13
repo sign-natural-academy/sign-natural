@@ -1,6 +1,7 @@
 // src/components/user/Settings.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { changeMyPassword } from "../../../api/services/auth";
+import { getUserSettings, updateUserSettings } from "../../../api/services/userSettings";
 
 export default function Settings() {
   const [pw, setPw] = useState({ currentPassword: "", newPassword: "" });
@@ -8,13 +9,43 @@ export default function Settings() {
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
 
-  // Client-side notification prefs (placeholder for future backend wiring)
+  // Persisted notification prefs (loaded/saved from backend)
   const [prefs, setPrefs] = useState({
     emailUpdates: true,
     smsUpdates: false,
     sseLive: true,
   });
+  const [prefsLoading, setPrefsLoading] = useState(true);
+  const [prefsSaving, setPrefsSaving] = useState(false);
+  const [prefsMsg, setPrefsMsg] = useState("");
+  const [prefsError, setPrefsError] = useState("");
 
+  // Load persisted preferences on mount
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setPrefsLoading(true);
+      try {
+        const res = await getUserSettings(); // GET /api/user-settings
+        if (!mounted) return;
+        const data = res?.data || {};
+        setPrefs({
+          emailUpdates: !!data?.notifications?.emailUpdates,
+          smsUpdates: !!data?.notifications?.smsUpdates,
+          sseLive: !!data?.notifications?.sseLive,
+        });
+      } catch (err) {
+        // Keep defaults but surface a non-blocking message
+        console.warn("Failed to load user settings:", err?.message || err);
+        if (mounted) setPrefsError("Failed to load preferences (showing defaults).");
+      } finally {
+        if (mounted) setPrefsLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  // Password handlers (unchanged behaviour)
   const onPwChange = (e) => setPw((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const onChangePassword = async (e) => {
@@ -28,7 +59,6 @@ export default function Settings() {
       setMsg("Password changed.");
       setPw({ currentPassword: "", newPassword: "" });
     } catch (err) {
-      // Friendly error message, no specifics leaked
       const msg = err?.response?.data?.message || "Invalid current password or request failed.";
       setError(msg);
     } finally {
@@ -36,9 +66,33 @@ export default function Settings() {
     }
   };
 
+  // Toggle a preference (optimistic UI) and persist to backend
+  const togglePref = (key) => async () => {
+    setPrefsMsg("");
+    setPrefsError("");
+
+    const prev = { ...prefs };
+    const next = { ...prefs, [key]: !prefs[key] };
+
+    // optimistic UI update
+    setPrefs(next);
+    setPrefsSaving(true);
+
+    try {
+      await updateUserSettings({ notifications: next }); // PATCH /api/user-settings
+      setPrefsMsg("Preferences saved.");
+    } catch (err) {
+      console.error("Failed to save prefs:", err);
+      setPrefs(prev); // rollback
+      setPrefsError("Failed to save preferences. Try again.");
+    } finally {
+      setPrefsSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Settings</h3>
+      <h3 className="text-lg font-semibold"></h3>
 
       {/* Password */}
       <form onSubmit={onChangePassword} className="bg-white p-4 rounded shadow space-y-3">
@@ -79,42 +133,56 @@ export default function Settings() {
         >
           {saving ? "Updating…" : "Change Password"}
         </button>
-        <div className="text-xs text-gray-500 mt-2">
+        {/* <div className="text-xs text-gray-500 mt-2">
           For your safety, we don’t reveal whether an email/password pair exists.
-        </div>
+        </div> */}
       </form>
 
-      {/* Notification preferences (client-only for now) */}
+      {/* Notification preferences (persisted) */}
       <div className="bg-white p-4 rounded shadow space-y-3">
-        <div className="text-sm font-semibold">Notifications</div>
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-semibold">Notifications</div>
+          <div className="text-xs text-gray-500">
+            {prefsLoading ? "Loading…" : prefsSaving ? "Saving…" : prefsMsg || ""}
+          </div>
+        </div>
+
+        {prefsError && <div className="text-sm text-red-600">{prefsError}</div>}
+
         <div className="space-y-2 text-sm">
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={prefs.emailUpdates}
-              onChange={() => setPrefs((p) => ({ ...p, emailUpdates: !p.emailUpdates }))}
+              onChange={togglePref("emailUpdates")}
+              disabled={prefsLoading || prefsSaving}
             />
             Email updates
           </label>
+
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={prefs.smsUpdates}
-              onChange={() => setPrefs((p) => ({ ...p, smsUpdates: !p.smsUpdates }))}
+              onChange={togglePref("smsUpdates")}
+              disabled={prefsLoading || prefsSaving}
             />
             SMS updates
           </label>
+
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={prefs.sseLive}
-              onChange={() => setPrefs((p) => ({ ...p, sseLive: !p.sseLive }))}
+              onChange={togglePref("sseLive")}
+              disabled={prefsLoading || prefsSaving}
             />
             Live in-app notifications
           </label>
         </div>
+
         <div className="text-xs text-gray-500">
-          These preferences are stored locally for now. We’ll wire them to per-user settings later.
+          These preferences are saved to your account and control how we notify you.
         </div>
       </div>
     </div>

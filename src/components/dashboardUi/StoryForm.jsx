@@ -61,7 +61,7 @@ export default function StoryForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-4">
-      <h3 className="text-lg font-semibold">Share your story</h3>
+      <h3 className="text-lg font-semibold"></h3>
 
       {/* Category (maps to tag) */}
       <div>

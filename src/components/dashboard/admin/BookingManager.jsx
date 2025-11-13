@@ -52,7 +52,7 @@ export default function BookingManager() {
   return (
     <div className="bg-white shadow rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-lg">Bookings</h3>
+        <h3 className="font-semibold text-lg"></h3>
         <button onClick={load} disabled={loading} className="px-3 py-1 border rounded disabled:opacity-60">
           {loading ? "Loading…" : "Refresh"}
         </button>

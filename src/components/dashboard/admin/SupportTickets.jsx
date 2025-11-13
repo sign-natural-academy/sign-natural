@@ -106,7 +106,7 @@ export default function SupportTickets() {
       {/* Left: list */}
       <div className="md:col-span-1 bg-white p-4 rounded shadow">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold">Support Tickets</h3>
+          <h3 className="font-semibold"></h3>
           <button
             onClick={() => { /* trigger reload by toggling page to same value */ setPage(p => p); }}
             className="px-2 py-1 border rounded text-sm"

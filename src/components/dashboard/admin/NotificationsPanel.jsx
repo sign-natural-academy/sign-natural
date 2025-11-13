@@ -142,7 +142,7 @@ export default function NotificationsPanel() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold">Notifications</h2>
+          <h2 className="text-lg sm:text-xl font-semibold"></h2>
           <p className="text-xs text-gray-500">Admin audience</p>
         </div>
 

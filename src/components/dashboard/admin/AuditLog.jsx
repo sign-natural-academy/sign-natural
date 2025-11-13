@@ -57,7 +57,7 @@ export default function AuditLog() {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-xl font-semibold">Audit Log</h2>
+      <h2 className="text-xl font-semibold"></h2>
 
       <div className="bg-white p-4 rounded shadow">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
@@ -166,7 +166,7 @@ export default function AuditLog() {
                 {expanded === row._id && (
                   <tr className="bg-gray-50">
                     <td className="p-3" colSpan={7}>
-                      <pre className="text-xs whitespace-pre-wrap break-words">
+                      <pre className="text-xs whitespace-pre-wrap wrap-break-words">
                         {JSON.stringify(row.meta ?? {}, null, 2)}
                       </pre>
                     </td>

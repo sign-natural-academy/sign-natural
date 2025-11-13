@@ -86,7 +86,7 @@ export default function ReportsExport() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Reports & Exports</h2>
+        <h2 className="text-xl font-semibold"></h2>
         <div className="text-sm text-gray-500">
           Generate CSV for bookings, testimonials, courses, workshops.
         </div>

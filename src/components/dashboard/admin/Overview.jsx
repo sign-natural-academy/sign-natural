@@ -64,7 +64,7 @@ export default function Overview() {
       {/* Header + filters — stack on mobile */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold">Overview</h2>
+          <h2 className="text-lg sm:text-xl font-semibold"></h2>
           <p className="text-xs text-gray-500">Analytics & key metrics</p>
         </div>
 

@@ -116,7 +116,7 @@ export default function ApproveTestimonials() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Testimonials / Stories (Pending)</h2>
+        <h2 className="text-xl font-semibold"></h2>
         <div className="flex gap-2">
           <button onClick={() => bulkAction("approve")} className="px-3 py-1 bg-green-600 text-white rounded text-sm">
             Approve selected

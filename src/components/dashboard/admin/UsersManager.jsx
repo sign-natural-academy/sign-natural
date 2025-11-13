@@ -154,7 +154,7 @@ export default function UsersManager() {
     <div className="bg-white rounded-lg shadow p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold">Users</h3>
+          <h3 className="text-lg font-semibold"></h3>
           <div className="text-xs text-gray-500">Manage roles & status (RBAC enforced)</div>
         </div>
         <button onClick={load} disabled={loading} className="px-3 py-1 border rounded disabled:opacity-50">

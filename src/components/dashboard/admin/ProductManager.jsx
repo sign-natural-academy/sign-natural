@@ -33,7 +33,7 @@ export default function ProductManager() {
       {/* LEFT: list */}
       <div className="bg-white shadow rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-lg">Products</h3>
+          <h3 className="font-semibold text-lg"></h3>
           <div className="flex items-center gap-2">
             <button
               onClick={load}

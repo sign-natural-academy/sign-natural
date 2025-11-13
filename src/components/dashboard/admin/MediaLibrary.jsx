@@ -91,7 +91,7 @@ export default function MediaLibrary() {
       {/* Header / actions */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold">Media Library</h2>
+          <h2 className="text-lg sm:text-xl font-semibold"></h2>
           <p className="text-xs text-gray-500">Upload, browse, and manage images.</p>
         </div>
         <div className="bg-white rounded shadow p-3 grid grid-cols-1 sm:grid-cols-4 gap-2">

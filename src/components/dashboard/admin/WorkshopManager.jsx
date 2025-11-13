@@ -57,7 +57,7 @@ export default function WorkshopManager() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="bg-white shadow rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-lg">Workshops</h3>
+          <h3 className="font-semibold text-lg"></h3>
           <div className="flex items-center gap-2">
             <button
               onClick={loadWorkshops}

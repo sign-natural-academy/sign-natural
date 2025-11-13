@@ -134,7 +134,7 @@ export default function SettingsPanel() {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-xl font-semibold">Settings</h2>
+      <h2 className="text-xl font-semibold"></h2>
 
       {/* Tabs */}
       <div className="flex gap-2">

@@ -27,7 +27,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
     { key: "my-stories", label: "My Stories", to: "/user-dashboard?tab=stories", icon: PhotoIcon },
     { key: "profile", label: "Profile", to: "/user-dashboard?tab=profile", icon: UserCircleIcon },
     { key: "settings", label: "Settings", to: "/user-dashboard?tab=settings", icon: Cog6ToothIcon },
-    { key: "help", label: "Help", to: "/support", icon: QuestionMarkCircleIcon },
+    { key: "help", label: "Help", to: "/user-dashboard?tab=help", icon: QuestionMarkCircleIcon },
   ];
 
   return (

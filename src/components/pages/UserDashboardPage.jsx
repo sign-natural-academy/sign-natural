@@ -10,8 +10,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Profile from "../dashboard/user/Profile";
 import Settings from "../dashboard/user/Settings";
 
-// ⬇ NEW: real Overview (keeps architecture; just a component swap)
 import Overview from "../dashboard/user/Overview";
+import Help from "../dashboard/user/Help";
 
 const TAB_DEFAULT = "overview";
 const USER_TABS = [
@@ -22,6 +22,7 @@ const USER_TABS = [
   { key: "stories", label: "My Stories" },
   { key: "profile", label: "Profile" },
   { key: "settings", label: "Settings" },
+  {key:"help",label:"Help"}
 ];
 
 export default function UserDashboardPage() {
@@ -53,6 +54,7 @@ export default function UserDashboardPage() {
       stories: () => <UserTestimonials />,
       profile: () => <Profile />,
       settings: () => <Settings />,
+       help: () => <Help />,
     }[activeTab] || (() => <div className="text-gray-600">Select an item from the menu.</div>);
   }, [activeTab]);
 

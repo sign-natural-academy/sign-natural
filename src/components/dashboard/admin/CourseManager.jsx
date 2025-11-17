@@ -55,57 +55,64 @@ export default function CourseManager() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white shadow rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-lg"></h3>
-          <div className="flex items-center gap-2">
+      {/* Left: course list */}
+      <div className="bg-white shadow rounded-lg p-4 flex flex-col">
+        <div className="flex items-center justify-between mb-3 gap-3">
+          <h3 className="font-semibold text-lg truncate">Courses</h3>
+
+          {/* On small screens buttons stack; on larger screens inline */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <button
               onClick={loadCourses}
               disabled={loading}
-              className="px-3 py-1 border rounded disabled:opacity-60"
+              className="w-full sm:w-auto px-3 py-1 border rounded disabled:opacity-60 text-sm"
             >
               {loading ? "Loading…" : "Refresh"}
             </button>
             <button
               onClick={() => setSelected({})}
-              className="px-3 py-1 bg-green-700 text-white rounded"
+              className="w-full sm:w-auto px-3 py-1 bg-green-700 text-white rounded text-sm"
             >
               + New Course
             </button>
           </div>
         </div>
 
-        {loading ? (
-          <div className="space-y-2">
-            <div className="h-10 bg-gray-100 animate-pulse rounded" />
-            <div className="h-10 bg-gray-100 animate-pulse rounded" />
-            <div className="h-10 bg-gray-100 animate-pulse rounded" />
-          </div>
-        ) : courses.length === 0 ? (
-          <div className="text-gray-500 py-6 text-center">No courses found.</div>
-        ) : (
-          <ul className="divide-y">
-            {courses.map((c) => (
-              <ListItemCard
-                key={c._id}
-                item={{
-                  ...c,
-                  meta: `${c.type || "—"} • ${c.duration || "—"} • ${
-                    c.price > 0 ? `₵${c.price}` : "Free"
-                  }`,
-                }}
-                onEdit={setSelected}
-                onDelete={handleDelete}
-                deleting={deletingId === c._id}
-              />
-            ))}
-          </ul>
-        )}
+        {/* Keep list scrollable on small screens so the form below stays reachable */}
+        <div className="flex-1 overflow-y-auto max-h-[60vh]">
+          {loading ? (
+            <div className="space-y-2">
+              <div className="h-10 bg-gray-100 animate-pulse rounded" />
+              <div className="h-10 bg-gray-100 animate-pulse rounded" />
+              <div className="h-10 bg-gray-100 animate-pulse rounded" />
+            </div>
+          ) : courses.length === 0 ? (
+            <div className="text-gray-500 py-6 text-center">No courses found.</div>
+          ) : (
+            <ul className="divide-y">
+              {courses.map((c) => (
+                <ListItemCard
+                  key={c._id}
+                  item={{
+                    ...c,
+                    meta: `${c.type || "—"} • ${c.duration || "—"} • ${
+                      c.price > 0 ? `₵${c.price}` : "Free"
+                    }`,
+                  }}
+                  onEdit={setSelected}
+                  onDelete={handleDelete}
+                  deleting={deletingId === c._id}
+                />
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
 
+      {/* Right: create/edit form */}
       <div className="bg-white shadow rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold">
+          <h3 className="font-semibold text-base sm:text-lg">
             {isEditing ? "Edit Course" : isCreating ? "Create Course" : "Create / Edit"}
           </h3>
           {selected && (
@@ -115,20 +122,22 @@ export default function CourseManager() {
           )}
         </div>
 
-        {selected ? (
-          <CourseForm
-            selected={selected}
-            onSuccess={async () => {
-              setSelected(null);
-              await loadCourses();
-            }}
-            onCancel={() => setSelected(null)}
-          />
-        ) : (
-          <div className="text-gray-500 text-sm">
-            Select a course to edit or click <span className="font-medium">“New Course”</span> to create one.
-          </div>
-        )}
+        <div>
+          {selected ? (
+            <CourseForm
+              selected={selected}
+              onSuccess={async () => {
+                setSelected(null);
+                await loadCourses();
+              }}
+              onCancel={() => setSelected(null)}
+            />
+          ) : (
+            <div className="text-gray-500 text-sm">
+              Select a course to edit or click <span className="font-medium">“New Course”</span> to create one.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

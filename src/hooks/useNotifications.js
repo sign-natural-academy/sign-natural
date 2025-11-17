@@ -10,6 +10,10 @@ const ADMIN_TYPES = new Set([
   "testimonial_deleted",
   "new_booking",
   "booking_updated",
+  // include ticket/support related events so admin bell shows them
+  "ticket_created",
+  "ticket_updated",
+  "ticket_status_changed",
 ]);
 
 function getSSEUrl() {
@@ -35,12 +39,56 @@ function normalizeItem(src, { scope }) {
     type === "testimonial_pending_created" ? "New story pending" :
     type === "testimonial_approved" ? "Story approved" :
     type === "testimonial_deleted" ? "Story deleted" :
-    "New activity";
+    // ticket titles
+    type === "ticket_created" ? "New support ticket" :
+    type === "ticket_updated" ? "Ticket updated" :
+    type === "ticket_status_changed" ? "Ticket status changed" :
+    src.title || "New activity";
+
+  // prefer explicit action.route if server provided it (keeps backward compatibility)
+  const action = src.action || (src.meta && src.meta.action) || undefined;
 
   // Safe link defaults by scope
-  const safeLink =
+  let safeLink =
     src.link ||
     (scope === "admin" ? "/admin-dashboard" : "/user-dashboard");
+
+  // ---------- TICKET MAPPING (scope-aware) ----------
+  // If notification carries a ticket identifier or is a ticket-type event,
+  // map to the exact tab routes you specified:
+  // - admin -> /admin-dashboard?tab=support
+  // - user  -> /user-dashboard?tab=help
+  const ticketId =
+    src.ticketId ||
+    src.supportId ||
+    (src.meta && src.meta.ticketId) ||
+    src._ticketId ||
+    src._rawTicketId ||
+    src.rawTicketId;
+
+  if (ticketId || (typeof type === "string" && type.startsWith("ticket"))) {
+    // prefer server-provided route when available
+    if (action && action.route) {
+      safeLink = action.route;
+    } else {
+      if (scope === "admin") {
+        safeLink = `/admin-dashboard?tab=support`;
+      } else {
+        safeLink = `/user-dashboard?tab=help`;
+      }
+    }
+  }
+
+  // booking mapping for user scope (kept as before)
+  const bookingId = src.bookingId || (src.meta && src.meta.bookingId) || src._bookingId;
+  if (bookingId && scope === "user") {
+    if (action && action.route) {
+      safeLink = action.route;
+    } else {
+      const tab = (action && action.tab) || src.tab || (src.meta && src.meta.tab) || 'upcoming';
+      safeLink = `/dashboard/bookings?tab=${encodeURIComponent(tab)}&id=${encodeURIComponent(bookingId)}`;
+    }
+  }
 
   return {
     id,

@@ -85,14 +85,15 @@ export default function ReportsExport() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold"></h2>
-        <div className="text-sm text-gray-500">
-          Generate CSV for bookings, testimonials, courses, workshops.
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+        <h2 className="text-xl font-semibold">Reports</h2>
+        <div className="text-sm text-gray-500 max-w-lg">
+          Generate CSV exports for bookings, testimonials, courses, and workshops.
         </div>
       </div>
 
       <div className="bg-white p-4 rounded shadow" onKeyDown={onKeyDown}>
+        {/* grid: single column on mobile, 3 columns on sm+ */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
           <div>
             <label className="text-xs block mb-1">Report type</label>
@@ -100,6 +101,7 @@ export default function ReportsExport() {
               value={type}
               onChange={(e) => setType(e.target.value)}
               className="border px-3 py-2 rounded w-full"
+              aria-label="Report type"
             >
               <option value="bookings">Bookings</option>
               <option value="testimonials">Testimonials</option>
@@ -115,21 +117,23 @@ export default function ReportsExport() {
               value="csv"
               disabled
               className="border px-3 py-2 rounded w-full bg-gray-100 text-gray-600"
+              aria-label="Format"
             >
               <option value="csv">CSV</option>
             </select>
           </div>
 
-          <div className="flex gap-2">
+          {/* Date inputs: stack nicely on very small screens */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label className="text-xs block mb-1">From</label>
               <input
                 type="date"
                 value={filters.from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="border px-3 py-2 rounded"
-                // Keep native calendar UI; min/max guide valid selections
+                className="border px-3 py-2 rounded w-full"
                 max={filters.to || undefined}
+                aria-label="From date"
               />
             </div>
             <div>
@@ -138,24 +142,42 @@ export default function ReportsExport() {
                 type="date"
                 value={filters.to}
                 onChange={(e) => setTo(e.target.value)}
-                className="border px-3 py-2 rounded"
+                className="border px-3 py-2 rounded w-full"
                 min={filters.from || undefined}
+                aria-label="To date"
               />
             </div>
           </div>
         </div>
 
-        <div className="mt-4 flex gap-2">
+        {/* Actions: stack on mobile for easy tapping */}
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
           <button
             onClick={handleDownload}
             disabled={busy || !dateRangeValid}
-            className="px-4 py-2 bg-[#7d4c35] text-white rounded disabled:opacity-60"
+            className="w-full sm:w-auto px-4 py-2 bg-[#7d4c35] text-white rounded disabled:opacity-60"
+            aria-disabled={busy || !dateRangeValid}
+            aria-label="Generate and download report"
           >
             {busy ? "Generating..." : "Generate & Download"}
           </button>
-          <button onClick={reset} className="px-4 py-2 border rounded">
+
+          <button
+            onClick={reset}
+            className="w-full sm:w-auto px-4 py-2 border rounded"
+            aria-label="Reset filters"
+          >
             Reset
           </button>
+
+          {/* helpful validation note on small screens */}
+          <div className="sm:ml-3 mt-1 sm:mt-0 text-sm text-gray-600">
+            {dateRangeValid ? (
+              <span>Range: {from && to ? `${from} → ${to}` : "No date filter"}</span>
+            ) : (
+              <span className="text-red-600">Invalid range — both dates required or clear both</span>
+            )}
+          </div>
         </div>
 
         {msg && (

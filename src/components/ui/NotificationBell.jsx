@@ -1,3 +1,4 @@
+// src/components/ui/NotificationBell.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { BellIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
@@ -24,7 +25,22 @@ function TypeBadge({ type }) {
   return <span className={`text-[10px] px-2 py-0.5 rounded-full ${m.cls}`}>{m.label}</span>;
 }
 
-export default function NotificationBell({ items = [], unread = 0, markAllRead = () => {} }) {
+/**
+ * NotificationBell
+ * - items: array of notifications
+ * - unread: number
+ * - markAllRead: function
+ * - onItemClick: optional callback(notification) => void
+ *
+ * If onItemClick is provided the component will call it when a notification is clicked.
+ * The component keeps the <a href> fallback for accessibility / non-JS scenarios.
+ */
+export default function NotificationBell({
+  items = [],
+  unread = 0,
+  markAllRead = () => {},
+  onItemClick = null
+}) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const btnRef = useRef(null);
@@ -49,6 +65,15 @@ export default function NotificationBell({ items = [], unread = 0, markAllRead =
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
+
+  // helper: when user clicks the anchor, prevent default and let onItemClick handle navigation
+  const anchorClickHandler = (e, n) => {
+    if (onItemClick) {
+      e.preventDefault();
+      onItemClick(n);
+    }
+    // else let anchor behave normally (fallback)
+  };
 
   return (
     <div className="relative">
@@ -93,12 +118,17 @@ export default function NotificationBell({ items = [], unread = 0, markAllRead =
               <ul className="divide-y">
                 {list.map((n, idx) => {
                   const type = n?.type || "";
-                  const msg  = n?.message || n?.title || "(no message)"; // ← ensure detail text
+                  const msg  = n?.message || n?.title || "(no message)";
                   const link = n?.link || "";
                   const time = n?.createdAt || n?.created_at || null;
 
                   return (
-                    <li key={idx} className="px-3 py-3 hover:bg-gray-50">
+                    <li
+                      key={idx}
+                      className="px-3 py-3 hover:bg-gray-50"
+                      // call onItemClick for clicks that are not directly on the anchor; anchor handles its own click
+                      onClick={() => { if (!link && onItemClick) onItemClick(n); }}
+                    >
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5">
                           <TypeBadge type={type} />
@@ -107,14 +137,20 @@ export default function NotificationBell({ items = [], unread = 0, markAllRead =
                           <div className="text-sm text-gray-800">{msg}</div>
                           <div className="text-xs text-gray-500 mt-0.5">{fmtAgo(time)}</div>
                         </div>
-                        {link && (
+                        {link ? (
                           <a
                             href={link}
+                            onClick={(e) => anchorClickHandler(e, n)}
                             className="shrink-0 p-1 text-gray-500 hover:text-gray-700"
                             title="Open"
                           >
                             <ChevronRightIcon className="w-4 h-4" />
                           </a>
+                        ) : (
+                          // keep visual affordance for non-link items
+                          <div className="shrink-0 p-1 text-gray-300">
+                            <ChevronRightIcon className="w-4 h-4" />
+                          </div>
                         )}
                       </div>
                     </li>

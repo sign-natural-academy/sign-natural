@@ -8,8 +8,7 @@ import {
 
 // Small helper to clamp chart height by breakpoint
 const useChartHeights = () => {
-  // Simple CSS-driven approach: rely on responsive classes (no listeners)
-  // h-56 on mobile, md:h-72 on larger screens
+  // Mobile: h-56, md+: h-72 (same idea as original)
   return {
     lineH: "h-56 md:h-72",
     barH: "h-56 md:h-72",
@@ -19,6 +18,8 @@ const useChartHeights = () => {
 export default function Overview() {
   // Filters
   const [range, setRange] = useState({ from: '', to: '' });
+  const [filtersOpen, setFiltersOpen] = useState(false); // mobile toggler
+
   // Data/UI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -64,45 +65,69 @@ export default function Overview() {
       {/* Header + filters — stack on mobile */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold"></h2>
+          <h2 className="text-lg sm:text-xl font-semibold">Analytics</h2>
           <p className="text-xs text-gray-500">Analytics & key metrics</p>
         </div>
 
-        <div className="flex flex-col xs:flex-row gap-2">
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="text-[11px] block mb-1">From</label>
-              <input
-                type="date"
-                className="w-full border px-3 py-2 rounded text-sm"
-                value={range.from}
-                max={range.to || undefined}
-                onChange={(e) => setRange(r => ({ ...r, from: e.target.value }))}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="text-[11px] block mb-1">To</label>
-              <input
-                type="date"
-                className="w-full border px-3 py-2 rounded text-sm"
-                value={range.to}
-                min={range.from || undefined}
-                onChange={(e) => setRange(r => ({ ...r, to: e.target.value }))}
-              />
+        {/* Filters: collapsible on mobile to save vertical space */}
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
+          <div className="sm:hidden">
+            <button
+              onClick={() => setFiltersOpen(v => !v)}
+              className="px-3 py-1 border rounded text-sm"
+              aria-expanded={filtersOpen}
+            >
+              {filtersOpen ? 'Hide filters' : 'Show filters'}
+            </button>
+          </div>
+
+          <div className={`w-full sm:w-auto ${filtersOpen ? 'block' : 'hidden sm:block'}`}>
+            <div className="flex flex-col xs:flex-row gap-2">
+              <div className="flex gap-2 w-full">
+                <div className="flex-1 min-w-0">
+                  <label className="text-[11px] block mb-1">From</label>
+                  <input
+                    type="date"
+                    className="w-full border px-3 py-2 rounded text-sm"
+                    value={range.from}
+                    max={range.to || undefined}
+                    onChange={(e) => setRange(r => ({ ...r, from: e.target.value }))}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <label className="text-[11px] block mb-1">To</label>
+                  <input
+                    type="date"
+                    className="w-full border px-3 py-2 rounded text-sm"
+                    value={range.to}
+                    min={range.from || undefined}
+                    onChange={(e) => setRange(r => ({ ...r, to: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-start sm:items-end gap-2">
+                <button
+                  className="px-3 py-2 border rounded text-sm"
+                  onClick={reset}
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
-          <button
-            className="self-start px-3 py-2 border rounded text-sm"
-            onClick={reset}
-          >
-            Reset
-          </button>
         </div>
       </div>
 
       {/* Status messages */}
       {error && <div className="text-red-600 text-sm">{error}</div>}
-      {loading && <div className="text-gray-600 text-sm">Loading…</div>}
+      {loading && (
+        <div className="space-y-3">
+          {[1,2].map(n => (
+            <div key={n} className="animate-pulse bg-gray-100 rounded p-4" />
+          ))}
+        </div>
+      )}
 
       {/* KPI Cards — single column on mobile, 2 on small, 4 on md+ */}
       {!loading && data && (
@@ -123,7 +148,7 @@ export default function Overview() {
               <div className="text-gray-500 text-sm">No data</div>
             ) : (
               Object.entries(status).map(([k, v]) => (
-                <div key={k} className="px-3 py-2 border rounded">
+                <div key={k} className="px-3 py-2 border rounded min-w-[110px]">
                   <div className="text-[11px] text-gray-500 capitalize">{k}</div>
                   <div className="text-base font-semibold">{v}</div>
                 </div>
@@ -133,7 +158,7 @@ export default function Overview() {
         </div>
       )}
 
-      {/* Timeseries: Bookings & Revenue — full width, responsive height */}
+      {/* Timeseries: Bookings & Revenue Over Time */}
       {!loading && data && (
         <div className="bg-white p-3 sm:p-4 rounded shadow">
           <div className="font-semibold mb-2 text-sm sm:text-base">Bookings & Revenue Over Time</div>
@@ -143,14 +168,14 @@ export default function Overview() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="date"
-                  interval="preserveStartEnd"
+                  interval={Math.max(0, Math.floor(timeseries.length / 8))}
                   tick={{ fontSize: 10 }}
                 />
                 <YAxis tick={{ fontSize: 10 }} />
                 <Tooltip />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Line type="monotone" dataKey="bookings" />
-                <Line type="monotone" dataKey="revenue" />
+                <Line type="monotone" dataKey="bookings" stroke="#8884d8" dot={false} />
+                <Line type="monotone" dataKey="revenue" stroke="#82ca9d" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -174,27 +199,31 @@ export default function Overview() {
   );
 }
 
+/* ---------------- small subcomponents ---------------- */
+
 function KpiCard({ title, value }) {
   return (
-    <div className="bg-white p-3 sm:p-4 rounded shadow">
+    <div className="bg-white p-3 sm:p-4 rounded shadow flex flex-col justify-between">
       <div className="text-[11px] sm:text-xs text-gray-500">{title}</div>
-      <div className="text-xl sm:text-2xl font-semibold wrap-break-words">{value}</div>
+      <div className="text-xl sm:text-2xl font-semibold wrap-break-word mt-2">{value}</div>
     </div>
   );
 }
 
 function RankedBar({ data, className = "" }) {
   const rows = (data || []).map(d => ({ name: d.title, value: d.bookings }));
+  // If too many items, reduce labels by showing top 8 only on small screens
+  const displayRows = rows.length > 12 ? rows.slice(0, 12) : rows;
   return (
-    <div className={className || "h-56 md:h-72"}>
+    <div className={`${className || "h-56 md:h-72"} w-full`}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={rows} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
+        <BarChart data={displayRows} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-15} height={40} />
+          <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-15} height={48} />
           <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
           <Tooltip />
           <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Bar dataKey="value" name="Bookings" />
+          <Bar dataKey="value" name="Bookings" fill="#7d4c35" />
         </BarChart>
       </ResponsiveContainer>
     </div>

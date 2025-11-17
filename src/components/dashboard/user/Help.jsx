@@ -3,18 +3,22 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   createTicket,
   listMyTickets,
-  replyToTicket,
 } from "../../../api/services/support";
 
 /**
- * Help & Support (User)
- * - Create ticket (subject, category, message)
- * - List own tickets (paginated envelope: { items, total, page, pages })
- * - Open a ticket, view messages, reply
+ * Help & Support (User) — Read-only conversation for users.
+ * - Users can create tickets (subject, category, message).
+ * - Users can view ticket threads, but cannot reply (admin-only).
  *
- * Uses existing services: createTicket, listMyTickets, replyToTicket
- * Defensive: accepts both array and envelope responses.
+ * Defensive: accepts axios-style responses (res.data) or direct payloads,
+ * and tolerates tickets with either `id` or `_id`.
  */
+
+function unwrap(res) {
+  if (!res) return res;
+  if (res.data !== undefined) return res.data;
+  return res;
+}
 
 export default function Help() {
   // Tickets envelope shape from backend
@@ -35,11 +39,6 @@ export default function Help() {
   const [creating, setCreating] = useState(false);
   const [createMsg, setCreateMsg] = useState("");
 
-  // Reply state
-  const [replyText, setReplyText] = useState("");
-  const [replying, setReplying] = useState(false);
-  const [replyMsg, setReplyMsg] = useState("");
-
   // Pagination controls
   const page = envelope.page || 1;
   const pages = envelope.pages || 1;
@@ -51,17 +50,23 @@ export default function Help() {
     setError("");
     try {
       const res = await listMyTickets({ page: p, limit: 20 });
-      // backend returns envelope { items, total, page, pages }
-      // defensive fallback: if res is an array, adapt
-      if (Array.isArray(res)) {
-        setEnvelope({ items: res, total: res.length, page: 1, pages: 1 });
-      } else {
+      const payload = unwrap(res);
+
+      if (Array.isArray(payload)) {
+        setEnvelope({ items: payload, total: payload.length, page: 1, pages: 1 });
+      } else if (payload && Array.isArray(payload.items)) {
         setEnvelope({
-          items: res.items || [],
-          total: res.total || 0,
-          page: res.page || p,
-          pages: res.pages || 1,
+          items: payload.items,
+          total: payload.total || 0,
+          page: payload.page || p,
+          pages: payload.pages || 1,
         });
+      } else {
+        if (payload && (payload._id || payload.id)) {
+          setEnvelope({ items: [payload], total: 1, page: 1, pages: 1 });
+        } else {
+          setEnvelope({ items: [], total: 0, page: 1, pages: 1 });
+        }
       }
     } catch (err) {
       console.error("Failed to load tickets:", err);
@@ -92,54 +97,43 @@ export default function Help() {
         priority: form.priority || "normal",
         message: String(form.message).trim(),
       };
-      const created = await createTicket(payload);
-      // optimistic: open created ticket
-      setActiveTicket(created);
+      const res = await createTicket(payload);
+      const created = unwrap(res);
+      const ticket = created?.ticket || created;
+      if (ticket) {
+        setActiveTicket(ticket);
+      }
+
       setForm({ subject: "", category: "", message: "", priority: "normal" });
       setCreateMsg("Ticket created.");
-      // refresh list to include latest
       await loadTickets(1);
     } catch (err) {
       console.error("Create ticket failed:", err);
       setCreateMsg(err?.response?.data?.message || "Failed to create ticket.");
     } finally {
       setCreating(false);
-      // auto-clear message after a while
       setTimeout(() => setCreateMsg(""), 3500);
     }
   };
 
-  // Reply to active ticket
-  const onReply = async () => {
-    if (!activeTicket || !replyText?.trim()) return;
-    setReplying(true);
-    setReplyMsg("");
-    try {
-      const updated = await replyToTicket(activeTicket._id, replyText.trim());
-      // update local active ticket messages (defensive)
-      setActiveTicket((prev) => {
-        if (!prev) return updated;
-        const msgs = Array.isArray(updated.messages) ? updated.messages : [...(prev.messages || [])];
-        return { ...prev, messages: msgs, status: updated.status, lastMessageAt: updated.lastMessageAt };
-      });
-      // also refresh ticket list to update lastMessageAt/status
-      await loadTickets(page);
-      setReplyText("");
-      setReplyMsg("Reply sent.");
-    } catch (err) {
-      console.error("Failed to send reply:", err);
-      setReplyMsg(err?.response?.data?.message || "Failed to send reply.");
-    } finally {
-      setReplying(false);
-      setTimeout(() => setReplyMsg(""), 3000);
-    }
-  };
-
-  // Open ticket by id (if not full payload present in list)
+  // Open ticket by id or object; prefer already-loaded messages if present
   const openTicket = async (t) => {
     if (!t) return;
-    // If t already has messages, use it; otherwise re-fetch list and find it.
-    setActiveTicket(t);
+    if (Array.isArray(t.messages) && t.messages.length > 0) {
+      setActiveTicket(t);
+      return;
+    }
+
+    try {
+      await loadTickets(page);
+      const fresh = (Array.isArray(envelope) ? envelope : envelope.items) || [];
+      const key = t._id || t.id;
+      const found = fresh.find((x) => (x._id || x.id) === key) || t;
+      setActiveTicket(found);
+    } catch (err) {
+      console.warn("Failed to refresh ticket before opening; opening provided object", err);
+      setActiveTicket(t);
+    }
   };
 
   // Pagination handlers
@@ -233,7 +227,7 @@ export default function Help() {
               {tickets.map((t) => (
                 <li
                   key={t._id || t.id || JSON.stringify(t)}
-                  className={`p-3 rounded cursor-pointer ${activeTicket?._id === t._id ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  className={`p-3 rounded cursor-pointer ${activeTicket && (activeTicket._id || activeTicket.id) === (t._id || t.id) ? "bg-gray-100" : "hover:bg-gray-50"}`}
                   onClick={() => openTicket(t)}
                 >
                   <div className="flex justify-between items-start">
@@ -281,21 +275,8 @@ export default function Help() {
               ))}
             </div>
 
-            <div className="mt-3">
-              <textarea
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                rows={4}
-                className="w-full border px-3 py-2 rounded"
-                placeholder="Write a reply..."
-              />
-              <div className="mt-2 flex gap-2">
-                <button onClick={onReply} disabled={replying || !replyText.trim()} className="px-3 py-2 bg-[#7d4c35] text-white rounded disabled:opacity-50">
-                  {replying ? "Sending…" : "Send Reply"}
-                </button>
-                <button onClick={() => { setReplyText(""); setReplyMsg(""); }} className="px-3 py-2 border rounded">Clear</button>
-              </div>
-              {replyMsg && <div className="text-sm text-gray-600 mt-2">{replyMsg}</div>}
+            <div className="mt-3 text-sm text-gray-600">
+              Replies are handled by our support team. You will be notified when an admin responds.
             </div>
           </>
         )}

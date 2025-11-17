@@ -1,3 +1,4 @@
+// src/components/dashboard/admin/NotificationsPanel.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import {
   adminListNotifications,
@@ -24,6 +25,8 @@ export default function NotificationsPanel() {
     () => items.length > 0 && items.every((n) => selected.has(n._id)),
     [items, selected]
   );
+
+  const [filtersOpen, setFiltersOpen] = useState(false); // mobile toggle
 
   // Build query
   const query = useMemo(() => {
@@ -139,14 +142,27 @@ export default function NotificationsPanel() {
 
   return (
     <div className="p-2 sm:p-4 space-y-4">
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold"></h2>
-          <p className="text-xs text-gray-500">Admin audience</p>
+          <h2 className="text-lg sm:text-xl font-semibold">Notifications (admin)</h2>
+          <p className="text-xs text-gray-500">Manage system notifications</p>
         </div>
 
-        <div className="bg-white rounded shadow p-3 grid grid-cols-1 sm:grid-cols-5 gap-2">
+        <div className="sm:hidden">
+          <button
+            onClick={() => setFiltersOpen((v) => !v)}
+            className="px-2 py-1 border rounded text-sm"
+            aria-expanded={filtersOpen}
+          >
+            {filtersOpen ? "Hide filters" : "Show filters"}
+          </button>
+        </div>
+      </div>
+
+      {/* Filters area */}
+      <div className={`bg-white rounded shadow p-3 ${filtersOpen ? "block" : "hidden sm:block"}`}>
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
           <input
             className="border px-3 py-2 rounded text-sm sm:col-span-2"
             placeholder="Search message/link/type…"
@@ -155,6 +171,7 @@ export default function NotificationsPanel() {
               setFilters({ ...filters, q: e.target.value });
               setPage(1);
             }}
+            aria-label="Search notifications"
           />
           <select
             className="border px-3 py-2 rounded text-sm"
@@ -163,6 +180,7 @@ export default function NotificationsPanel() {
               setFilters({ ...filters, type: e.target.value });
               setPage(1);
             }}
+            aria-label="Filter by type"
           >
             <option value="">Any type</option>
             <option value="new_booking">new_booking</option>
@@ -178,6 +196,7 @@ export default function NotificationsPanel() {
               setFilters({ ...filters, read: e.target.value });
               setPage(1);
             }}
+            aria-label="Filter by read state"
           >
             <option value="">Any read state</option>
             <option value="false">Unread</option>
@@ -198,6 +217,7 @@ export default function NotificationsPanel() {
                 }));
                 setPage(1);
               }}
+              aria-label="From date"
             />
             <input
               type="date"
@@ -208,8 +228,10 @@ export default function NotificationsPanel() {
                 setFilters({ ...filters, to: e.target.value });
                 setPage(1);
               }}
+              aria-label="To date"
             />
           </div>
+
           <div className="sm:col-span-5 flex gap-2">
             <button
               className="px-3 py-2 border rounded text-sm"
@@ -228,6 +250,7 @@ export default function NotificationsPanel() {
           {msg && <span className="ml-3 text-green-700">{msg}</span>}
           {error && <span className="ml-3 text-red-600">{error}</span>}
         </div>
+
         <div className="flex flex-wrap gap-2">
           <button
             className="px-3 py-1 border rounded text-sm"
@@ -252,8 +275,70 @@ export default function NotificationsPanel() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded shadow overflow-x-auto">
+      {/* Mobile: card view */}
+      <div className="space-y-3 md:hidden">
+        {loading ? (
+          <div className="text-center text-gray-500 py-6">Loading…</div>
+        ) : items.length === 0 ? (
+          <div className="text-center text-gray-500 py-6">No notifications</div>
+        ) : (
+          items.map((n) => (
+            <article
+              key={n._id}
+              className={`border rounded p-3 ${n.read ? "bg-white" : "bg-orange-50"}`}
+            >
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={selected.has(n._id)}
+                  onChange={() => toggleOne(n._id)}
+                  className="mt-1"
+                  aria-label={`Select notification ${n.type}`}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="text-sm font-medium truncate">{n.type || "-"}</div>
+                    <div className="text-xs text-gray-500">{n.createdAt ? new Date(n.createdAt).toLocaleString() : ""}</div>
+                  </div>
+
+                  <div className="text-xs text-gray-600 mt-1 wrap-break-word">{n.message || "-"}</div>
+
+                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
+                    <div className="text-xs text-gray-500">Link:</div>
+                    <div className="text-xs break-all">
+                      {n.link ? (
+                        <a href={n.link} target="_blank" rel="noreferrer" className="text-blue-600 underline">{n.link}</a>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex gap-2 flex-wrap">
+                    {n.read ? (
+                      <button className="px-2 py-1 border rounded text-xs" onClick={() => onMarkRead(n._id, false)}>Mark unread</button>
+                    ) : (
+                      <button className="px-2 py-1 border rounded text-xs" onClick={() => onMarkRead(n._1d || n._id, true)}>Mark read</button>
+                    )}
+                    <button className="px-2 py-1 border rounded text-xs" onClick={async () => {
+                      try {
+                        await adminDeleteNotification(n._id);
+                        setItems((arr) => arr.filter((x) => x._id !== n._id));
+                      } catch (err) {
+                        console.error(err);
+                        setMsg("Delete failed.");
+                      }
+                    }}>Delete</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))
+        )}
+      </div>
+
+      {/* Desktop/tablet: table view */}
+      <div className="hidden md:block bg-white rounded shadow overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
@@ -271,15 +356,11 @@ export default function NotificationsPanel() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center">
-                  Loading…
-                </td>
+                <td colSpan={7} className="px-3 py-6 text-center">Loading…</td>
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-gray-500">
-                  No notifications
-                </td>
+                <td colSpan={7} className="px-3 py-6 text-center text-gray-500">No notifications</td>
               </tr>
             ) : (
               items.map((n) => (
@@ -293,33 +374,20 @@ export default function NotificationsPanel() {
                   </td>
                   <td className="px-3 py-2 align-top">
                     <div className="font-medium">{n.type || "-"}</div>
-                    <div className="text-xs text-gray-500 capitalize">
-                      {n.audience || "admin"}
-                    </div>
+                    <div className="text-xs text-gray-500 capitalize">{n.audience || "admin"}</div>
                   </td>
                   <td className="px-3 py-2 align-top">
-                    <div className="max-w-[380px] wrap-break-words">{n.message || "-"}</div>
+                    <div className="max-w-[380px] wrap-break-word">{n.message || "-"}</div>
                   </td>
                   <td className="px-3 py-2 align-top">
                     {n.link ? (
-                      <a
-                        href={n.link}
-                        className="text-blue-600 underline break-all"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {n.link}
-                      </a>
+                      <a href={n.link} className="text-blue-600 underline break-all" target="_blank" rel="noreferrer">{n.link}</a>
                     ) : (
                       <span className="text-gray-400">—</span>
                     )}
                   </td>
                   <td className="px-3 py-2 align-top text-center">
-                    <span
-                      className={`px-2 py-1 rounded text-xs ${
-                        n.read ? "bg-gray-200" : "bg-green-200"
-                      }`}
-                    >
+                    <span className={`px-2 py-1 rounded text-xs ${n.read ? "bg-gray-200" : "bg-green-200"}`}>
                       {n.read ? "Read" : "Unread"}
                     </span>
                   </td>
@@ -329,34 +397,19 @@ export default function NotificationsPanel() {
                   <td className="px-3 py-2 align-top">
                     <div className="flex gap-2">
                       {n.read ? (
-                        <button
-                          className="px-2 py-1 border rounded text-xs"
-                          onClick={() => onMarkRead(n._id, false)}
-                        >
-                          Mark unread
-                        </button>
+                        <button className="px-2 py-1 border rounded text-xs" onClick={() => onMarkRead(n._id, false)}>Mark unread</button>
                       ) : (
-                        <button
-                          className="px-2 py-1 border rounded text-xs"
-                          onClick={() => onMarkRead(n._id, true)}
-                        >
-                          Mark read
-                        </button>
+                        <button className="px-2 py-1 border rounded text-xs" onClick={() => onMarkRead(n._id, true)}>Mark read</button>
                       )}
-                      <button
-                        className="px-2 py-1 border rounded text-xs"
-                        onClick={async () => {
-                          try {
-                            await adminDeleteNotification(n._id);
-                            setItems((arr) => arr.filter((x) => x._id !== n._id));
-                          } catch (err) {
-                            console.error(err);
-                            setMsg("Delete failed.");
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
+                      <button className="px-2 py-1 border rounded text-xs" onClick={async () => {
+                        try {
+                          await adminDeleteNotification(n._id);
+                          setItems((arr) => arr.filter((x) => x._id !== n._id));
+                        } catch (err) {
+                          console.error(err);
+                          setMsg("Delete failed.");
+                        }
+                      }}>Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -367,24 +420,27 @@ export default function NotificationsPanel() {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center gap-2">
-        <button
-          className="px-3 py-1 border rounded disabled:opacity-50"
-          disabled={page <= 1}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-        >
-          Prev
-        </button>
-        <span className="text-sm">
-          Page {page} / {pages}
-        </span>
-        <button
-          className="px-3 py-1 border rounded disabled:opacity-50"
-          disabled={page >= pages}
-          onClick={() => setPage((p) => p + 1)} // ✅ fixed parenthesis
-        >
-          Next
-        </button>
+      <div className="flex flex-col sm:flex-row items-center gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            className="px-3 py-1 border rounded disabled:opacity-50 flex-1 sm:flex-none"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Prev
+          </button>
+          <button
+            className="px-3 py-1 border rounded disabled:opacity-50 flex-1 sm:flex-none"
+            disabled={page >= pages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+          </button>
+        </div>
+
+        <div className="text-sm mt-1 sm:mt-0">Page <span className="font-medium">{page}</span> / <span className="font-medium">{pages}</span></div>
+
+        <div className="ml-auto text-xs text-gray-500">{total} total</div>
       </div>
     </div>
   );

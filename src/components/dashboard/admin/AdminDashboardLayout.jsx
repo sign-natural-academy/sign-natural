@@ -121,16 +121,16 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Home link: full label on sm+, icon-only on xs */}
               <Link
-                to="/admin-dashboard"
+                to="/"
                 className="hidden sm:inline-flex items-center gap-2 px-3 py-1 border rounded text-sm hover:bg-gray-50"
-                title="Admin home"
+                title="home"
               >
                 Home
               </Link>
               <Link
-                to="/admin-dashboard"
+                to="/"
                 className="inline-flex sm:hidden items-center justify-center w-9 h-9 border rounded hover:bg-gray-50"
-                title="Admin Home"
+                title="Home"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V9.5z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

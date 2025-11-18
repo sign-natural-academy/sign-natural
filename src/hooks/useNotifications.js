@@ -39,7 +39,6 @@ function normalizeItem(src, { scope }) {
     type === "testimonial_pending_created" ? "New story pending" :
     type === "testimonial_approved" ? "Story approved" :
     type === "testimonial_deleted" ? "Story deleted" :
-    // ticket titles
     type === "ticket_created" ? "New support ticket" :
     type === "ticket_updated" ? "Ticket updated" :
     type === "ticket_status_changed" ? "Ticket status changed" :
@@ -54,10 +53,6 @@ function normalizeItem(src, { scope }) {
     (scope === "admin" ? "/admin-dashboard" : "/user-dashboard");
 
   // ---------- TICKET MAPPING (scope-aware) ----------
-  // If notification carries a ticket identifier or is a ticket-type event,
-  // map to the exact tab routes you specified:
-  // - admin -> /admin-dashboard?tab=support
-  // - user  -> /user-dashboard?tab=help
   const ticketId =
     src.ticketId ||
     src.supportId ||
@@ -74,19 +69,32 @@ function normalizeItem(src, { scope }) {
       if (scope === "admin") {
         safeLink = `/admin-dashboard?tab=support`;
       } else {
-        safeLink = `/user-dashboard?tab=help`;
+        // user dashboard help tab
+        safeLink = `/user-dashboard?tab=help&ticket=${encodeURIComponent(ticketId || "")}`;
       }
     }
   }
 
-  // booking mapping for user scope (kept as before)
-  const bookingId = src.bookingId || (src.meta && src.meta.bookingId) || src._bookingId;
+  // ---------- BOOKING MAPPING (user scope only) ----------
+  const bookingId =
+    src.bookingId ||
+    (src.meta && src.meta.bookingId) ||
+    src._bookingId ||
+    src._bookingid ||
+    src._bk ||
+    src.booking;
+
   if (bookingId && scope === "user") {
+    // If backend supplied an explicit route, prefer it (backward compatibility)
     if (action && action.route) {
       safeLink = action.route;
     } else {
-      const tab = (action && action.tab) || src.tab || (src.meta && src.meta.tab) || 'upcoming';
-      safeLink = `/dashboard/bookings?tab=${encodeURIComponent(tab)}&id=${encodeURIComponent(bookingId)}`;
+      // Use top-level tab=bookings for the dashboard and pass 'sub' for inner bookings view
+      // e.g.: /user-dashboard?tab=bookings&sub=upcoming&id=<bookingId>
+      const sub = (action && action.tab) || src.tab || (src.meta && src.meta.tab) || "upcoming";
+      safeLink = `/user-dashboard?tab=bookings&sub=${encodeURIComponent(sub)}&id=${encodeURIComponent(
+        bookingId
+      )}`;
     }
   }
 
@@ -194,7 +202,6 @@ export default function useNotifications({ scope = "user" } = {}) {
       reconnectKeyRef.current += 1;
       setTimeout(() => {
         // force React to re-run effect; simplest is updating state it depends on
-        // Here: toggle `connected` which is in deps via reconnectKeyRef
         setConnected((c) => c); // noop but ensures a render; dependency is below
       }, Math.min(30000, 1000 * (reconnectKeyRef.current + 1))); // capped backoff
     };

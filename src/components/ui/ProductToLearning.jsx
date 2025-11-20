@@ -121,13 +121,13 @@ export default function ProductsToLearning({ limit = 6, className = "" }) {
 </div>
 
               {/* CTA: View Product */}
-              {/* <button
+              <button
                 disabled={loading}
                 onClick={() => navigate("")}
-                className="w-full mt-4 border border-gray-400 py-2 rounded hover:bg-gray-100 transition disabled:opacity-60"
-              >
+                className="w-full mt-4 border border-gray-400 py-2 rounded hover:bg-gray-100 transition disabled:opacity-60">
+              
                 View Product
-              </button> */}
+              </button>
             </div>
           </motion.div>
         ))}

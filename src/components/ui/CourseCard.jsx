@@ -4,13 +4,31 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useBook from "../../hooks/useBook";
 
+// tiny spinner
+function Spinner() {
+  return (
+    <svg className="w-4 h-4 inline-block animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
+      <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function CourseCard({ course, onView }) {
-  // const navigate = useNavigate();
-  const {bookItem} = useBook();
+  const navigate = useNavigate();
+  const { bookItem, loading, error } = useBook();
+
   const handleActionClick = () => navigate("/signup");
 
-  const handleBook = () =>
-    bookItem({ itemType: "Course", itemId: course._id, price: course.price });
+  const handleBook = async () => {
+    try {
+      await bookItem({ itemType: "Course", itemId: course._id, price: course.price });
+      // success navigates inside hook
+    } catch (err) {
+      // hook already sets error; optionally show extra UI (we keep it minimal)
+      // console.error(err);
+    }
+  };
 
   return (
     <motion.div
@@ -42,36 +60,23 @@ export default function CourseCard({ course, onView }) {
         </div>
 
         <div className="flex items-center gap-2 mt-4">
-          {/* <button
+          <button
             onClick={() => onView?.(course._id)}
             className="w-full border border-gray-300 py-2 rounded text-sm hover:bg-gray-50"
           >
             View Details
-          </button> */}
-          {/* <button
-            onClick={handleActionClick}
-            className={`w-full py-2 rounded text-white font-medium ${
-              course.type === "free" ? "bg-[#455f30]" : "bg-yellow-600"
-            }`}
-          >
-            {course.type === "free" ? "Start Learning" : "Book Now"}
-          </button> */}
+          </button>
+
           <button
-      onClick={() => onView?.(course._id)}
-      className="w-full border border-gray-300 py-2 rounded text-sm hover:bg-gray-50"
-    >
-      View Details
-    </button>
-    <button
-      onClick={handleBook}
-      className={`w-full py-2 rounded text-white font-medium ${
-        course.type === "free" ? "bg-[#455f30]" : "bg-yellow-600"
-      }`}
-    >
-      {course.type === "free" ? "Start Learning" : "Book Now"}
-    </button>
-           
+            onClick={handleBook}
+            disabled={loading}
+            className={`w-full py-2 rounded text-white font-medium ${course.type === "free" ? "bg-[#455f30]" : "bg-yellow-600"} ${loading ? "opacity-70 pointer-events-none" : ""}`}
+          >
+            {loading ? <><Spinner /> <span className="ml-2">Booking…</span></> : (course.type === "free" ? "Start Learning" : "Book Now")}
+          </button>
         </div>
+
+        {error && <div className="text-xs text-red-600 mt-2">{error}</div>}
       </div>
     </motion.div>
   );

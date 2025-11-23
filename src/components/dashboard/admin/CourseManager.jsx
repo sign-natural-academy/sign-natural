@@ -58,7 +58,7 @@ export default function CourseManager() {
       {/* Left: course list */}
       <div className="bg-white shadow rounded-lg p-4 flex flex-col">
         <div className="flex items-center justify-between mb-3 gap-3">
-          <h3 className="font-semibold text-lg truncate">Courses</h3>
+          <h3 className="font-semibold text-lg truncate"></h3>
 
           {/* On small screens buttons stack; on larger screens inline */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">

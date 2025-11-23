@@ -145,7 +145,7 @@ export default function NotificationsPanel() {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold">Notifications (admin)</h2>
+          <h2 className="text-lg sm:text-xl font-semibold"></h2>
           <p className="text-xs text-gray-500">Manage system notifications</p>
         </div>
 

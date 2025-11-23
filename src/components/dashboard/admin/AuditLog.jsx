@@ -59,7 +59,7 @@ export default function AuditLog() {
   return (
     <div className="p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold">Audit Log</h2>
+        <h2 className="text-xl font-semibold"></h2>
         <div className="text-sm text-gray-500">System activity & events</div>
       </div>
 

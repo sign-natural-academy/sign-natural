@@ -247,7 +247,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
         {/* Image Upload + Library (kept your UI; only added a new button) */}
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700">
-            Workshop Image
+            
           </label>
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <button
@@ -255,7 +255,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               onClick={triggerFileInput}
               className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition"
             >
-              Upload Image
+              Upload 
             </button>
 
             {/* New: open media library */}
@@ -264,7 +264,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               onClick={() => setPickerOpen(true)}
               className="px-4 py-2 border rounded"
             >
-              Choose from Library
+              Library
             </button>
 
             {(preview || libAsset?.secure_url) && (

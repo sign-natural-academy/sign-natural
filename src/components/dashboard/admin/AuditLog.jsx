@@ -56,10 +56,27 @@ export default function AuditLog() {
 
   const toggleRow = (id) => setExpanded((cur) => (cur === id ? null : id));
 
+  // Helper to produce a friendly actor string from backend shape
+  const actorDisplay = (row) => {
+    // new backend: row.actorEmail / row.actorName (preferred)
+    if (row.actorEmail) {
+      return row.actorName ? `${row.actorName} <${row.actorEmail}>` : row.actorEmail;
+    }
+    // fallback: sometimes actor may still be populated object or id
+    if (row.actor && typeof row.actor === "object") {
+      const email = row.actor.email || row.actorEmail;
+      const name = row.actor.name || row.actorName;
+      if (email) return name ? `${name} <${email}>` : email;
+      if (name) return name;
+    }
+    // fallback to plain actor field or actorId
+    return row.actor || row.actorId || "-";
+  };
+
   return (
     <div className="p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold"></h2>
+        <h2 className="text-xl font-semibold">Audit Log</h2>
         <div className="text-sm text-gray-500">System activity & events</div>
       </div>
 
@@ -81,13 +98,13 @@ export default function AuditLog() {
         <div className={`${filtersOpen ? "block" : "hidden sm:block"} mt-3`}>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div>
-              <label className="text-xs block mb-1">Actor (User ID)</label>
+              <label className="text-xs block mb-1">Actor (email or id)</label>
               <input
                 type="text"
                 value={filters.actor}
                 onChange={(e) => { setFilters({ ...filters, actor: e.target.value }); setPage(1); }}
                 className="border px-3 py-2 rounded w-full"
-                placeholder="Actor userId"
+                placeholder="email or user id"
               />
             </div>
             <div>
@@ -114,6 +131,7 @@ export default function AuditLog() {
                 <option value="Product">Product</option>
                 <option value="Course">Course</option>
                 <option value="Workshop">Workshop</option>
+                <option value="SupportTicket">SupportTicket</option>
               </select>
             </div>
             <div>
@@ -174,7 +192,7 @@ export default function AuditLog() {
                 </div>
                 <div className="shrink-0 text-right">
                   <div className="text-xs text-gray-600">Actor</div>
-                  <div className="text-sm font-medium">{row.actor || "-"}</div>
+                  <div className="text-sm font-medium">{actorDisplay(row)}</div>
                 </div>
               </div>
 
@@ -218,7 +236,10 @@ export default function AuditLog() {
                 <React.Fragment key={row._id}>
                   <tr className="border-t">
                     <td className="p-3 whitespace-nowrap">{row.createdAt ? new Date(row.createdAt).toLocaleString() : "-"}</td>
-                    <td className="p-3">{row.actor || "-"}</td>
+                    <td className="p-3">
+                      <div className="text-sm">{actorDisplay(row)}</div>
+                      {row.actorName && <div className="text-xs text-gray-500">{row.actorName}</div>}
+                    </td>
                     <td className="p-3">{row.action || "-"}</td>
                     <td className="p-3">{row.entityType || "-"} · {row.entityId || "-"}</td>
                     <td className="p-3">{row.ip || "-"}</td>
@@ -232,7 +253,7 @@ export default function AuditLog() {
                   {expanded === row._id && (
                     <tr className="bg-gray-50">
                       <td className="p-3" colSpan={7}>
-                        <pre className="text-xs whitespace-pre-wrap wrap-break-word">
+                        <pre className="text-xs whitespace-pre-wrap break-words">
                           {JSON.stringify(row.meta ?? {}, null, 2)}
                         </pre>
                       </td>

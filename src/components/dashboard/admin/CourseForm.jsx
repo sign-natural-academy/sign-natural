@@ -22,6 +22,15 @@ function SmallSpinner() {
   );
 }
 
+// tiny remove icon (X)
+function RemoveIcon() {
+  return (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function CourseForm({ selected, onSuccess }) {
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
@@ -111,10 +120,8 @@ export default function CourseForm({ selected, onSuccess }) {
 
     if (file) {
       setImageUploading(true);
-      // create preview + simulate small processing time
       const url = URL.createObjectURL(file);
       setImagePreview(url);
-      // clear uploading after short delay (keeps UX snappy)
       setTimeout(() => setImageUploading(false), 600);
     } else {
       setImagePreview(null);
@@ -163,6 +170,13 @@ export default function CourseForm({ selected, onSuccess }) {
       setImagePreview(asset.secure_url);
       setVideoPreview(null);
     }
+  };
+
+  const clearVideoSelection = () => {
+    setVideoPreview(null);
+    setVideoFile(null);
+    setVideoUrl("");
+    setLibAsset(null);
   };
 
   const handleSubmit = async (e) => {
@@ -324,7 +338,7 @@ export default function CourseForm({ selected, onSuccess }) {
 
         {/* Image: Upload OR Library */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700"></label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">Cover</label>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -356,71 +370,80 @@ export default function CourseForm({ selected, onSuccess }) {
           )}
         </div>
 
-        {/* Video: YouTube OR Upload OR Library — simplified UI */}
+        {/* Video: YouTube OR Upload OR Library — simplified & rearranged UI */}
         <div>
-          <label className="block text-sm font-medium mb-1 text-gray-700"></label>
+          <label className="block text-sm font-medium mb-1 text-gray-700">Course Video (YouTube or Upload)</label>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start">
-            <div>
-              <input
-                type="text"
-                placeholder="YouTube URL"
-                value={videoUrl}
-                onChange={onYouTubeChange}
-                className="w-full border px-3 py-2 rounded"
-              />
+          {/* Row: youtube input + upload buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 items-start">
+            <input
+              type="text"
+              placeholder="paste YouTube link"
+              value={videoUrl}
+              onChange={onYouTubeChange}
+              className="flex-1 border px-3 py-2 rounded w-full"
+            />
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => videoInputRef.current.click()}
+                className="px-4 py-2 border rounded flex items-center gap-2"
+              >
+                {videoUploading ? <SmallSpinner /> : null}
+                <span>{videoUploading ? "Processing…" : "Upload"}</span>
+              </button>
+
+              <button type="button" onClick={() => setPickerOpen(true)} className="px-4 py-2 border rounded">
+                Library
+              </button>
+
+              {(videoPreview || libAsset?.secure_url) && (
+                <button type="button" className="px-3 py-2 border rounded" onClick={() => { clearVideoSelection(); }}>
+                  Clear
+                </button>
+              )}
             </div>
+          </div>
 
-            <div>
-              <div className="flex gap-2">
+          <input type="file" ref={videoInputRef} accept="video/*" onChange={onVideoFile} className="hidden" />
+          <div className="text-xs text-gray-500 mt-1">≤ 10 MB</div>
+
+          {/* Preview always appears below the controls — prevents overlap */}
+          <div className="mt-3">
+            {videoPreview ? (
+              <div className="relative">
+                {/* Remove button (top-right) */}
                 <button
                   type="button"
-                  onClick={() => videoInputRef.current.click()}
-                  className="px-4 py-2 border rounded flex items-center gap-2"
+                  onClick={clearVideoSelection}
+                  title="Remove video"
+                  className="absolute right-2 top-2 z-20 bg-white/90 hover:bg-white text-gray-700 border rounded-full p-1 shadow"
                 >
-                  {videoUploading ? <SmallSpinner /> : null}
-                  <span>{videoUploading ? "Processing…" : "Upload"}</span>
+                  <RemoveIcon />
                 </button>
 
-                <button type="button" onClick={() => setPickerOpen(true)} className="px-4 py-2 border rounded">
-                  Library
-                </button>
-
-                {(videoPreview || libAsset?.secure_url) && (
-                  <button type="button" className="px-3 py-2 border rounded" onClick={() => { setVideoPreview(null); setVideoFile(null); setVideoUrl(""); setLibAsset(null); }}>
-                    Clear
-                  </button>
-                )}
-              </div>
-              <input type="file" ref={videoInputRef} accept="video/*" onChange={onVideoFile} className="hidden" />
-              <div className="text-xs text-gray-500 mt-1">≤ 10 MB</div>
-            </div>
-
-            <div>
-              {videoPreview ? (
-                (videoUrl && videoUrl.includes("youtube")) ? (
-                  <div className="mt-1">
-                    <div className="aspect-w-16 aspect-h-9">
-                      <iframe
-                        title="youtube-preview"
-                        src={convertYouTubeToEmbed(videoUrl)}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="w-full h-40 rounded"
-                      />
-                    </div>
+                {(videoUrl && videoUrl.includes("youtube")) ? (
+                  <div className="relative" style={{ paddingTop: "56.25%" }}>
+                    <iframe
+                      title="youtube-preview"
+                      src={convertYouTubeToEmbed(videoUrl)}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full rounded"
+                    />
                   </div>
                 ) : (
-                  <div className="mt-1">
+                  <div>
                     <video controls src={videoPreview} className="w-full h-40 object-cover rounded border" />
                     {libAsset?.public_id && <div className="mt-1 text-xs text-gray-500 break-all">public_id: {libAsset.public_id}</div>}
                   </div>
-                )
-              ) : (
-                <div className="mt-1 text-xs text-gray-500">No video</div>
-              )}
-            </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-xs text-gray-500">No video selected</div>
+            )}
           </div>
         </div>
 

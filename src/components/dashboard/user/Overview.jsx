@@ -7,7 +7,7 @@ import useNotifications from "../../../hooks/useNotifications";
  * User Overview (Analytics Snapshot)
  * - KPIs: Unread notifications, total bookings, upcoming booking, stories (approved/pending)
  * - Breakdown: bookings by status
- * - Suggested free tutorials (top 5)
+ * - Suggested free tutorials (top 5) -> now redirect to tutorials tab
  * - Recent activity (bookings + notifications)
  * - Live unread via SSE
  */
@@ -241,7 +241,7 @@ export default function Overview() {
                   />
                 )}
                 <button
-                  onClick={() => navigate(`/courses/${c._id}`)}
+                  onClick={() => navigate("/user-dashboard?tab=tutorials")}
                   className="mt-2 text-xs px-2 py-1 border rounded"
                 >
                   Open

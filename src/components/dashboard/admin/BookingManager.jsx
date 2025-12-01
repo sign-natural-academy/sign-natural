@@ -164,7 +164,7 @@ export default function BookingManager() {
           {/* Left column: status + search (stacked on mobile) */}
           <div className="flex flex-col md:flex-row md:items-center md:gap-3 w-full md:w-auto">
             {/* Status dropdown */}
-            <div className="w-full md:w-44 flex-shrink-0">
+            <div className="w-full md:w-44 shrink-0">
               <label className="text-xs text-gray-600 mb-1 block">Status</label>
               <select
                 value={filters.status}

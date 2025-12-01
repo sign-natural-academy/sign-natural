@@ -3,7 +3,7 @@ import axios from "axios";
 import { getToken, signOut } from "./auth";
 
 const baseURL =
-  // import.meta.env.VITE_API_BASE_URL ||     // preferred (rename your env to this)
+  import.meta.env.VITE_API_BASE_URL ||     // preferred (rename your env to this)
   import.meta.env.VITE_API_URL ||          // backward compat with your current var
   // window.__API_BASE__ ||                   // optional global override
   "";                                      // same-origin fallback (proxy or same domain)

@@ -1,5 +1,5 @@
 // src/components/dashboardUi/DashboardLayout.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -17,27 +17,56 @@ export default function DashboardLayout({ children, title = "My Dashboard" }) {
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
-  const { items, unread, markAllRead } = useNotifications({ scope:"user"});
+  // Memoize options so useNotifications receives a stable reference each render.
+  const notifOptions = useMemo(() => ({ scope: "user" }), []);
 
-  useEffect(() => { setRole(getUserRole()); }, []);
+  // Keep hook call order stable and top-level
+  const { items, unread, markAllRead } = useNotifications(notifOptions);
+
+  useEffect(() => {
+    setRole(getUserRole());
+  }, []);
 
   // handle notification item clicks
   const handleNotifClick = async (notif) => {
     if (!notif) return;
 
+    // Normalize id shape (some notifications use id, some _id)
+    const notifId = notif._id || notif.id;
+
+    // If already read, just follow the link/route if present
     if (notif.read) {
-      if (notif.link) return window.location.href = notif.link;
-      if (notif.action?.route) return navigate(notif.action.route);
+      if (notif.link) {
+        // respect absolute or relative links
+        if (notif.link.startsWith("/")) navigate(notif.link, { replace: false });
+        else window.location.href = notif.link;
+        return;
+      }
+      if (notif.action?.route) {
+        navigate(notif.action.route);
+        return;
+      }
       return;
     }
 
+    // Mark read, then navigate
     try {
-      await markNotificationRead(notif._id || notif.id);
+      if (notifId) {
+        // markNotificationRead should accept id; fallback to API call inside service
+        await markNotificationRead(notifId);
+      } else {
+        // best-effort: call markNotificationRead with undefined will likely fail; ignore
+        console.warn("handleNotifClick: notification missing id, skipping mark-as-read");
+      }
     } catch (err) {
       console.error("Failed to mark notification read:", err);
     } finally {
-      if (notif.link) window.location.href = notif.link;
-      else if (notif.action?.route) navigate(notif.action.route);
+      if (notif.link) {
+        if (notif.link.startsWith("/")) navigate(notif.link, { replace: false });
+        else window.location.href = notif.link;
+      } else if (notif.action?.route) {
+        navigate(notif.action.route);
+      }
     }
   };
 

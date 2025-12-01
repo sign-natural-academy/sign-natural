@@ -1,9 +1,9 @@
 // src/hooks/useNotifications.js
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import api from "../lib/api";
 import { getToken } from "../lib/auth";
 
-// Admin-only event types you want shown in the admin bell
+// Admin-only event types shown in admin bell
 const ADMIN_TYPES = new Set([
   "testimonial_pending_created",
   "testimonial_approved",
@@ -44,7 +44,7 @@ function normalizeItem(src, { scope }) {
     type === "ticket_status_changed" ? "Ticket status changed" :
     src.title || "New activity";
 
-  // prefer explicit action.route if server provided it (keeps backward compatibility)
+  // prefer explicit action.route if server provided it
   const action = src.action || (src.meta && src.meta.action) || undefined;
 
   // Safe link defaults by scope
@@ -62,14 +62,12 @@ function normalizeItem(src, { scope }) {
     src.rawTicketId;
 
   if (ticketId || (typeof type === "string" && type.startsWith("ticket"))) {
-    // prefer server-provided route when available
     if (action && action.route) {
       safeLink = action.route;
     } else {
       if (scope === "admin") {
         safeLink = `/admin-dashboard?tab=support`;
       } else {
-        // user dashboard help tab
         safeLink = `/user-dashboard?tab=help&ticket=${encodeURIComponent(ticketId || "")}`;
       }
     }
@@ -85,12 +83,9 @@ function normalizeItem(src, { scope }) {
     src.booking;
 
   if (bookingId && scope === "user") {
-    // If backend supplied an explicit route, prefer it (backward compatibility)
     if (action && action.route) {
       safeLink = action.route;
     } else {
-      // Use top-level tab=bookings for the dashboard and pass 'sub' for inner bookings view
-      // e.g.: /user-dashboard?tab=bookings&sub=upcoming&id=<bookingId>
       const sub = (action && action.tab) || src.tab || (src.meta && src.meta.tab) || "upcoming";
       safeLink = `/user-dashboard?tab=bookings&sub=${encodeURIComponent(sub)}&id=${encodeURIComponent(
         bookingId
@@ -107,7 +102,7 @@ function normalizeItem(src, { scope }) {
     createdAt,
     read: Boolean(src.read),
     audience: src.audience || (scope === "admin" ? "admin" : "user"),
-    _raw: src, // keep original just in case
+    _raw: src,
   };
 }
 
@@ -118,33 +113,41 @@ function dedupePrepend(list, item, max = 50) {
   return [item, ...list].slice(0, max);
 }
 
-export default function useNotifications({ scope = "user" } = {}) {
+/**
+ * useNotifications
+ * options:
+ *  - scope: "user" | "admin"
+ *  - onEvent: optional callback(payload) for live SSE messages
+ */
+export default function useNotifications({ scope = "user", onEvent } = {}) {
   const [items, setItems] = useState([]);   // normalized items
   const [unread, setUnread] = useState(0);
   const [connected, setConnected] = useState(false);
 
   const esRef = useRef(null);
   const pausedRef = useRef(false); // pause unread increments when tab hidden
-  const reconnectKeyRef = useRef(0); // bump to force effect re-run on reconnect
 
-  // Optional: hydrate from REST on mount for recent history
+  // reconnectTick toggles to force re-setup (safe primitive in deps)
+  const [reconnectTick, setReconnectTick] = useState(0);
+
+  // Hydrate from REST on mount / when scope changes
   useEffect(() => {
+    let mounted = true;
     const token = getToken();
-    if (!token) return;
+    if (!token) return; // unauthenticated
 
     (async () => {
       try {
         const res = await api.get("/api/notifications", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (!mounted) return;
         const raw = Array.isArray(res.data) ? res.data : [];
-        // If your DB rows include audience, filter by it
         const filtered = raw.filter((n) =>
           scope === "admin" ? n.audience === "admin" : n.audience === "user"
         );
         const mapped = filtered.map((row) => normalizeItem(row, { scope }));
 
-        // Deduplicate by id just in case
         const map = new Map();
         for (const m of mapped) map.set(m.id, m);
         const unique = Array.from(map.values()).sort(
@@ -153,20 +156,30 @@ export default function useNotifications({ scope = "user" } = {}) {
 
         setItems(unique.slice(0, 50));
         setUnread(unique.filter((n) => !n.read).length);
-      } catch {
-        // non-fatal
+      } catch (err) {
+        // non-fatal: keep defaults
+        // console.warn("hydrate notifications failed", err);
       }
     })();
+
+    return () => { mounted = false; };
   }, [scope]);
 
-  // Live SSE stream
+  // SSE stream: setup/teardown on (scope, reconnectTick)
   useEffect(() => {
     const token = getToken();
     if (!token) return;
 
     const url = `${getSSEUrl()}?token=${encodeURIComponent(token)}`;
-    const es = new EventSource(url, { withCredentials: false });
-    esRef.current = es;
+    let es;
+    try {
+      es = new EventSource(url, { withCredentials: false });
+      esRef.current = es;
+    } catch (err) {
+      // EventSource constructor failed (e.g., server URL invalid)
+      setConnected(false);
+      return;
+    }
 
     const onVis = () => { pausedRef.current = document.hidden; };
     document.addEventListener("visibilitychange", onVis);
@@ -183,13 +196,15 @@ export default function useNotifications({ scope = "user" } = {}) {
           if (payload.kind !== "admin_board") return;
           if (payload.type && !ADMIN_TYPES.has(payload.type)) return;
         } else {
-          // user scope: ignore admin board events
           if (payload.kind === "admin_board") return;
         }
 
         const normalized = normalizeItem(payload, { scope });
         setItems((prev) => dedupePrepend(prev, normalized, 50));
         if (!pausedRef.current) setUnread((u) => u + 1);
+
+        // Call optional user-provided callback
+        try { if (typeof onEvent === "function") onEvent(payload); } catch (e) { /* no-op */ }
       } catch {
         // ignore parse errors
       }
@@ -198,23 +213,20 @@ export default function useNotifications({ scope = "user" } = {}) {
     es.onerror = () => {
       setConnected(false);
       try { es.close(); } catch {}
-      // trigger a reconnect by bumping a key (re-runs this effect)
-      reconnectKeyRef.current += 1;
-      setTimeout(() => {
-        // force React to re-run effect; simplest is updating state it depends on
-        setConnected((c) => c); // noop but ensures a render; dependency is below
-      }, Math.min(30000, 1000 * (reconnectKeyRef.current + 1))); // capped backoff
+      // schedule a reconnect by bumping reconnectTick
+      setTimeout(() => setReconnectTick((t) => t + 1), 1000 + Math.min(30000, reconnectTick * 1000));
     };
 
     return () => {
       document.removeEventListener("visibilitychange", onVis);
       try { es.close(); } catch {}
+      esRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scope, reconnectKeyRef.current]);
+    // NOTE: reconnectTick is intentionally in deps to control backoff reconnects
+  }, [scope, reconnectTick, onEvent]);
 
   // Public helpers
-  const markAllRead = async () => {
+  const markAllRead = useCallback(async () => {
     const token = getToken();
     if (!token) return;
     try {
@@ -228,9 +240,9 @@ export default function useNotifications({ scope = "user" } = {}) {
     } catch {
       // non-fatal
     }
-  };
+  }, []);
 
-  const markOneRead = async (id) => {
+  const markOneRead = useCallback(async (id) => {
     const token = getToken();
     if (!token || !id) return;
     try {
@@ -244,7 +256,7 @@ export default function useNotifications({ scope = "user" } = {}) {
     } catch {
       // non-fatal
     }
-  };
+  }, []);
 
   return { items, unread, connected, markAllRead, markOneRead };
 }

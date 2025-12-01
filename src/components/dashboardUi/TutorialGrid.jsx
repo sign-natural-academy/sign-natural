@@ -52,7 +52,8 @@ export default function TutorialGrid() {
   }, []);
 
   // progress hook: watch current item ids
-  const ids = items.map((c) => c._id);
+  // <-- Memoize ids so useProgress doesn't get a new array every render
+  const ids = useMemo(() => items.map((c) => c._id), [items]);
   const { map: progressMap, get: getProgress, set: setProgress } = useProgress(ids);
 
   // search + pagination

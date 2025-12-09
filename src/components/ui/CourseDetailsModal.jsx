@@ -6,6 +6,7 @@ import { getCourseById } from "../../api/services/courses";
 import { useNavigate } from "react-router-dom";
 import useBook from "../../hooks/useBook";
 import api, { authHeaders } from "../../lib/api";
+import { isAuthed } from "../../lib/auth"; // added
 
 export default function CourseDetailsModal({ open, onClose, courseId }) {
   const [loading, setLoading] = useState(false);
@@ -71,6 +72,13 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   const handleBook = async () => {
     setBookingError("");
     if (!course) return;
+
+    // NEW: if free + authed -> go straight to tutorial tab (no booking)
+    if (course.type === "free" && isAuthed()) {
+      onClose?.();
+      navigate(`/user-dashboard?tab=tutorials&id=${encodeURIComponent(course._id)}`);
+      return;
+    }
 
     if (hasBooked) {
       setBookingError("You already have an active booking for this item. Cancel the existing booking before creating another.");

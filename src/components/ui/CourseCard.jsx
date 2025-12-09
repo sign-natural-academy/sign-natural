@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useBook from "../../hooks/useBook";
+import { isAuthed } from "../../lib/auth"; // added
 
 // tiny spinner
 function Spinner() {
@@ -21,12 +22,18 @@ export default function CourseCard({ course, onView }) {
   const handleActionClick = () => navigate("/signup");
 
   const handleBook = async () => {
+    // If this is a free course and the user is logged in -> jump straight to tutorial tab
+    if (course?.type === "free" && isAuthed()) {
+      navigate(`/user-dashboard?tab=tutorials&id=${encodeURIComponent(course._id)}`);
+      return;
+    }
+
+    // Otherwise keep existing booking flow
     try {
       await bookItem({ itemType: "Course", itemId: course._id, price: course.price });
       // success navigates inside hook
     } catch (err) {
       // hook already sets error; optionally show extra UI (we keep it minimal)
-      // console.error(err);
     }
   };
 
@@ -46,7 +53,7 @@ export default function CourseCard({ course, onView }) {
         <img src={course.image || "/images/soap2.jpg"} alt={course.title} className="w-full h-48 object-cover" />
       </button>
 
-      <div className="p-4 flex flex-col flex-grow justify-between">
+      <div className="p-4 flex flex-col grow justify-between">
         <div>
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">

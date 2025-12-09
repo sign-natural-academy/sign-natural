@@ -1,7 +1,7 @@
 // src/components/dashboard/user/TutorialGrid.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { getCourses } from "../../api/services/courses"; // uses shared axios client
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useProgress from "../../hooks/useProgress";
 
 /**
@@ -16,6 +16,7 @@ import useProgress from "../../hooks/useProgress";
 
 export default function TutorialGrid() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // state
   const [items, setItems] = useState([]);
@@ -138,6 +139,23 @@ export default function TutorialGrid() {
     setPlayerCourse(null);
     resumeRef.current = 0;
   };
+
+  // auto-open when URL contains ?id= and items are loaded
+  useEffect(() => {
+    const p = new URLSearchParams(location.search);
+    const id = p.get("id");
+    if (!id) return;
+    if (items.length === 0) return; // wait until items loaded
+    const found = items.find((c) => String(c._id) === String(id));
+    if (found) {
+      // open the player for that course
+      // use setTimeout to avoid hook state updates during render in edge cases
+      setTimeout(() => {
+        openPlayer(found);
+      }, 0);
+    }
+    // intentionally only depends on location.search and items
+  }, [location.search, items]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // close on Escape
   useEffect(() => {
@@ -302,7 +320,14 @@ export default function TutorialGrid() {
                   {/* CTAs — Only Start Learning */}
                   <div className="mt-auto pt-3">
                     <button
-                      onClick={() => openPlayer(c)}
+                      onClick={() => {
+                        // when clicking Start Learning inside the Tutorials tab, if user is authed
+                        // you may want this to update the URL so sharing works. For now we just open player:
+                        // openPlayer(c);
+                        // but to keep parity with redirect behavior from other places, update URL too:
+                        navigate(`/user-dashboard?tab=tutorials&id=${encodeURIComponent(c._id)}`);
+                        // TutorialGrid's effect will pick up the id param and open player automatically.
+                      }}
                       className="w-full inline-flex items-center justify-center px-3 py-2 text-sm bg-[#7d4c35] text-white rounded hover:opacity-90"
                       aria-label={`Start learning ${c.title}`}
                     >

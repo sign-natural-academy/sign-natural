@@ -41,10 +41,19 @@ export default function WorkshopCard({ workshop, onView }) {
         <img src={workshop.image || "/images/soap2.jpg"} alt={workshop.title} className="w-full h-48 object-cover" />
       </button>
 
-      <div className="p-4 flex flex-col flex-grow justify-between">
+      <div className="p-4 flex flex-col grow justify-between">
         <div>
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-lg font-semibold text-gray-800 truncate">{workshop.title}</h3>
+            <div className="min-w-0">
+              <h3 className="text-lg font-semibold text-gray-800 truncate">{workshop.title}</h3>
+              {/* LOCATION (new) */}
+              {workshop.location && (
+                <div className="text-xs text-gray-500 mt-1 truncate">
+                  <span className="font-medium">Location:</span> {workshop.location}
+                </div>
+              )}
+            </div>
+            
             <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 shrink-0">
               {workshop.type || "workshop"}
             </span>

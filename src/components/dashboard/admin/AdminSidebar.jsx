@@ -12,7 +12,7 @@ import {
   Cog6ToothIcon,
   ChatBubbleBottomCenterTextIcon,
   ShieldCheckIcon,
-  ChartBarIcon,BellIcon
+  ChartBarIcon,BellIcon,VideoCameraIcon
 } from "@heroicons/react/24/outline";
 import SidebarShell from "../../dashboardUi/shared/SidebarShell";
 import { getActiveKey } from "../../dashboardUi/shared/navUtils";
@@ -27,6 +27,7 @@ export default function AdminSidebar({ open = false, onClose = () => {} }) {
     { key: "courses", label: "Courses", to: "/admin-dashboard?tab=courses", icon: BookOpenIcon },
     { key: "workshops", label: "Workshops", to: "/admin-dashboard?tab=workshops", icon: HomeIcon },
     { key: "products", label: "Products", to: "/admin-dashboard?tab=products", icon: ShoppingBagIcon },
+    { key: "homeVideo", label: "Video", to: "/admin-dashboard?tab=homeVideo", icon: VideoCameraIcon },
     { key: "testimonials", label: "Testimonials", to: "/admin-dashboard?tab=testimonials", icon: DocumentTextIcon },
     { key: "users", label: "Users", to: "/admin-dashboard?tab=users", icon: UsersIcon },
     { key: "media", label: "Media", to: "/admin-dashboard?tab=media", icon: PhotoIcon },

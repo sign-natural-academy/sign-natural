@@ -19,6 +19,7 @@ import SettingsPanel from "../dashboard/admin/SettingsPanel";
 import SupportTickets from "../dashboard/admin/SupportTickets";
 import AuditLog from "../dashboard/admin/AuditLog";
 import NotificationsPanel from "../dashboard/admin/NotificationsPanel";
+import HomeVideoManager from "../dashboard/admin/HomeVideoManager";
 
 /**
  * Admin Dashboard page.
@@ -59,6 +60,7 @@ export default function AdminDashboard() {
       courses: () => <CourseManager />,
       workshops: () => <WorkshopManager />,
       products: () => <ProductManager />,
+      homeVideo: () => <HomeVideoManager />,
       testimonials: () => <ApproveTestimonials />,
       users: () => <UsersManager />,
       media: () => <MediaLibrary />,

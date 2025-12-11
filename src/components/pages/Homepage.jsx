@@ -8,6 +8,7 @@ import ProductsToLearning from "../ui/ProductToLearning";
 import SuccessPreview from "../ui/SuccessPreview";
 import Navbar from "../ui/Navbar";
 import Footer from "../ui/Footer";
+import HomeHeroVideo from "../ui/HomeHeroVideo";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export default function Homepage() {
           />
         </div>
       </section>
-
+      <HomeHeroVideo/>
       <ExperientialWorkshops />
       <CustomWorkshopPackage />
       <ProductsToLearning />

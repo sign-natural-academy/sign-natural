@@ -1,13 +1,14 @@
 // src/hooks/useBook.js
 import { useNavigate, useLocation } from "react-router-dom";
-import { isAuthed } from "../lib/auth";
+import { isAuthed, getUserRole } from "../lib/auth";
 import { createBooking } from "../api/services/bookings";
 import { useCallback, useState } from "react";
 
 /**
- * useBook - lightweight booking helper that preserves existing architecture.
- * - Requires your existing createBooking service.
- * - Returns { bookItem, loading, error } so callers can show UI states.
+ * useBook
+ * - Supports self booking, booking for others, guest booking
+ * - ALWAYS forwards `contact` (backend requirement)
+ * - Blocks admins from booking
  */
 export default function useBook() {
   const navigate = useNavigate();
@@ -17,14 +18,19 @@ export default function useBook() {
   const [error, setError] = useState(null);
 
   const bookItem = useCallback(
-    async ({ itemType, itemId, price, scheduledAt } = {}) => {
-      // Prevent parallel attempts from the UI
+    async ({
+      itemType,
+      itemId,
+      price,
+      scheduledAt,
+      contact,        // ✅ REQUIRED
+      attendees = [], // optional
+    } = {}) => {
       if (loading) return null;
 
-      // 1) Require login
-      if (!isAuthed()) {
-        const next = `/login?redirect=${encodeURIComponent(location.pathname + location.search)}`;
-        navigate(next);
+      // ❌ Admins cannot book
+      if (isAuthed() && getUserRole?.() === "admin") {
+        setError("Admins are not allowed to make bookings.");
         return null;
       }
 
@@ -32,27 +38,40 @@ export default function useBook() {
       setError(null);
 
       try {
-        // 2) Call backend (this is your existing service)
-        const payload = { itemType, itemId, price };
+        // 🚨 CONTACT MUST ALWAYS BE SENT
+        if (!contact?.name || !contact?.email) {
+          throw new Error("Contact information is missing.");
+        }
+
+        const payload = {
+          itemType,
+          itemId,
+          price,
+          contact,        // ✅ FIX
+          attendees,      // ✅ FIX
+        };
+
         if (scheduledAt) payload.scheduledAt = scheduledAt;
 
         const res = await createBooking(payload);
 
-        // 3) Go to "My Bookings" tab (keeps existing navigation)
-        navigate("/user-dashboard?tab=bookings");
+        // Navigate only for logged-in users
+        if (isAuthed()) {
+          navigate("/user-dashboard?tab=bookings");
+        }
 
         return res;
       } catch (err) {
-        // Normalize and preserve error for caller UI
-        const msg = err?.response?.data?.message || err?.message || "Booking failed";
+        const msg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Booking failed";
         setError(msg);
-        // Rethrow so callers who want to handle can catch
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [loading, navigate, location.pathname, location.search]
   );
 

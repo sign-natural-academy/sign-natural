@@ -19,7 +19,7 @@ export function getUserRole() {
   return typeof u?.role === "string" ? u.role : null;
 }
 
-// 🔎 Separate checks
+// Separate checks
 export function isAdminRole() {
   return getUserRole() === "admin";
 }

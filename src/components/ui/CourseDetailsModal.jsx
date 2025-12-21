@@ -8,14 +8,6 @@ import useBook from "../../hooks/useBook";
 import api, { authHeaders } from "../../lib/api";
 import { isAuthed, getUser } from "../../lib/auth";
 
-const getUserRole = () => {
-  try {
-    return JSON.parse(localStorage.getItem("user"))?.role;
-  } catch {
-    return null;
-  }
-};
-
 export default function CourseDetailsModal({ open, onClose, courseId }) {
   const [loading, setLoading] = useState(false);
   const [course, setCourse] = useState(null);
@@ -25,6 +17,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
 
+  // ORIGINAL STATE — unchanged
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const [guestContact, setGuestContact] = useState({ name: "", email: "" });
@@ -55,7 +48,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
     };
   }, [open, courseId]);
 
-  /* ---------------- Check existing booking (ignore cancelled) ---------------- */
+  /* ---------------- Check booking (ignore cancelled) ---------------- */
   useEffect(() => {
     let active = true;
     if (!open || !courseId || !isAuthed()) return;
@@ -90,12 +83,6 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
     setBookingError("");
     if (!course) return;
 
-    const role = getUserRole();
-    if (role === "admin" || role === "super") {
-      setBookingError("Admins are not allowed to make bookings.");
-      return;
-    }
-
     // Free + logged-in → tutorials
     if (course.type === "free" && isAuthed()) {
       onClose?.();
@@ -108,7 +95,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       return;
     }
 
-    // 🔑 CONTACT (required by backend)
+    // 🔐 CONTACT — backend requires this ALWAYS
     const contact = isAuthed()
       ? {
           name: getUser()?.name || "Registered User",
@@ -116,9 +103,19 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
         }
       : guestContact;
 
-    if (!contact?.email || !contact?.name) {
+    if (!contact?.name || !contact?.email) {
       setBookingError("Contact name and email are required.");
       return;
+    }
+
+    // 🧠 booking for others must include attendees
+    if (bookForOthers) {
+      const invalid = attendees.length === 0 || attendees.some((a) => !a.email);
+
+      if (invalid) {
+        setBookingError("Please add at least one attendee email.");
+        return;
+      }
     }
 
     setBookingInProgress(true);
@@ -127,15 +124,13 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
         itemType: "Course",
         itemId: course._id,
         price: course.price,
-        contact,
+        contact, // ✅ FIX
         attendees: bookForOthers ? attendees : [],
       });
 
       setHasBooked(true);
     } catch (e) {
-      setBookingError(
-        e?.response?.data?.message || "Failed to create booking"
-      );
+      setBookingError(e?.response?.data?.message || "Failed to create booking");
     } finally {
       setBookingInProgress(false);
     }
@@ -169,16 +164,15 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                   <img
                     src={course.image || "/images/soap2.jpg"}
                     className="h-60 w-full object-cover rounded"
+                    alt={course.title}
                   />
                 </div>
 
                 <div className="p-5 space-y-3">
                   <h2 className="text-xl font-semibold">{course.title}</h2>
-                  <p className="text-sm text-gray-600">
-                    {course.description}
-                  </p>
+                  <p className="text-sm text-gray-600">{course.description}</p>
 
-                  {/* Booking mode */}
+                  {/* ORIGINAL UI — UNCHANGED */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <button
@@ -256,19 +250,23 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                   <button
                     onClick={handleBook}
                     disabled={bookingInProgress || hasBooked}
-                    className="w-full mt-3 py-2 bg-[#455f30] text-white rounded"
+                    className={`w-full mt-3 py-2 rounded text-white ${
+                      hasBooked
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-[#455f30]"
+                    }`}
                   >
                     {bookingInProgress
                       ? "Booking…"
+                      : hasBooked
+                      ? "Already Booked"
                       : course.type === "free"
                       ? "Start Learning"
                       : "Book"}
                   </button>
 
                   {bookingError && (
-                    <div className="text-sm text-red-600">
-                      {bookingError}
-                    </div>
+                    <div className="text-sm text-red-600">{bookingError}</div>
                   )}
                 </div>
               </div>

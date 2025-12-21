@@ -6,9 +6,9 @@ import { useCallback, useState } from "react";
 
 /**
  * useBook
- * - Supports self booking, booking for others, guest booking
- * - ALWAYS forwards `contact` (backend requirement)
- * - Blocks admins from booking
+ * - Preserves existing architecture
+ * - Requires contact (backend requirement)
+ * - Blocks admins
  */
 export default function useBook() {
   const navigate = useNavigate();
@@ -18,14 +18,7 @@ export default function useBook() {
   const [error, setError] = useState(null);
 
   const bookItem = useCallback(
-    async ({
-      itemType,
-      itemId,
-      price,
-      scheduledAt,
-      contact,        // ✅ REQUIRED
-      attendees = [], // optional
-    } = {}) => {
+    async ({ itemType, itemId, price, scheduledAt, contact, attendees = [] } = {}) => {
       if (loading) return null;
 
       // ❌ Admins cannot book
@@ -34,28 +27,27 @@ export default function useBook() {
         return null;
       }
 
+      if (!contact?.name || !contact?.email) {
+        setError("Contact name and email are required.");
+        return null;
+      }
+
       setLoading(true);
       setError(null);
 
       try {
-        // 🚨 CONTACT MUST ALWAYS BE SENT
-        if (!contact?.name || !contact?.email) {
-          throw new Error("Contact information is missing.");
-        }
-
         const payload = {
           itemType,
           itemId,
           price,
-          contact,        // ✅ FIX
-          attendees,      // ✅ FIX
+          contact,
+          attendees,
         };
 
         if (scheduledAt) payload.scheduledAt = scheduledAt;
 
         const res = await createBooking(payload);
 
-        // Navigate only for logged-in users
         if (isAuthed()) {
           navigate("/user-dashboard?tab=bookings");
         }

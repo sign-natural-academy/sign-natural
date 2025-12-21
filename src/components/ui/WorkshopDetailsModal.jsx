@@ -7,14 +7,6 @@ import useBook from "../../hooks/useBook";
 import api, { authHeaders } from "../../lib/api";
 import { isAuthed, getUser } from "../../lib/auth";
 
-const getUserRole = () => {
-  try {
-    return JSON.parse(localStorage.getItem("user"))?.role;
-  } catch {
-    return null;
-  }
-};
-
 export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   const [loading, setLoading] = useState(false);
   const [workshop, setWorkshop] = useState(null);
@@ -24,6 +16,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
 
+  // ORIGINAL STATES (UNCHANGED)
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const [guestContact, setGuestContact] = useState({ name: "", email: "" });
@@ -85,17 +78,12 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   const handleBook = async () => {
     setBookingError("");
 
-    const role = getUserRole();
-    if (role === "admin" || role === "super") {
-      setBookingError("Admins are not allowed to book.");
-      return;
-    }
-
     if (hasBooked) {
-      setBookingError("You already have an active booking.");
+      setBookingError("You already have an active booking for this workshop.");
       return;
     }
 
+    // 🔐 CONTACT — backend requires this ALWAYS
     const contact = isAuthed()
       ? {
           name: getUser()?.name || "Registered User",
@@ -103,25 +91,36 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
         }
       : guestContact;
 
-    if (!contact?.email || !contact?.name) {
+    if (!contact?.name || !contact?.email) {
       setBookingError("Contact name and email are required.");
       return;
     }
 
+    // 🧠 booking for others must include attendees
+    if (bookForOthers) {
+      const invalid = attendees.length === 0 || attendees.some((a) => !a.email);
+
+      if (invalid) {
+        setBookingError("Please add at least one attendee email.");
+        return;
+      }
+    }
+
+    setBookingInProgress(true);
     try {
       await bookItem({
         itemType: "Workshop",
         itemId: workshop._id,
         price: workshop.price,
-        contact,
+        contact, // ✅ FIX
         attendees: bookForOthers ? attendees : [],
       });
 
       setHasBooked(true);
     } catch (e) {
-      setBookingError(
-        e?.response?.data?.message || "Failed to create booking"
-      );
+      setBookingError(e?.response?.data?.message || "Failed to create booking");
+    } finally {
+      setBookingInProgress(false);
     }
   };
 
@@ -153,17 +152,17 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                   <img
                     src={workshop.image || "/images/soap2.jpg"}
                     className="h-60 w-full object-cover rounded"
+                    alt={workshop.title}
                   />
                 </div>
 
                 <div className="p-5 space-y-3">
-                  <h2 className="text-xl font-semibold">
-                    {workshop.title}
-                  </h2>
+                  <h2 className="text-xl font-semibold">{workshop.title}</h2>
                   <p className="text-sm text-gray-600">
                     {workshop.description}
                   </p>
 
+                  {/* ORIGINAL UI — UNCHANGED */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <button
@@ -240,15 +239,22 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
                   <button
                     onClick={handleBook}
-                    className="w-full mt-3 py-2 bg-[#455f30] text-white rounded"
+                    disabled={bookingInProgress || hasBooked}
+                    className={`w-full mt-3 py-2 rounded text-white ${
+                      hasBooked
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-[#455f30]"
+                    }`}
                   >
-                    Book / Enroll
+                    {bookingInProgress
+                      ? "Booking…"
+                      : hasBooked
+                      ? "Already Booked"
+                      : "Book / Enroll"}
                   </button>
 
                   {bookingError && (
-                    <div className="text-sm text-red-600">
-                      {bookingError}
-                    </div>
+                    <div className="text-sm text-red-600">{bookingError}</div>
                   )}
                 </div>
               </div>

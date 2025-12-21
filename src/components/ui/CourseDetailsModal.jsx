@@ -13,7 +13,10 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   const [course, setCourse] = useState(null);
   const [error, setError] = useState("");
 
-  const [hasBooked, setHasBooked] = useState(false);
+  // Split booking state
+  const [hasSelfBooked, setHasSelfBooked] = useState(false);
+  const [hasOthersBooked, setHasOthersBooked] = useState(false);
+
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
 
@@ -48,7 +51,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
     };
   }, [open, courseId]);
 
-  /* ---------------- Check booking (ignore cancelled) ---------------- */
+  /* ---------------- Booking check (FIXED) ---------------- */
   useEffect(() => {
     let active = true;
     if (!open || !courseId || !isAuthed()) return;
@@ -59,15 +62,27 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
           headers: authHeaders(),
         });
 
-        const found = (res.data || []).some((b) => {
+        let self = false;
+        let others = false;
+
+        (res.data || []).forEach((b) => {
           const itemId = b.item && (b.item._id || b.item);
-          return (
+          if (
             String(itemId) === String(courseId) &&
-            !["cancelled"].includes(b.status)
-          );
+            b.status !== "cancelled"
+          ) {
+            if (Array.isArray(b.attendees) && b.attendees.length > 0) {
+              others = true;
+            } else {
+              self = true;
+            }
+          }
         });
 
-        if (active) setHasBooked(Boolean(found));
+        if (active) {
+          setHasSelfBooked(self);
+          setHasOthersBooked(others);
+        }
       } catch {
         // non-fatal
       }
@@ -79,6 +94,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   }, [open, courseId]);
 
   /* ---------------- Handle booking ---------------- */
+ 
   const handleBook = async () => {
     setBookingError("");
     if (!course) return;
@@ -90,12 +106,16 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       return;
     }
 
-    if (hasBooked) {
-      setBookingError("You already have an active booking for this course.");
+    if (!bookForOthers && hasSelfBooked) {
+      setBookingError("You have already booked this course for yourself.");
       return;
     }
 
-    // 🔐 CONTACT — backend requires this ALWAYS
+    if (bookForOthers && hasOthersBooked) {
+      setBookingError("You have already booked this course for others.");
+      return;
+    }
+
     const contact = isAuthed()
       ? {
           name: getUser()?.name || "Registered User",
@@ -108,10 +128,9 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       return;
     }
 
-    // 🧠 booking for others must include attendees
     if (bookForOthers) {
-      const invalid = attendees.length === 0 || attendees.some((a) => !a.email);
-
+      const invalid =
+        attendees.length === 0 || attendees.some((a) => !a.email);
       if (invalid) {
         setBookingError("Please add at least one attendee email.");
         return;
@@ -124,17 +143,20 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
         itemType: "Course",
         itemId: course._id,
         price: course.price,
-        contact, // ✅ FIX
+        contact,
         attendees: bookForOthers ? attendees : [],
       });
-
-      setHasBooked(true);
     } catch (e) {
       setBookingError(e?.response?.data?.message || "Failed to create booking");
     } finally {
       setBookingInProgress(false);
     }
   };
+
+  const isBlocked =
+    bookingInProgress ||
+    (!bookForOthers && hasSelfBooked) ||
+    (bookForOthers && hasOthersBooked);
 
   return (
     <AnimatePresence>
@@ -247,24 +269,29 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                     )}
                   </div>
 
-                  <button
+                   <button
                     onClick={handleBook}
-                    disabled={bookingInProgress || hasBooked}
+                    disabled={isBlocked}
                     className={`w-full mt-3 py-2 rounded text-white ${
-                      hasBooked
+                      isBlocked
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-[#455f30]"
                     }`}
                   >
                     {bookingInProgress
                       ? "Booking…"
-                      : hasBooked
-                      ? "Already Booked"
+                      : !bookForOthers && hasSelfBooked
+                      ? "Already Booked (Myself)"
+                      : bookForOthers && hasOthersBooked
+                      ? "Already Booked (Others)"
                       : course.type === "free"
                       ? "Start Learning"
                       : "Book"}
                   </button>
 
+                  {bookingError && (
+                    <div className="text-sm text-red-600">{bookingError}</div>
+                  )}
                   {bookingError && (
                     <div className="text-sm text-red-600">{bookingError}</div>
                   )}

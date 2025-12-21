@@ -12,11 +12,12 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   const [workshop, setWorkshop] = useState(null);
   const [error, setError] = useState("");
 
-  const [hasBooked, setHasBooked] = useState(false);
+  const [hasSelfBooked, setHasSelfBooked] = useState(false);
+  const [hasOthersBooked, setHasOthersBooked] = useState(false);
+
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
 
-  // ORIGINAL STATES (UNCHANGED)
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const [guestContact, setGuestContact] = useState({ name: "", email: "" });
@@ -46,7 +47,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
     };
   }, [open, workshopId]);
 
-  /* ---------------- Check booking (ignore cancelled) ---------------- */
+  /* ---------------- Booking check (FIXED) ---------------- */
   useEffect(() => {
     let active = true;
     if (!open || !workshopId || !isAuthed()) return;
@@ -57,15 +58,27 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
           headers: authHeaders(),
         });
 
-        const found = (res.data || []).some((b) => {
+        let self = false;
+        let others = false;
+
+        (res.data || []).forEach((b) => {
           const itemId = b.item && (b.item._id || b.item);
-          return (
+          if (
             String(itemId) === String(workshopId) &&
-            !["cancelled"].includes(b.status)
-          );
+            b.status !== "cancelled"
+          ) {
+            if (Array.isArray(b.attendees) && b.attendees.length > 0) {
+              others = true;
+            } else {
+              self = true;
+            }
+          }
         });
 
-        if (active) setHasBooked(Boolean(found));
+        if (active) {
+          setHasSelfBooked(self);
+          setHasOthersBooked(others);
+        }
       } catch {}
     })();
 
@@ -73,17 +86,20 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
       active = false;
     };
   }, [open, workshopId]);
-
-  /* ---------------- Handle booking ---------------- */
+ /* ---------------- Handle booking ---------------- */
   const handleBook = async () => {
     setBookingError("");
 
-    if (hasBooked) {
-      setBookingError("You already have an active booking for this workshop.");
+    if (!bookForOthers && hasSelfBooked) {
+      setBookingError("You have already booked this workshop for yourself.");
       return;
     }
 
-    // 🔐 CONTACT — backend requires this ALWAYS
+    if (bookForOthers && hasOthersBooked) {
+      setBookingError("You have already booked this workshop for others.");
+      return;
+    }
+
     const contact = isAuthed()
       ? {
           name: getUser()?.name || "Registered User",
@@ -96,10 +112,9 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
       return;
     }
 
-    // 🧠 booking for others must include attendees
     if (bookForOthers) {
-      const invalid = attendees.length === 0 || attendees.some((a) => !a.email);
-
+      const invalid =
+        attendees.length === 0 || attendees.some((a) => !a.email);
       if (invalid) {
         setBookingError("Please add at least one attendee email.");
         return;
@@ -112,17 +127,20 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
         itemType: "Workshop",
         itemId: workshop._id,
         price: workshop.price,
-        contact, // ✅ FIX
+        contact,
         attendees: bookForOthers ? attendees : [],
       });
-
-      setHasBooked(true);
     } catch (e) {
       setBookingError(e?.response?.data?.message || "Failed to create booking");
     } finally {
       setBookingInProgress(false);
     }
   };
+
+  const isBlocked =
+    bookingInProgress ||
+    (!bookForOthers && hasSelfBooked) ||
+    (bookForOthers && hasOthersBooked);
 
   return (
     <AnimatePresence>
@@ -239,17 +257,19 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
                   <button
                     onClick={handleBook}
-                    disabled={bookingInProgress || hasBooked}
+                    disabled={isBlocked}
                     className={`w-full mt-3 py-2 rounded text-white ${
-                      hasBooked
+                      isBlocked
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-[#455f30]"
                     }`}
                   >
                     {bookingInProgress
                       ? "Booking…"
-                      : hasBooked
-                      ? "Already Booked"
+                      : !bookForOthers && hasSelfBooked
+                      ? "Already Booked (Myself)"
+                      : bookForOthers && hasOthersBooked
+                      ? "Already Booked (Others)"
                       : "Book / Enroll"}
                   </button>
 

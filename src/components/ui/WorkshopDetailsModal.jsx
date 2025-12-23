@@ -26,8 +26,8 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
   /* ---------------- Load workshop ---------------- */
   useEffect(() => {
-    let active = true;
     if (!open || !workshopId) return;
+    let active = true;
 
     (async () => {
       setLoading(true);
@@ -42,15 +42,13 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
       }
     })();
 
-    return () => {
-      active = false;
-    };
+    return () => (active = false);
   }, [open, workshopId]);
 
-  /* ---------------- Booking check (FIXED) ---------------- */
+  /* ---------------- Booking check ---------------- */
   useEffect(() => {
-    let active = true;
     if (!open || !workshopId || !isAuthed()) return;
+    let active = true;
 
     (async () => {
       try {
@@ -62,7 +60,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
         let others = false;
 
         (res.data || []).forEach((b) => {
-          const itemId = b.item && (b.item._id || b.item);
+          const itemId = b.item?._id || b.item;
           if (
             String(itemId) === String(workshopId) &&
             b.status !== "cancelled"
@@ -82,11 +80,10 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
       } catch {}
     })();
 
-    return () => {
-      active = false;
-    };
+    return () => (active = false);
   }, [open, workshopId]);
- /* ---------------- Handle booking ---------------- */
+
+  /* ---------------- Handle booking ---------------- */
   const handleBook = async () => {
     setBookingError("");
 
@@ -97,6 +94,11 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
     if (bookForOthers && hasOthersBooked) {
       setBookingError("You have already booked this workshop for others.");
+      return;
+    }
+
+    if (!isAuthed() && bookForOthers) {
+      setBookingError("Guests cannot book for others.");
       return;
     }
 
@@ -131,7 +133,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
         attendees: bookForOthers ? attendees : [],
       });
     } catch (e) {
-      setBookingError(e?.response?.data?.message || "Failed to create booking");
+      setBookingError(e?.response?.data?.message || "Booking failed");
     } finally {
       setBookingInProgress(false);
     }
@@ -146,10 +148,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <motion.div
-            className="absolute inset-0 bg-black/40"
-            onClick={onClose}
-          />
+          <motion.div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
           <motion.div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="flex justify-between px-5 py-4 border-b">
@@ -158,11 +157,6 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
-
-            {loading && <div className="p-6">Loading…</div>}
-            {!loading && error && (
-              <div className="p-6 text-red-600">{error}</div>
-            )}
 
             {!loading && workshop && (
               <div className="grid md:grid-cols-2">
@@ -176,11 +170,9 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
                 <div className="p-5 space-y-3">
                   <h2 className="text-xl font-semibold">{workshop.title}</h2>
-                  <p className="text-sm text-gray-600">
-                    {workshop.description}
-                  </p>
+                  <p className="text-sm text-gray-600">{workshop.description}</p>
 
-                  {/* ORIGINAL UI — UNCHANGED */}
+                  {/* UI preserved */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <button
@@ -191,14 +183,17 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                       >
                         Myself
                       </button>
-                      <button
-                        onClick={() => setBookForOthers(true)}
-                        className={`px-3 py-1 text-xs border rounded ${
-                          bookForOthers && "bg-black text-white"
-                        }`}
-                      >
-                        Others
-                      </button>
+
+                      {isAuthed() && (
+                        <button
+                          onClick={() => setBookForOthers(true)}
+                          className={`px-3 py-1 text-xs border rounded ${
+                            bookForOthers && "bg-black text-white"
+                          }`}
+                        >
+                          Others
+                        </button>
+                      )}
                     </div>
 
                     {bookForOthers &&
@@ -234,10 +229,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                           placeholder="Your full name"
                           value={guestContact.name}
                           onChange={(e) =>
-                            setGuestContact({
-                              ...guestContact,
-                              name: e.target.value,
-                            })
+                            setGuestContact({ ...guestContact, name: e.target.value })
                           }
                         />
                         <input
@@ -245,10 +237,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                           placeholder="Your email"
                           value={guestContact.email}
                           onChange={(e) =>
-                            setGuestContact({
-                              ...guestContact,
-                              email: e.target.value,
-                            })
+                            setGuestContact({ ...guestContact, email: e.target.value })
                           }
                         />
                       </>

@@ -13,6 +13,7 @@ export default function BookingManager() {
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
   const [err, setErr] = useState("");
 
   const [filters, setFilters] = useState({
@@ -40,21 +41,12 @@ export default function BookingManager() {
           ? res.data
           : res.data?.items ?? res.data?.list ?? [];
 
-        if (
-          opts.useFilters &&
-          Array.isArray(res.data) &&
-          (filters.status !== "all" || filters.q || filters.from || filters.to)
-        ) {
-          setServerSupportsQuery(false);
-        }
-
         if (!serverSupportsQuery) {
           list = applyClientFilters(list, filters);
         }
 
         setRows(list);
       } catch (e) {
-        console.error("Failed to load bookings:", e);
         setErr(e?.response?.data?.message || "Failed to load bookings");
         setRows([]);
       } finally {
@@ -68,7 +60,6 @@ export default function BookingManager() {
     load({ useFilters: true });
   }, []);
 
-  /* ---------------- Live refresh ---------------- */
   useNotifications({
     onEvent: (payload) => {
       if (
@@ -81,51 +72,31 @@ export default function BookingManager() {
     },
   });
 
-  /* ---------------- Client-side filters ---------------- */
   const applyClientFilters = (list = [], f = {}) => {
     const q = (f.q || "").trim().toLowerCase();
-    const fromD = f.from ? new Date(f.from) : null;
-    const toD = f.to ? new Date(f.to) : null;
-    if (toD) toD.setHours(23, 59, 59, 999);
-
     return list.filter((b) => {
-      if (!b) return false;
       if (f.status !== "all" && b.status !== f.status) return false;
+      if (!q) return true;
 
-      const d = new Date(b.scheduledAt || b.createdAt);
-      if (fromD && d < fromD) return false;
-      if (toD && d > toD) return false;
+      const name =
+        (b.user?.name || b.contact?.name || "").toLowerCase();
+      const email =
+        (b.user?.email || b.contact?.email || "").toLowerCase();
+      const item =
+        (b.item?.title || b.item?.name || "").toLowerCase();
 
-      if (q) {
-        const name =
-          (b.user?.name || b.contact?.name || "").toLowerCase();
-        const email =
-          (b.user?.email || b.contact?.email || "").toLowerCase();
-        const item =
-          (b.item?.title || b.item?.name || "").toLowerCase();
-
-        if (!name.includes(q) && !email.includes(q) && !item.includes(q)) {
-          return false;
-        }
-      }
-
-      return true;
+      return (
+        name.includes(q) || email.includes(q) || item.includes(q)
+      );
     });
   };
 
-  useEffect(() => {
-    load({ useFilters: true });
-  }, [filters]);
-
-  /* ---------------- Status change ---------------- */
   const changeStatus = async (id, status) => {
     setBusyId(id);
     setOpenMenuId(null);
     try {
       await updateBookingStatus(id, status);
       await load({ useFilters: true });
-    } catch (e) {
-      alert(e?.response?.data?.message || "Failed to update status");
     } finally {
       setBusyId(null);
     }
@@ -134,7 +105,6 @@ export default function BookingManager() {
   const fmtDate = (d) =>
     d ? new Date(d).toLocaleString() : "—";
 
-  /* ---------------- UI ---------------- */
   return (
     <div className="bg-white shadow rounded-lg p-5 space-y-5">
       <h3 className="font-semibold text-lg">Bookings</h3>
@@ -145,11 +115,11 @@ export default function BookingManager() {
             <tr className="text-left text-gray-600 border-b">
               <th>User</th>
               <th>Email</th>
+              <th>Mode</th>
               <th>Item</th>
               <th>Type</th>
               <th>Price</th>
               <th>Scheduled</th>
-              <th>Booked At</th>
               <th>Status</th>
               <th />
             </tr>
@@ -162,93 +132,128 @@ export default function BookingManager() {
                   Loading…
                 </td>
               </tr>
-            ) : rows.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="py-6 text-center text-gray-500">
-                  No bookings.
-                </td>
-              </tr>
             ) : (
               rows.map((b) => {
                 const id = b._id;
+                const isExpanded = expandedId === id;
 
-                // ✅ FIXED DISPLAY LOGIC
                 const displayName =
-                  b.user?.name ||
-                  b.contact?.name ||
-                  "Guest";
-
+                  b.user?.name || b.contact?.name || "Guest";
                 const displayEmail =
-                  b.user?.email ||
-                  b.contact?.email ||
-                  "—";
+                  b.user?.email || b.contact?.email || "—";
 
-                const isGuest = !b.user;
+                const bookingMode = !b.user
+                  ? "Guest"
+                  : b.attendees?.length > 0
+                  ? "For Others"
+                  : "Self";
 
                 return (
-                  <tr key={id} className="border-b hover:bg-gray-50">
-                    <td className="py-3 font-medium">
-                      {displayName}
-                      {isGuest && (
-                        <span className="ml-2 text-xs text-gray-500">
-                          (Guest)
+                  <React.Fragment key={id}>
+                    <tr className="border-b hover:bg-gray-50">
+                      <td className="py-3 font-medium">{displayName}</td>
+                      <td className="py-3 text-xs text-gray-600">
+                        {displayEmail}
+                      </td>
+
+                      <td className="py-3">
+                        <span
+                          className={`px-2 py-1 rounded text-xs ${
+                            bookingMode === "Guest"
+                              ? "bg-gray-100"
+                              : bookingMode === "For Others"
+                              ? "bg-blue-100 text-blue-700"
+                              : "bg-green-100 text-green-700"
+                          }`}
+                        >
+                          {bookingMode}
                         </span>
-                      )}
-                    </td>
 
-                    <td className="py-3 text-xs text-gray-600">
-                      {displayEmail}
-                    </td>
+                        {bookingMode === "For Others" && (
+                          <button
+                            onClick={() =>
+                              setExpandedId(
+                                isExpanded ? null : id
+                              )
+                            }
+                            className="ml-2 text-xs text-blue-600 hover:underline"
+                          >
+                            {isExpanded ? "Hide" : "View"} attendees
+                          </button>
+                        )}
+                      </td>
 
-                    <td className="py-3">
-                      {b.item?.title || b.item?.name || "—"}
-                    </td>
+                      <td className="py-3">
+                        {b.item?.title || b.item?.name || "—"}
+                      </td>
 
-                    <td className="py-3">{b.itemType}</td>
+                      <td className="py-3">{b.itemType}</td>
 
-                    <td className="py-3">
-                      {typeof b.price === "number" ? `₵${b.price}` : "—"}
-                    </td>
+                      <td className="py-3">
+                        {typeof b.price === "number"
+                          ? `₵${b.price}`
+                          : "—"}
+                      </td>
 
-                    <td className="py-3">{fmtDate(b.scheduledAt)}</td>
-                    <td className="py-3 text-xs text-gray-500">
-                      {fmtDate(b.createdAt)}
-                    </td>
+                      <td className="py-3">{fmtDate(b.scheduledAt)}</td>
 
-                    <td className="py-3">
-                      <span className="px-2 py-1 rounded text-xs bg-gray-100">
-                        {b.status}
-                      </span>
-                    </td>
+                      <td className="py-3">
+                        <span className="px-2 py-1 rounded text-xs bg-gray-100">
+                          {b.status}
+                        </span>
+                      </td>
 
-                    <td className="py-3 text-right">
-                      <button
-                        onClick={() =>
-                          setOpenMenuId(openMenuId === id ? null : id)
-                        }
-                        className="px-3 py-1 border rounded text-sm"
-                      >
-                        Actions ▾
-                      </button>
-
-                      {openMenuId === id && (
-                        <div className="absolute bg-white border rounded shadow mt-1 right-5">
-                          {["confirmed", "completed", "cancelled"].map(
-                            (s) => (
-                              <button
-                                key={s}
-                                onClick={() => changeStatus(id, s)}
-                                disabled={busyId === id}
-                                className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
-                              >
-                                {s}
-                              </button>
+                      <td className="py-3 text-right">
+                        <button
+                          onClick={() =>
+                            setOpenMenuId(
+                              openMenuId === id ? null : id
                             )
-                          )}
-                        </div>
-                      )}
-                    </td>
-                  </tr>
+                          }
+                          className="px-3 py-1 border rounded text-sm"
+                        >
+                          Actions ▾
+                        </button>
+
+                        {openMenuId === id && (
+                          <div className="absolute bg-white border rounded shadow mt-1 right-5 z-10">
+                            {["confirmed", "completed", "cancelled"].map(
+                              (s) => (
+                                <button
+                                  key={s}
+                                  onClick={() => changeStatus(id, s)}
+                                  disabled={busyId === id}
+                                  className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
+                                >
+                                  {s}
+                                </button>
+                              )
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+
+                    {/* ✅ EXPANDED ATTENDEES ROW */}
+                    {isExpanded && b.attendees?.length > 0 && (
+                      <tr className="bg-blue-50">
+                        <td colSpan={9} className="px-6 py-3">
+                          <div className="text-xs text-gray-700">
+                            <strong className="block mb-1">
+                              Attendees
+                            </strong>
+                            <ul className="list-disc pl-5 space-y-1">
+                              {b.attendees.map((a, i) => (
+                                <li key={i}>
+                                  {a.email || "—"}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 );
               })
             )}

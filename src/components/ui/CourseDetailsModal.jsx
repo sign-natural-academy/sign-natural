@@ -13,14 +13,14 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   const [course, setCourse] = useState(null);
   const [error, setError] = useState("");
 
-  // Split booking state
+  // mode-aware booking state
   const [hasSelfBooked, setHasSelfBooked] = useState(false);
   const [hasOthersBooked, setHasOthersBooked] = useState(false);
 
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
 
-  // ORIGINAL STATE — unchanged
+  // ORIGINAL UI STATE (unchanged)
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const [guestContact, setGuestContact] = useState({ name: "", email: "" });
@@ -30,8 +30,8 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
 
   /* ---------------- Load course ---------------- */
   useEffect(() => {
-    let active = true;
     if (!open || !courseId) return;
+    let active = true;
 
     (async () => {
       setLoading(true);
@@ -46,15 +46,13 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       }
     })();
 
-    return () => {
-      active = false;
-    };
+    return () => (active = false);
   }, [open, courseId]);
 
-  /* ---------------- Booking check (FIXED) ---------------- */
+  /* ---------------- Booking check (FIXED & MODE-AWARE) ---------------- */
   useEffect(() => {
-    let active = true;
     if (!open || !courseId || !isAuthed()) return;
+    let active = true;
 
     (async () => {
       try {
@@ -66,7 +64,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
         let others = false;
 
         (res.data || []).forEach((b) => {
-          const itemId = b.item && (b.item._id || b.item);
+          const itemId = b.item?._id || b.item;
           if (
             String(itemId) === String(courseId) &&
             b.status !== "cancelled"
@@ -84,28 +82,25 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
           setHasOthersBooked(others);
         }
       } catch {
-        // non-fatal
+        // silent fail (non-fatal)
       }
     })();
 
-    return () => {
-      active = false;
-    };
+    return () => (active = false);
   }, [open, courseId]);
 
   /* ---------------- Handle booking ---------------- */
- 
   const handleBook = async () => {
     setBookingError("");
-    if (!course) return;
 
-    // Free + logged-in → tutorials
-    if (course.type === "free" && isAuthed()) {
+    // free course redirect
+    if (course?.type === "free" && isAuthed()) {
       onClose?.();
       navigate(`/user-dashboard?tab=tutorials&id=${course._id}`);
       return;
     }
 
+    // block duplicate bookings by mode
     if (!bookForOthers && hasSelfBooked) {
       setBookingError("You have already booked this course for yourself.");
       return;
@@ -116,6 +111,13 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       return;
     }
 
+    // guests cannot book for others
+    if (!isAuthed() && bookForOthers) {
+      setBookingError("Guests cannot book for others.");
+      return;
+    }
+
+    // contact (always required)
     const contact = isAuthed()
       ? {
           name: getUser()?.name || "Registered User",
@@ -128,6 +130,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
       return;
     }
 
+    // attendees validation
     if (bookForOthers) {
       const invalid =
         attendees.length === 0 || attendees.some((a) => !a.email);
@@ -147,7 +150,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
         attendees: bookForOthers ? attendees : [],
       });
     } catch (e) {
-      setBookingError(e?.response?.data?.message || "Failed to create booking");
+      setBookingError(e?.response?.data?.message || "Booking failed");
     } finally {
       setBookingInProgress(false);
     }
@@ -162,10 +165,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <motion.div
-            className="absolute inset-0 bg-black/40"
-            onClick={onClose}
-          />
+          <motion.div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
           <motion.div className="relative z-10 w-full max-w-3xl bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="flex justify-between px-5 py-4 border-b">
@@ -174,11 +174,6 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
-
-            {loading && <div className="p-6">Loading…</div>}
-            {!loading && error && (
-              <div className="p-6 text-red-600">{error}</div>
-            )}
 
             {!loading && course && (
               <div className="grid md:grid-cols-2">
@@ -194,7 +189,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                   <h2 className="text-xl font-semibold">{course.title}</h2>
                   <p className="text-sm text-gray-600">{course.description}</p>
 
-                  {/* ORIGINAL UI — UNCHANGED */}
+                  {/* ORIGINAL UI — only logic adjusted */}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <button
@@ -205,14 +200,17 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                       >
                         Myself
                       </button>
-                      <button
-                        onClick={() => setBookForOthers(true)}
-                        className={`px-3 py-1 text-xs border rounded ${
-                          bookForOthers && "bg-black text-white"
-                        }`}
-                      >
-                        Others
-                      </button>
+
+                      {isAuthed() && (
+                        <button
+                          onClick={() => setBookForOthers(true)}
+                          className={`px-3 py-1 text-xs border rounded ${
+                            bookForOthers && "bg-black text-white"
+                          }`}
+                        >
+                          Others
+                        </button>
+                      )}
                     </div>
 
                     {bookForOthers &&
@@ -248,10 +246,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                           placeholder="Your full name"
                           value={guestContact.name}
                           onChange={(e) =>
-                            setGuestContact({
-                              ...guestContact,
-                              name: e.target.value,
-                            })
+                            setGuestContact({ ...guestContact, name: e.target.value })
                           }
                         />
                         <input
@@ -259,17 +254,14 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                           placeholder="Your email"
                           value={guestContact.email}
                           onChange={(e) =>
-                            setGuestContact({
-                              ...guestContact,
-                              email: e.target.value,
-                            })
+                            setGuestContact({ ...guestContact, email: e.target.value })
                           }
                         />
                       </>
                     )}
                   </div>
 
-                   <button
+                  <button
                     onClick={handleBook}
                     disabled={isBlocked}
                     className={`w-full mt-3 py-2 rounded text-white ${
@@ -289,9 +281,6 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
                       : "Book"}
                   </button>
 
-                  {bookingError && (
-                    <div className="text-sm text-red-600">{bookingError}</div>
-                  )}
                   {bookingError && (
                     <div className="text-sm text-red-600">{bookingError}</div>
                   )}

@@ -19,6 +19,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
 
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
+  const [guestSuccess, setGuestSuccess] = useState("");
 
   // ORIGINAL UI STATE (unchanged)
   const [bookForOthers, setBookForOthers] = useState(false);
@@ -92,6 +93,7 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
   /* ---------------- Handle booking ---------------- */
   const handleBook = async () => {
     setBookingError("");
+    setGuestSuccess("");
 
     // free course redirect
     if (course?.type === "free" && isAuthed()) {
@@ -149,6 +151,12 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
         contact,
         attendees: bookForOthers ? attendees : [],
       });
+      // ✅ ADD
+      if (!isAuthed()) {
+        setGuestSuccess(
+          "Booking successful! We will contact you via email shortly."
+        );
+      }
     } catch (e) {
       setBookingError(e?.response?.data?.message || "Booking failed");
     } finally {
@@ -283,6 +291,12 @@ export default function CourseDetailsModal({ open, onClose, courseId }) {
 
                   {bookingError && (
                     <div className="text-sm text-red-600">{bookingError}</div>
+                  )}
+                   {/* ✅ ADD */}
+                  {guestSuccess && (
+                    <div className="text-sm text-green-600">
+                      {guestSuccess}
+                    </div>
                   )}
                 </div>
               </div>

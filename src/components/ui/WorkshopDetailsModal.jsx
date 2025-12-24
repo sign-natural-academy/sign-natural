@@ -17,6 +17,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
 
   const [bookingInProgress, setBookingInProgress] = useState(false);
   const [bookingError, setBookingError] = useState("");
+  const [guestSuccess, setGuestSuccess] = useState("");
 
   const [bookForOthers, setBookForOthers] = useState(false);
   const [attendees, setAttendees] = useState([]);
@@ -86,6 +87,7 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
   /* ---------------- Handle booking ---------------- */
   const handleBook = async () => {
     setBookingError("");
+    setGuestSuccess(""); 
 
     if (!bookForOthers && hasSelfBooked) {
       setBookingError("You have already booked this workshop for yourself.");
@@ -132,6 +134,12 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
         contact,
         attendees: bookForOthers ? attendees : [],
       });
+      // ✅ ADD (guest success message)
+      if (!isAuthed()) {
+        setGuestSuccess(
+          "Booking successful! We will contact you via email shortly."
+        );
+      }
     } catch (e) {
       setBookingError(e?.response?.data?.message || "Booking failed");
     } finally {
@@ -265,6 +273,13 @@ export default function WorkshopDetailsModal({ open, onClose, workshopId }) {
                   {bookingError && (
                     <div className="text-sm text-red-600">{bookingError}</div>
                   )}
+                  {/* ✅ ADD */}
+                  {guestSuccess && (
+                    <div className="text-sm text-green-600">
+                      {guestSuccess}
+                    </div>
+                  )}
+
                 </div>
               </div>
             )}

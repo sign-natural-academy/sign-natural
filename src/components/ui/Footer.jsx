@@ -35,7 +35,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-serif mb-4">Contact Us</h4>
             <p className="mb-2 text-sm">Accra, Ghana</p>
-            <p className="mb-2 text-sm">signnatural@gmail.com</p>
+            <p className="mb-2 text-sm">hello@signnatural.com</p>
             <p className="mb-4 text-sm">+233 059 632 4605</p>
             <div className="flex space-x-4">
               <a href="https://www.facebook.com/signnatural" target="_blank" rel="noopener noreferrer" aria-label="Facebook">FB</a>

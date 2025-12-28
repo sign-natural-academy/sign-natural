@@ -7,7 +7,7 @@ import {
   adminDeleteHomeVideo,
 } from "../../../api/services/homeVideo";
 
-const MAX_VIDEO_BYTES = 10 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 
 function convertYouTubeToEmbed(url) {
   if (!url) return "";
@@ -81,7 +81,7 @@ export default function HomeVideoManager() {
       return;
     }
     if (file.size > MAX_VIDEO_BYTES) {
-      alert("Video must be 10 MB or smaller.");
+      alert("Video must be 100 MB or smaller.");
       e.target.value = "";
       return;
     }

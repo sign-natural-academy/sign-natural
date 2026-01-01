@@ -10,7 +10,7 @@ const TYPE_OPTIONS = [
   { value: "in-demand", label: "On-Demand" },
 ];
 
-const MAX_VIDEO_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_VIDEO_BYTES = 100 * 1024 * 1024// 100 MB
 
 // Small inline spinner used by upload buttons
 function SmallSpinner() {
@@ -132,7 +132,7 @@ export default function CourseForm({ selected, onSuccess }) {
   const onVideoFile = (e) => {
     const file = e.target.files?.[0] ?? null;
     if (file && file.size > MAX_VIDEO_BYTES) {
-      alert("Video must be ≤ 10 MB.");
+      alert("Video must be ≤ 100 MB.");
       return;
     }
     setVideoFile(file);
@@ -407,7 +407,7 @@ export default function CourseForm({ selected, onSuccess }) {
           </div>
 
           <input type="file" ref={videoInputRef} accept="video/*" onChange={onVideoFile} className="hidden" />
-          <div className="text-xs text-gray-500 mt-1">≤ 10 MB</div>
+          <div className="text-xs text-gray-500 mt-1">≤ 100 MB</div>
 
           {/* Preview always appears below the controls — prevents overlap */}
           <div className="mt-3">

@@ -164,7 +164,7 @@ export default function HomeVideoManager() {
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold">Home page video</h2>
+          <h2 className="text-lg font-semibold"></h2>
           <p className="text-xs text-gray-500">
             Short hero video shown on the main landing page.
           </p>
@@ -270,7 +270,7 @@ export default function HomeVideoManager() {
                   </button>
                 )}
                 <span className="text-[11px] text-gray-500">
-                  Max 10MB • YouTube or upload
+                  Max 100MB • YouTube or upload
                 </span>
               </div>
               <input

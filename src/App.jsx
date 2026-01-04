@@ -10,21 +10,32 @@ import ProductGallery from "./components/pages/ProductGallery";
 /* Lazy load pages for performance */
 const Homepage = lazy(() => import("./components/pages/Homepage"));
 const LearnPage = lazy(() => import("./components/pages/LearnPage"));
-const ExperientialWorkshopPage = lazy(() => import("./components/pages/ExperientialWorkshopPage"));
-const SuccessStoriesPage = lazy(() => import("./components/pages/SuccessStoriesPage"));
+const ExperientialWorkshopPage = lazy(() =>
+  import("./components/pages/ExperientialWorkshopPage")
+);
+const SuccessStoriesPage = lazy(() =>
+  import("./components/pages/SuccessStoriesPage")
+);
 const Login = lazy(() => import("./components/pages/Login"));
 const SignUp = lazy(() => import("./components/pages/SignUp"));
 const PrivacyPolicy = lazy(() => import("./components/pages/PrivacyPolicy"));
 const RefundPolicy = lazy(() => import("./components/pages/RefundPolicy"));
-const TermsAndConditions = lazy(() => import("./components/pages/TermsAndConditions"));
-const UserDashboardPage = lazy(() => import("./components/pages/UserDashboardPage"));
+const TermsAndConditions = lazy(() =>
+  import("./components/pages/TermsAndConditions")
+);
+const UserDashboardPage = lazy(() =>
+  import("./components/pages/UserDashboardPage")
+);
 const AdminDashboard = lazy(() => import("./components/pages/AdminDashboard"));
 const AboutPage = lazy(() => import("./components/pages/AboutPage"));
 const NotFound = lazy(() => import("./components/pages/NotFound"));
 const VerifyEmail = lazy(() => import("./components/pages/VerifyEmail"));
-const SuperuserDashboard = lazy(() => import("./components/pages/SuperuserDashboard"));
-const RequireSuperuser   = lazy(() => import("./components/RequireSuperuser"));
-
+const SuperuserDashboard = lazy(() =>
+  import("./components/pages/SuperuserDashboard")
+);
+const RequireSuperuser = lazy(() => import("./components/RequireSuperuser"));
+const ForgotPassword = lazy(() => import("./components/pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./components/pages/ResetPassword"));
 
 export default function App() {
   return (
@@ -36,7 +47,7 @@ export default function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/learn" element={<LearnPage />} />
-          <Route path="/product" element={<ProductGallery/>} />
+          <Route path="/product" element={<ProductGallery />} />
           <Route path="/workshop" element={<ExperientialWorkshopPage />} />
           <Route path="/stories" element={<SuccessStoriesPage />} />
           <Route path="/login" element={<Login />} />
@@ -45,6 +56,8 @@ export default function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Protected user routes */}
           <Route
@@ -67,13 +80,13 @@ export default function App() {
           />
 
           <Route
-  path="/super-dashboard"
-  element={
-    <RequireSuperuser>
-      <SuperuserDashboard />
-    </RequireSuperuser>
-  }
-/>
+            path="/super-dashboard"
+            element={
+              <RequireSuperuser>
+                <SuperuserDashboard />
+              </RequireSuperuser>
+            }
+          />
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

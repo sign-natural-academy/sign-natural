@@ -51,13 +51,19 @@ export default function Login() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <div className="hidden md:flex w-1/2 items-center justify-center bg-[#faf8f6]">
-        <img src="/woman.jpg" alt="Sign Natural" className="object-cover h-full w-full" />
+        <img
+          src="/woman.jpg"
+          alt="Sign Natural"
+          className="object-cover h-full w-full"
+        />
       </div>
 
       <div className="w-full md:w-1/2 p-8 flex items-center justify-center">
         <div className="max-w-md w-full">
           <div className="flex justify-center mb-6">
-            <Link to="/"><img src="/logo2.png" alt="Logo" className="h-20 w-auto" /></Link>
+            <Link to="/">
+              <img src="/logo2.png" alt="Logo" className="h-20 w-auto" />
+            </Link>
           </div>
           <h2 className="text-2xl font-bold text-[#455f30] mb-6">LOGIN</h2>
 
@@ -87,6 +93,15 @@ export default function Login() {
             >
               {loading ? "Logging in..." : "Log In"}
             </button>
+            <div className="text-right mt-2">
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="text-sm text-green-700 hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
           </form>
 
           {/* Google sign-in mirrors the same routing */}
@@ -101,7 +116,10 @@ export default function Login() {
 
           <div className="mt-6 text-center text-sm text-gray-700">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-green-700 hover:underline font-medium">
+            <Link
+              to="/signup"
+              className="text-green-700 hover:underline font-medium"
+            >
               Sign up
             </Link>
           </div>

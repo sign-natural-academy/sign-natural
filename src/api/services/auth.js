@@ -28,3 +28,14 @@ export const updateMyAvatar = (file) => {
     headers: { "Content-Type": "multipart/form-data" },                            
   });
 };
+export const forgotPassword = (email) =>
+  api.post("/api/auth/forgot-password", { email });
+
+// src/api/services/auth.js
+
+export const resetPassword = ({ email, otp, password }) =>
+  api.post("/api/auth/reset-password", {
+    email,
+    otp,
+    password,
+  });

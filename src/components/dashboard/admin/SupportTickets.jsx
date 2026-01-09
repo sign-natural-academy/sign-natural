@@ -109,7 +109,7 @@ export default function SupportTickets() {
           <h3 className="font-semibold"></h3>
           <button
             onClick={() => { /* trigger reload by toggling page to same value */ setPage(p => p); }}
-            className="px-2 py-1 border rounded text-sm"
+            className="px-2 py-1 shadow rounded text-sm"
           >
             Refresh
           </button>
@@ -118,14 +118,14 @@ export default function SupportTickets() {
         {/* Filters mini-panel for list */}
         <div className="space-y-2 mb-3">
           <input
-            className="border px-3 py-2 rounded w-full"
+            className="shadow px-3 py-2 rounded w-full"
             placeholder="Search subject…"
             value={filters.q}
             onChange={(e) => { setFilters({ ...filters, q: e.target.value }); setPage(1); }}
           />
           <div className="grid grid-cols-2 gap-2">
             <select
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               value={filters.status}
               onChange={(e) => { setFilters({ ...filters, status: e.target.value }); setPage(1); }}
             >
@@ -136,7 +136,7 @@ export default function SupportTickets() {
               <option value="closed">Closed</option>
             </select>
             <input
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               placeholder="Category"
               value={filters.category}
               onChange={(e) => { setFilters({ ...filters, category: e.target.value }); setPage(1); }}
@@ -145,7 +145,7 @@ export default function SupportTickets() {
           <div className="flex gap-2">
             <input
               type="date"
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               value={filters.from}
               max={filters.to || undefined}
               onChange={(e) => {
@@ -157,7 +157,7 @@ export default function SupportTickets() {
             />
             <input
               type="date"
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               value={filters.to}
               min={filters.from || undefined}
               onChange={(e) => { setFilters({ ...filters, to: e.target.value }); setPage(1); }}

@@ -1,8 +1,19 @@
 // src/components/dashboard/admin/MediaLibrary.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { listMedia, uploadMedia, deleteMedia } from "../../../api/services/media";
+import {
+  listMedia,
+  uploadMedia,
+  deleteMedia,
+} from "../../../api/services/media";
 
 const PAGE_LIMIT = 24;
+function getVideoThumbnail(url) {
+  if (!url) return "";
+  // Convert Cloudinary video URL → jpg thumbnail
+  return url
+    .replace("/video/upload/", "/video/upload/so_0/")
+    .replace(/\.(mp4|webm|mov|avi)$/i, ".jpg");
+}
 
 export default function MediaLibrary() {
   const [folder, setFolder] = useState("signnatural");
@@ -17,12 +28,17 @@ export default function MediaLibrary() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null); // { url, public_id }
 
-  const query = useMemo(() => ({ folder, q, page, limit: PAGE_LIMIT }), [folder, q, page]);
+  const query = useMemo(
+    () => ({ folder, q, page, limit: PAGE_LIMIT }),
+    [folder, q, page]
+  );
 
   useEffect(() => {
     let alive = true;
     (async () => {
-      setLoading(true); setError(""); setMsg("");
+      setLoading(true);
+      setError("");
+      setMsg("");
       try {
         const res = await listMedia(query);
         if (!alive) return;
@@ -33,12 +49,15 @@ export default function MediaLibrary() {
         console.error(e);
         if (!alive) return;
         setError("Failed to load media.");
-        setItems([]); setTotal(0);
+        setItems([]);
+        setTotal(0);
       } finally {
         if (alive) setLoading(false);
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [query]);
 
   const doUpload = async () => {
@@ -50,7 +69,7 @@ export default function MediaLibrary() {
 
       const res = await uploadMedia(fd);
       const uploaded = res.data;
-      setItems(arr => [uploaded, ...arr]);
+      setItems((arr) => [uploaded, ...arr]);
       setFile(null);
       setMsg("Uploaded.");
     } catch (e) {
@@ -62,13 +81,15 @@ export default function MediaLibrary() {
   const doDelete = async (public_id, force = false) => {
     try {
       await deleteMedia(public_id, { force });
-      setItems(arr => arr.filter(i => i.public_id !== public_id));
+      setItems((arr) => arr.filter((i) => i.public_id !== public_id));
       setMsg("Deleted.");
       if (preview?.public_id === public_id) setPreview(null);
     } catch (e) {
       // 409 means “in-use”
       if (e?.response?.status === 409) {
-        setMsg("Asset is in use. Delete blocked. Use Force Delete to override.");
+        setMsg(
+          "Asset is in use. Delete blocked. Use Force Delete to override."
+        );
       } else {
         setMsg("Delete failed.");
       }
@@ -92,7 +113,9 @@ export default function MediaLibrary() {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
           <h2 className="text-lg sm:text-xl font-semibold"></h2>
-          <p className="text-xs text-gray-500">Upload, browse, and manage images.</p>
+          <p className="text-xs text-gray-500">
+            Upload, browse, and manage images.
+          </p>
         </div>
         <div className="bg-white rounded shadow p-3 grid grid-cols-1 sm:grid-cols-4 gap-2">
           <select
@@ -101,7 +124,9 @@ export default function MediaLibrary() {
             onChange={(e) => setFolder(e.target.value)}
           >
             {folders.map((f) => (
-              <option key={f} value={f}>{f}</option>
+              <option key={f} value={f}>
+                {f}
+              </option>
             ))}
           </select>
           <input
@@ -126,7 +151,11 @@ export default function MediaLibrary() {
             </button>
             <button
               className="px-3 py-2 border rounded text-sm"
-              onClick={() => { setQ(""); setFile(null); setMsg(""); }}
+              onClick={() => {
+                setQ("");
+                setFile(null);
+                setMsg("");
+              }}
             >
               Reset
             </button>
@@ -153,15 +182,32 @@ export default function MediaLibrary() {
               <button
                 key={m.public_id}
                 className="group relative shadow rounded overflow-hidden bg-gray-50 hover:shadow"
-                onClick={() => setPreview({ url: m.secure_url, public_id: m.public_id })}
+                onClick={() =>
+                  setPreview({ url: m.secure_url, public_id: m.public_id })
+                }
                 title={m.public_id}
               >
-                <img
-                  src={m.secure_url}
-                  alt={m.public_id}
-                  className="w-full h-28 object-cover"
-                  loading="lazy"
-                />
+                {m.resource_type === "video" ? (
+                  <div className="relative w-full h-28 bg-black">
+                    <img
+                      src={getVideoThumbnail(m.secure_url)}
+                      alt={m.public_id}
+                      className="w-full h-28 object-cover opacity-90"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-black/60 rounded-full p-2">▶</div>
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src={m.secure_url}
+                    alt={m.public_id}
+                    className="w-full h-28 object-cover"
+                    loading="lazy"
+                  />
+                )}
+
                 <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] px-2 py-1 truncate">
                   {m.public_id}
                 </div>
@@ -174,11 +220,16 @@ export default function MediaLibrary() {
       {/* Preview modal */}
       {preview && (
         <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setPreview(null)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setPreview(null)}
+          />
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="bg-white rounded shadow max-w-3xl w-full overflow-hidden">
               <div className="flex items-center justify-between px-4 py-2 ">
-                <div className="font-semibold text-sm truncate">{preview.public_id}</div>
+                <div className="font-semibold text-sm truncate">
+                  {preview.public_id}
+                </div>
                 <div className="flex gap-2">
                   <button
                     className="px-3 py-1 border rounded text-sm"
@@ -193,14 +244,32 @@ export default function MediaLibrary() {
                   >
                     Force Delete
                   </button>
-                  <button className="px-3 py-1 border rounded text-sm" onClick={() => setPreview(null)}>
+                  <button
+                    className="px-3 py-1 border rounded text-sm"
+                    onClick={() => setPreview(null)}
+                  >
                     Close
                   </button>
                 </div>
               </div>
               <div className="p-3">
-                <img src={preview.url} alt="preview" className="w-full max-h-[70vh] object-contain" />
-                <div className="mt-2 text-xs text-gray-600 wrap-break-words">{preview.public_id}</div>
+                {preview.url.includes("/video/upload/") ? (
+                  <video
+                    src={preview.url}
+                    controls
+                    className="w-full max-h-[70vh] rounded"
+                  />
+                ) : (
+                  <img
+                    src={preview.url}
+                    alt="preview"
+                    className="w-full max-h-[70vh] object-contain"
+                  />
+                )}
+
+                <div className="mt-2 text-xs text-gray-600 wrap-break-words">
+                  {preview.public_id}
+                </div>
               </div>
             </div>
           </div>

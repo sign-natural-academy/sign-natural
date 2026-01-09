@@ -100,7 +100,7 @@ export default function ReportsExport() {
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               aria-label="Report type"
             >
               <option value="bookings">Bookings</option>
@@ -116,7 +116,7 @@ export default function ReportsExport() {
             <select
               value="csv"
               disabled
-              className="border px-3 py-2 rounded w-full bg-gray-100 text-gray-600"
+              className="shadow px-3 py-2 rounded w-full bg-gray-100 text-gray-600"
               aria-label="Format"
             >
               <option value="csv">CSV</option>
@@ -131,7 +131,7 @@ export default function ReportsExport() {
                 type="date"
                 value={filters.from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="border px-3 py-2 rounded w-full"
+                className="shadow px-3 py-2 rounded w-full"
                 max={filters.to || undefined}
                 aria-label="From date"
               />
@@ -142,7 +142,7 @@ export default function ReportsExport() {
                 type="date"
                 value={filters.to}
                 onChange={(e) => setTo(e.target.value)}
-                className="border px-3 py-2 rounded w-full"
+                className="shadow px-3 py-2 rounded w-full"
                 min={filters.from || undefined}
                 aria-label="To date"
               />

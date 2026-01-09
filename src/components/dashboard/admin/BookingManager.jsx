@@ -112,7 +112,7 @@ export default function BookingManager() {
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="text-left text-gray-600 border-b">
+            <tr className="text-left text-gray-600 shadow">
               <th>User</th>
               <th>Email</th>
               <th>Mode</th>
@@ -150,7 +150,7 @@ export default function BookingManager() {
 
                 return (
                   <React.Fragment key={id}>
-                    <tr className="border-b hover:bg-gray-50">
+                    <tr className=" hover:bg-gray-50">
                       <td className="py-3 font-medium">{displayName}</td>
                       <td className="py-3 text-xs text-gray-600">
                         {displayEmail}
@@ -210,7 +210,7 @@ export default function BookingManager() {
                               openMenuId === id ? null : id
                             )
                           }
-                          className="px-3 py-1 border rounded text-sm"
+                          className="px-3 py-1  rounded text-sm"
                         >
                           Actions ▾
                         </button>

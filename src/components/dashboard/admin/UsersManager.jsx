@@ -157,7 +157,7 @@ export default function UsersManager() {
           <h3 className="text-lg font-semibold"></h3>
           <div className="text-xs text-gray-500">Manage roles & status (RBAC enforced)</div>
         </div>
-        <button onClick={load} disabled={loading} className="px-3 py-1 border rounded disabled:opacity-50">
+        <button onClick={load} disabled={loading} className="px-3 py-1 shadow rounded disabled:opacity-50">
           {loading ? "Loading…" : "Refresh"}
         </button>
       </div>
@@ -168,12 +168,12 @@ export default function UsersManager() {
           value={search}
           onChange={(e) => { setPage(1); setSearch(e.target.value); }}
           placeholder="Search name or email…"
-          className="w-full sm:max-w-xs border px-3 py-2 rounded"
+          className="w-full sm:max-w-xs shadow px-3 py-2 rounded"
         />
         <select
           value={roleFilter}
           onChange={(e) => { setPage(1); setRoleFilter(e.target.value); }}
-          className="w-full sm:w-44 border px-3 py-2 rounded"
+          className="w-full sm:w-44 shadow px-3 py-2 rounded"
         >
           {ROLE_FILTERS.map((r) => (
             <option key={r.value} value={r.value}>{r.label}</option>
@@ -184,7 +184,7 @@ export default function UsersManager() {
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="text-left text-gray-600 border-b">
+            <tr className="text-left text-gray-600 ">
               <th className="py-2 pr-3">Name</th>
               <th className="py-2 pr-3">Email</th>
               <th className="py-2 pr-3">Role</th>
@@ -205,7 +205,7 @@ export default function UsersManager() {
                 const isWorking = workingId === row._id;
 
                 return (
-                  <tr key={row._id} className="border-b">
+                  <tr key={row._id} className="">
                     <td className="py-3 pr-3">{row.name}</td>
                     <td className="py-3 pr-3">{row.email}</td>
                     <td className="py-3 pr-3 capitalize">{row.role}</td>

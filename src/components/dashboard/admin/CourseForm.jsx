@@ -129,49 +129,50 @@ export default function CourseForm({ selected, onSuccess }) {
   };
 
   // Video selection: validate size, preview, spinner
-  const onVideoFile = (e) => {
-    const file = e.target.files?.[0] ?? null;
-    if (file && file.size > MAX_VIDEO_BYTES) {
-      alert("Video must be ≤ 100 MB.");
-      return;
-    }
-    setVideoFile(file);
-    setLibAsset(null);
+// ---------------- VIDEO FILE ----------------
+const onVideoFile = (e) => {
+  const file = e.target.files?.[0] ?? null;
+  if (file && file.size > MAX_VIDEO_BYTES) {
+    alert("Video must be ≤ 100 MB.");
+    return;
+  }
+
+  setVideoFile(file);
+  setVideoUrl("");
+
+  if (file) {
+    setVideoUploading(true);
+    const url = URL.createObjectURL(file);
+    setVideoPreview(url);
+    setTimeout(() => setVideoUploading(false), 700);
+  } else {
+    setVideoPreview(null);
+  }
+};
+
+// ---------------- YOUTUBE ----------------
+const onYouTubeChange = (e) => {
+  const v = e.target.value;
+  setVideoUrl(v);
+  setVideoFile(null);
+  setVideoPreview(v || null);
+};
+
+// ---------------- MEDIA PICKER ----------------
+const onPickerSelect = (asset) => {
+  setLibAsset(asset);
+
+  if (asset.resource_type?.startsWith("video")) {
+    setVideoPreview(asset.secure_url);
     setVideoUrl("");
-
-    if (file) {
-      setVideoUploading(true);
-      const url = URL.createObjectURL(file);
-      setVideoPreview(url);
-      setTimeout(() => setVideoUploading(false), 700);
-    } else {
-      setVideoPreview(null);
-    }
-  };
-
-  const onYouTubeChange = (e) => {
-    const v = e.target.value;
-    setVideoUrl(v);
     setVideoFile(null);
-    setLibAsset(null);
-    setVideoPreview(v || null);
-  };
+  }
 
-  const onPickerSelect = (asset) => {
-    setLibAsset(asset);
+  if (!asset.resource_type || asset.resource_type.startsWith("image")) {
+    setImagePreview(asset.secure_url);
     setForm((p) => ({ ...p, image: null }));
-    setVideoFile(null);
-    setVideoUrl("");
-
-    if (asset.resource_type && asset.resource_type.startsWith("video")) {
-      setVideoPreview(asset.secure_url);
-      setImagePreview(null);
-    } else {
-      setImagePreview(asset.secure_url);
-      setVideoPreview(null);
-    }
-  };
-
+  }
+};
   const clearVideoSelection = () => {
     setVideoPreview(null);
     setVideoFile(null);

@@ -96,7 +96,7 @@ export default function MediaLibrary() {
         </div>
         <div className="bg-white rounded shadow p-3 grid grid-cols-1 sm:grid-cols-4 gap-2">
           <select
-            className="border px-3 py-2 rounded text-sm"
+            className=" px-3 py-2 rounded text-sm"
             value={folder}
             onChange={(e) => setFolder(e.target.value)}
           >
@@ -105,7 +105,7 @@ export default function MediaLibrary() {
             ))}
           </select>
           <input
-            className="border px-3 py-2 rounded text-sm"
+            className=" px-3 py-2 rounded text-sm"
             placeholder="Search filename/public_id…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -113,7 +113,7 @@ export default function MediaLibrary() {
           <input
             type="file"
             accept="image/*"
-            className="border px-3 py-2 rounded text-sm"
+            className=" px-3 py-2 rounded text-sm"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
           <div className="flex gap-2">
@@ -152,7 +152,7 @@ export default function MediaLibrary() {
             {items.map((m) => (
               <button
                 key={m.public_id}
-                className="group relative border rounded overflow-hidden bg-gray-50 hover:shadow"
+                className="group relative shadow rounded overflow-hidden bg-gray-50 hover:shadow"
                 onClick={() => setPreview({ url: m.secure_url, public_id: m.public_id })}
                 title={m.public_id}
               >
@@ -177,7 +177,7 @@ export default function MediaLibrary() {
           <div className="absolute inset-0 bg-black/50" onClick={() => setPreview(null)} />
           <div className="absolute inset-0 flex items-center justify-center p-4">
             <div className="bg-white rounded shadow max-w-3xl w-full overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-2 border-b">
+              <div className="flex items-center justify-between px-4 py-2 ">
                 <div className="font-semibold text-sm truncate">{preview.public_id}</div>
                 <div className="flex gap-2">
                   <button

@@ -12,7 +12,7 @@ export default function WorkshopFilters({ currentFilter, onFilterChange }) {
   const filters = [
     { label: "All workshops", value: "all", icon: Squares2X2Icon },
     { label: "Celebrations", value: "celebration", icon: GifIcon },
-    { label: "Diasporan", value: "diasporan", icon: GlobeAsiaAustraliaIcon },
+    { label: "Heritage", value: "diasporan", icon: GlobeAsiaAustraliaIcon },
     { label: "Group Events", value: "group", icon: UserGroupIcon },
   ];
 

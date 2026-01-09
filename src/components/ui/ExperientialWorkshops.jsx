@@ -27,7 +27,7 @@ export default function ExperientialWorkshops() {
     },
     {
       image: "/images/group2.jpg",
-      title: "Diasporan Packages",
+      title: "The Shea Heritage Experience",
       text: "Take a piece of Ghana home by creating authentic skincare products using traditional ingredients.",
     },
     {

@@ -29,7 +29,7 @@ export default function Homepage() {
       <section className="flex-1 bg-[#455f30] text-white pt-12 px-6 md:flex md:items-center md:justify-between transition">
         <div className="md:w-1/2 space-y-6 py-8">
           <h1 className="text-3xl md:text-5xl font-light leading-snug">
-            Learn the Art of Organic Skincare with <br />
+            Learn the Art of Natural Skincare with <br />
             <strong className="font-semibold">SIGN NATURAL</strong>
           </h1>
           <p className="text-lg leading-relaxed">

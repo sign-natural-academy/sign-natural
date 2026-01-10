@@ -46,7 +46,7 @@ export default function SidebarShell({
   );
 
   const Desktop = (
-    <aside className={`hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex ${widthClass} lg:flex-col bg-white border-r`}>
+    <aside className={`hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex ${widthClass} lg:flex-col bg-white shadow`}>
       <div className="flex h-16 items-center px-6">
         <img src={logoSrc} alt="Logo" className="h-10 w-auto" />
       </div>

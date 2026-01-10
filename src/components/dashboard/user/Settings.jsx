@@ -108,7 +108,7 @@ export default function Settings() {
               type="password"
               value={pw.currentPassword}
               onChange={onPwChange}
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               placeholder="••••••••"
               required
             />
@@ -120,7 +120,7 @@ export default function Settings() {
               type="password"
               value={pw.newPassword}
               onChange={onPwChange}
-              className="border px-3 py-2 rounded w-full"
+              className="shadow px-3 py-2 rounded w-full"
               placeholder="Choose a strong password"
               required
             />

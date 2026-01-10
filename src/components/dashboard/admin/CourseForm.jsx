@@ -249,7 +249,7 @@ const onPickerSelect = (asset) => {
             type="text"
             placeholder="Enter course title"
             required
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+            className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
           />
         </div>
 
@@ -262,7 +262,7 @@ const onPickerSelect = (asset) => {
             onChange={handleChange}
             placeholder="Enter course description"
             rows="4"
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+            className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
           />
         </div>
 
@@ -277,7 +277,7 @@ const onPickerSelect = (asset) => {
               type="number"
               min="0"
               placeholder="0 for free"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
 
@@ -289,7 +289,7 @@ const onPickerSelect = (asset) => {
               onChange={handleChange}
               type="text"
               placeholder="e.g. 2 hours"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
 
@@ -301,7 +301,7 @@ const onPickerSelect = (asset) => {
               onChange={handleChange}
               type="text"
               placeholder="e.g. Skincare Basics"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
         </div>
@@ -314,7 +314,7 @@ const onPickerSelect = (asset) => {
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             >
               {TYPE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -332,7 +332,7 @@ const onPickerSelect = (asset) => {
               onChange={handleChange}
               type="text"
               placeholder="e.g. Accra / Online"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
         </div>
@@ -355,7 +355,7 @@ const onPickerSelect = (asset) => {
             </button>
 
             {(imagePreview || libAsset?.secure_url) && (
-              <button type="button" className="px-3 py-2 border rounded" onClick={() => { setImagePreview(null); setLibAsset(null); setForm((p) => ({ ...p, image: null })); }}>
+              <button type="button" className="px-3 py-2 shadow rounded" onClick={() => { setImagePreview(null); setLibAsset(null); setForm((p) => ({ ...p, image: null })); }}>
                 Clear
               </button>
             )}
@@ -365,7 +365,7 @@ const onPickerSelect = (asset) => {
 
           {(imagePreview || (libAsset && (!libAsset.resource_type || libAsset.resource_type.startsWith("image")) && libAsset.secure_url)) && (
             <div className="mt-3">
-              <img src={imagePreview || libAsset.secure_url} alt="Preview" className="w-full h-40 object-cover rounded border" />
+              <img src={imagePreview || libAsset.secure_url} alt="Preview" className="w-full h-40 object-cover rounded shadow" />
               {libAsset?.public_id && <div className="mt-1 text-xs text-gray-500 break-all">public_id: {libAsset.public_id}</div>}
             </div>
           )}
@@ -382,25 +382,25 @@ const onPickerSelect = (asset) => {
               placeholder="paste YouTube link"
               value={videoUrl}
               onChange={onYouTubeChange}
-              className="flex-1 border px-3 py-2 rounded w-full"
+              className="flex-1 shadow px-3 py-2 rounded w-full"
             />
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => videoInputRef.current.click()}
-                className="px-4 py-2 border rounded flex items-center gap-2"
+                className="px-4 py-2 shadow rounded flex items-center gap-2"
               >
                 {videoUploading ? <SmallSpinner /> : null}
                 <span>{videoUploading ? "Processing…" : "Upload"}</span>
               </button>
 
-              <button type="button" onClick={() => setPickerOpen(true)} className="px-4 py-2 border rounded">
+              <button type="button" onClick={() => setPickerOpen(true)} className="px-4 py-2 shadow rounded">
                 Library
               </button>
 
               {(videoPreview || libAsset?.secure_url) && (
-                <button type="button" className="px-3 py-2 border rounded" onClick={() => { clearVideoSelection(); }}>
+                <button type="button" className="px-3 py-2 shadow rounded" onClick={() => { clearVideoSelection(); }}>
                   Clear
                 </button>
               )}
@@ -437,7 +437,7 @@ const onPickerSelect = (asset) => {
                   </div>
                 ) : (
                   <div>
-                    <video controls src={videoPreview} className="w-full h-40 object-cover rounded border" />
+                    <video controls src={videoPreview} className="w-full h-40 object-cover rounded shadow" />
                     {libAsset?.public_id && <div className="mt-1 text-xs text-gray-500 break-all">public_id: {libAsset.public_id}</div>}
                   </div>
                 )}

@@ -111,7 +111,7 @@ export default function Profile() {
                   name="name"
                   value={form.name}
                   onChange={onChange}
-                  className="border px-3 py-2 rounded w-full"
+                  className="shadow px-3 py-2 rounded w-full"
                   placeholder="Your name"
                 />
               </div>
@@ -122,7 +122,7 @@ export default function Profile() {
                   type="email"
                   value={form.email}
                   onChange={onChange}
-                  className="border px-3 py-2 rounded w-full"
+                  className="shadow px-3 py-2 rounded w-full"
                   placeholder="you@example.com"
                 />
               </div>
@@ -143,7 +143,7 @@ export default function Profile() {
               <img
                 src={avatarPreview || "/avatar-placeholder.png"}
                 alt="avatar"
-                className="h-16 w-16 rounded-full object-cover border"
+                className="h-16 w-16 rounded-full object-cover shadow"
               />
               <div className="space-y-2">
                 <input type="file" accept="image/*" onChange={onPickAvatar} />

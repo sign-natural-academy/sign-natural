@@ -74,7 +74,7 @@ export default function Overview() {
           <div className="sm:hidden">
             <button
               onClick={() => setFiltersOpen(v => !v)}
-              className="px-3 py-1 border rounded text-sm"
+              className="px-3 py-1 shadow rounded text-sm"
               aria-expanded={filtersOpen}
             >
               {filtersOpen ? 'Hide filters' : 'Show filters'}
@@ -88,7 +88,7 @@ export default function Overview() {
                   <label className="text-[11px] block mb-1">From</label>
                   <input
                     type="date"
-                    className="w-full border px-3 py-2 rounded text-sm"
+                    className="w-full shadow px-3 py-2 rounded text-sm"
                     value={range.from}
                     max={range.to || undefined}
                     onChange={(e) => setRange(r => ({ ...r, from: e.target.value }))}
@@ -98,7 +98,7 @@ export default function Overview() {
                   <label className="text-[11px] block mb-1">To</label>
                   <input
                     type="date"
-                    className="w-full border px-3 py-2 rounded text-sm"
+                    className="w-full shadow px-3 py-2 rounded text-sm"
                     value={range.to}
                     min={range.from || undefined}
                     onChange={(e) => setRange(r => ({ ...r, to: e.target.value }))}
@@ -108,7 +108,7 @@ export default function Overview() {
 
               <div className="flex items-start sm:items-end gap-2">
                 <button
-                  className="px-3 py-2 border rounded text-sm"
+                  className="px-3 py-2 shadow rounded text-sm"
                   onClick={reset}
                 >
                   Reset
@@ -148,7 +148,7 @@ export default function Overview() {
               <div className="text-gray-500 text-sm">No data</div>
             ) : (
               Object.entries(status).map(([k, v]) => (
-                <div key={k} className="px-3 py-2 border rounded min-w-[110px]">
+                <div key={k} className="px-3 py-2 shadow rounded min-w-[110px]">
                   <div className="text-[11px] text-gray-500 capitalize">{k}</div>
                   <div className="text-base font-semibold">{v}</div>
                 </div>

@@ -158,7 +158,7 @@ export default function Help() {
               <input
                 value={form.subject}
                 onChange={(e) => setForm((s) => ({ ...s, subject: e.target.value }))}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full shadow px-3 py-2 rounded"
                 placeholder="Short summary (e.g. Payment not credited)"
                 required
               />
@@ -169,7 +169,7 @@ export default function Help() {
               <input
                 value={form.category}
                 onChange={(e) => setForm((s) => ({ ...s, category: e.target.value }))}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full shadow px-3 py-2 rounded"
                 placeholder="billing / booking / other"
               />
             </div>
@@ -180,7 +180,7 @@ export default function Help() {
                 value={form.message}
                 onChange={(e) => setForm((s) => ({ ...s, message: e.target.value }))}
                 rows={5}
-                className="w-full border px-3 py-2 rounded"
+                className="w-full shadow px-3 py-2 rounded"
                 placeholder="Explain the problem in detail..."
                 required
               />
@@ -190,7 +190,7 @@ export default function Help() {
               <select
                 value={form.priority}
                 onChange={(e) => setForm((s) => ({ ...s, priority: e.target.value }))}
-                className="border px-3 py-2 rounded"
+                className="shadow px-3 py-2 rounded"
               >
                 <option value="normal">Normal</option>
                 <option value="high">High</option>
@@ -213,7 +213,7 @@ export default function Help() {
         <div className="bg-white p-4 rounded shadow">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold">My Tickets</h3>
-            <button onClick={() => loadTickets(1)} className="text-sm px-2 py-1 border rounded">Refresh</button>
+            <button onClick={() => loadTickets(1)} className="text-sm px-2 py-1 shadow rounded">Refresh</button>
           </div>
 
           {loading ? (
@@ -245,8 +245,8 @@ export default function Help() {
           <div className="mt-3 flex items-center justify-between text-sm text-gray-600">
             <div>Page {page} of {pages}</div>
             <div className="flex gap-2">
-              <button onClick={goPrev} disabled={page <= 1} className="px-2 py-1 border rounded disabled:opacity-40">Prev</button>
-              <button onClick={goNext} disabled={page >= pages} className="px-2 py-1 border rounded disabled:opacity-40">Next</button>
+              <button onClick={goPrev} disabled={page <= 1} className="px-2 py-1 shadow rounded disabled:opacity-40">Prev</button>
+              <button onClick={goNext} disabled={page >= pages} className="px-2 py-1 shadow rounded disabled:opacity-40">Next</button>
             </div>
           </div>
         </div>
@@ -266,7 +266,7 @@ export default function Help() {
               <div className="text-xs text-gray-500">{activeTicket.lastMessageAt ? new Date(activeTicket.lastMessageAt).toLocaleString() : ""}</div>
             </div>
 
-            <div className="max-h-[440px] overflow-y-auto space-y-3 border-t pt-4 pb-4">
+            <div className="max-h-[440px] overflow-y-auto space-y-3 shadow pt-4 pb-4">
               {(activeTicket.messages || []).map((m, i) => (
                 <div key={i} className={`p-3 rounded ${m.senderRole === "admin" ? "bg-gray-50" : "bg-green-50"}`}>
                   <div className="text-sm">{m.text}</div>

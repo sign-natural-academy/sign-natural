@@ -5,7 +5,7 @@ import MediaPicker from "../../Media/MediaPicker"; // added
 
 const TYPE_OPTIONS = [
   { value: "celebration", label: "Celebration" },
-  { value: "diasporan", label: "Diasporan" },
+  { value: "diasporan", label: "Heritage" },
   { value: "group", label: "Group" },
   { value: "other", label: "Other" },
 ];
@@ -144,7 +144,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
             type="text"
             placeholder="Enter workshop title"
             required
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+            className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
           />
         </div>
 
@@ -159,7 +159,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
             onChange={handleChange}
             placeholder="Enter workshop description"
             rows="4"
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+            className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
           />
         </div>
 
@@ -176,7 +176,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               type="number"
               min="0"
               placeholder="0 if free"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
           <div>
@@ -189,7 +189,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               onChange={handleChange}
               type="text"
               placeholder="e.g. 2 hours"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
           <div>
@@ -202,7 +202,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               onChange={handleChange}
               type="text"
               placeholder="e.g. Accra / Online"
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+              className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
             />
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
             onChange={handleChange}
             type="text"
             placeholder="e.g. 10 - 20 / Unlimited"
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+            className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
           />
         </div>
 
@@ -231,7 +231,7 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
             name="type"
             value={form.type}
             onChange={handleChange}
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+            className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
           >
             {TYPE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -285,14 +285,14 @@ export default function WorkshopForm({ selected, onSuccess, onCancel }) {
               <img
                 src={preview}
                 alt="Preview"
-                className="w-32 h-24 object-cover rounded border"
+                className="w-32 h-24 object-cover rounded shadow"
               />
             )}
             {!preview && libAsset?.secure_url && (
               <img
                 src={libAsset.secure_url}
                 alt="Preview"
-                className="w-32 h-24 object-cover rounded border"
+                className="w-32 h-24 object-cover rounded shadow"
               />
             )}
           </div>

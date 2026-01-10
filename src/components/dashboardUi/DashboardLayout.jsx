@@ -12,7 +12,7 @@ import useNotifications from "../../hooks/useNotifications";
 // ---------- ADD: import the single-mark service ----------
 import { markNotificationRead } from "../../api/services/notifications"; // adjust path if needed
 
-export default function DashboardLayout({ children, title = "My Dashboard" }) {
+export default function DashboardLayout({ children, title = "Dashboard" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
@@ -112,14 +112,14 @@ export default function DashboardLayout({ children, title = "My Dashboard" }) {
               {/* Home: hide label on very small screens */}
               <Link
                 to="/"
-                className="hidden sm:inline-flex items-center gap-2 px-3 py-1 border rounded text-sm hover:bg-gray-50"
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-1 shadow rounded text-sm hover:bg-gray-50"
                 title="Go to homepage"
               >
                 Home
               </Link>
               <Link
                 to="/"
-                className="inline-flex sm:hidden items-center justify-center w-9 h-9 border rounded hover:bg-gray-50"
+                className="inline-flex sm:hidden items-center justify-center w-9 h-9 shadow rounded hover:bg-gray-50"
                 title="Home"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -139,7 +139,7 @@ export default function DashboardLayout({ children, title = "My Dashboard" }) {
 
               {/* Role display: hide label on tiny screens */}
               <div className="hidden sm:flex flex-col text-right mr-2">
-                <span className="text-sm">Signed in as</span>
+                <span className="text-sm"></span>
                 <span className="text-xs text-gray-600 font-medium">{role ?? "Member"}</span>
               </div>
 
@@ -149,7 +149,7 @@ export default function DashboardLayout({ children, title = "My Dashboard" }) {
               {/* Sign out: show icon on small screens */}
               <button
                 onClick={() => { signOut(); navigate("/"); }}
-                className="px-3 py-1 border rounded text-sm hover:bg-gray-50 flex items-center gap-2"
+                className="px-3 py-1 shadow rounded text-sm hover:bg-gray-50 flex items-center gap-2"
                 title="Sign out"
               >
                 <span className="hidden sm:inline">Sign out</span>

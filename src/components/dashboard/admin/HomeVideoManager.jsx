@@ -193,7 +193,7 @@ export default function HomeVideoManager() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-700"
+                className="w-full shadow rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-700"
                 placeholder="e.g. Welcome to Sign Natural"
                 required
               />
@@ -207,7 +207,7 @@ export default function HomeVideoManager() {
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 rows={3}
-                className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-700"
+                className="w-full shadow rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-700"
                 placeholder="Short message below the video"
               />
             </div>
@@ -227,14 +227,14 @@ export default function HomeVideoManager() {
                     if (fileRef.current) fileRef.current.value = "";
                   }
                 }}
-                className="w-full border rounded px-3 py-2 text-sm"
+                className="w-full shadow rounded px-3 py-2 text-sm"
                 placeholder="YouTube URL (optional)"
               />
               <div className="flex flex-wrap gap-2 items-center">
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="px-3 py-2 border rounded text-sm inline-flex items-center gap-2"
+                  className="px-3 py-2 shadow rounded text-sm inline-flex items-center gap-2"
                 >
                   {uploadBusy && (
                     <svg
@@ -372,7 +372,7 @@ export default function HomeVideoManager() {
                       {v.caption}
                     </div>
                   )}
-                  <div className="text-[11px] text-gray-400">
+                  <div className="text-[11px] s text-gray-400">
                     {v.published ? "Published" : "Draft"} •{" "}
                     {v.createdAt
                       ? new Date(v.createdAt).toLocaleString()
@@ -383,7 +383,7 @@ export default function HomeVideoManager() {
                   <button
                     type="button"
                     onClick={() => togglePublish(v._id, v.published)}
-                    className={`px-3 py-1 rounded text-xs ${
+                    className={`px-3 py-1 shadow rounded text-xs ${
                       v.published
                         ? "bg-green-100 text-green-800"
                         : "bg-gray-100 text-gray-700"

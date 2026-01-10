@@ -70,7 +70,7 @@ export default function StoryForm() {
           name="tag"
           value={form.tag}
           onChange={handleChange}
-          className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
         >
           {CATEGORY_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -85,7 +85,7 @@ export default function StoryForm() {
           name="rating"
           value={form.rating}
           onChange={handleChange}
-          className="w-32 border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          className="w-32 shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
         >
           {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} ★</option>)}
         </select>
@@ -101,7 +101,7 @@ export default function StoryForm() {
           rows={5}
           placeholder="Tell us about your experience…"
           required
-          className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
+          className="w-full shadow border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-green-700"
         />
       </div>
 

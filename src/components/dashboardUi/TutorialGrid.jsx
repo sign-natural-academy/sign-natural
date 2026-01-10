@@ -216,7 +216,7 @@ export default function TutorialGrid() {
           value={q}
           onChange={onSearch}
           placeholder="Search tutorials…"
-          className="border px-3 py-2 rounded w-full sm:w-64"
+          className="shadow px-3 py-2 rounded w-full sm:w-64"
           aria-label="Search tutorials"
         />
       </div>
@@ -225,7 +225,7 @@ export default function TutorialGrid() {
       {loading && (
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: pageSize }).map((_, i) => (
-            <li key={i} className="animate-pulse border rounded p-3">
+            <li key={i} className="animate-pulse shadow rounded p-3">
               <div className="h-40 bg-gray-200 rounded mb-3" />
               <div className="h-3 bg-gray-200 rounded mb-2 w-2/3" />
               <div className="h-3 bg-gray-200 rounded w-1/3" />
@@ -256,7 +256,7 @@ export default function TutorialGrid() {
               const prog = progressMap[c._id] ?? 0;
 
               return (
-                <li key={c._id} className="border rounded p-3 flex flex-col">
+                <li key={c._id} className="shadow rounded p-3 flex flex-col">
                   {/* Video or cover */}
                   <div className="w-full mb-3">
                     {videoUrl ? (
@@ -272,7 +272,7 @@ export default function TutorialGrid() {
                           />
                         </div>
                       ) : (
-                        <video controls src={videoUrl} className="w-full h-40 object-cover rounded border" />
+                        <video controls src={videoUrl} className="w-full h-40 object-cover rounded shadow" />
                       )
                     ) : (
                       <img src={cover} alt={c.title || "Course image"} className="w-full h-32 object-cover rounded mb-0" />
@@ -344,7 +344,7 @@ export default function TutorialGrid() {
             <button
               onClick={prev}
               disabled={currentPage === 1}
-              className="px-3 py-1 border rounded text-sm disabled:opacity-50"
+              className="px-3 py-1 shadow rounded text-sm disabled:opacity-50"
             >
               Prev
             </button>
@@ -354,7 +354,7 @@ export default function TutorialGrid() {
             <button
               onClick={next}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 border rounded text-sm disabled:opacity-50"
+              className="px-3 py-1 shadow rounded text-sm disabled:opacity-50"
             >
               Next
             </button>

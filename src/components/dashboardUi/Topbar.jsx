@@ -7,7 +7,7 @@ export default function Topbar({ onToggleSidebar = () => {}, title = "Dashboard"
     <header className="w-full bg-white border-b">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <button onClick={onToggleSidebar} className="lg:hidden px-2 py-1 border rounded">☰</button>
+          <button onClick={onToggleSidebar} className="lg:hidden px-2 py-1 shadow rounded">☰</button>
           <div>
             <h1 className="text-lg font-semibold">{title}</h1>
             {role && <div className="text-xs text-gray-500">{role}</div>}

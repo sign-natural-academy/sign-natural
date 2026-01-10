@@ -121,7 +121,7 @@ export default function Overview() {
         <button
           onClick={markAllRead}
           disabled={(unread || 0) === 0}
-          className="px-3 py-1 border rounded text-sm disabled:opacity-50"
+          className="px-3 py-1 shadow rounded text-sm disabled:opacity-50"
         >
           Mark all read
         </button>
@@ -134,7 +134,7 @@ export default function Overview() {
           <div className="text-xs text-gray-500">Unread notifications</div>
           <div className="mt-1 text-3xl font-semibold">{unread || 0}</div>
           <div className="mt-3">
-            <Link to="/user-dashboard?tab=tutorials" className="text-xs px-2 py-1 border rounded hover:bg-gray-50">
+            <Link to="/user-dashboard?tab=tutorials" className="text-xs px-2 py-1 shadow rounded hover:bg-gray-50">
               Continue learning
             </Link>
           </div>
@@ -167,7 +167,7 @@ export default function Overview() {
             <div className="mt-1 text-sm text-gray-600">No upcoming booking</div>
           )}
           <div className="mt-3">
-            <Link to="/user-dashboard?tab=bookings" className="text-xs px-2 py-1 border rounded hover:bg-gray-50">
+            <Link to="/user-dashboard?tab=bookings" className="text-xs px-2 py-1 shadow rounded hover:bg-gray-50">
               View bookings
             </Link>
           </div>
@@ -192,19 +192,19 @@ export default function Overview() {
           <div className="text-sm text-gray-600">No bookings yet.</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <div className="border rounded p-3">
+            <div className="shadow rounded p-3">
               <div className="text-xs text-gray-500">Pending</div>
               <div className="text-xl font-semibold">{bookingStats.pending}</div>
             </div>
-            <div className="border rounded p-3">
+            <div className="shadow rounded p-3">
               <div className="text-xs text-gray-500">Confirmed</div>
               <div className="text-xl font-semibold">{bookingStats.confirmed}</div>
             </div>
-            <div className="border rounded p-3">
+            <div className="shadow rounded p-3">
               <div className="text-xs text-gray-500">Completed</div>
               <div className="text-xl font-semibold">{bookingStats.completed}</div>
             </div>
-            <div className="border rounded p-3">
+            <div className="shadow rounded p-3">
               <div className="text-xs text-gray-500">Cancelled</div>
               <div className="text-xl font-semibold">{bookingStats.cancelled}</div>
             </div>
@@ -231,7 +231,7 @@ export default function Overview() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {freeCourses.map((c) => (
-              <div key={c._id} className="border rounded p-3 hover:shadow-sm transition">
+              <div key={c._id} className="shadow rounded p-3 hover:shadow-sm transition">
                 <div className="text-sm font-medium line-clamp-2">{c.title}</div>
                 {c.image && (
                   <img
@@ -242,7 +242,7 @@ export default function Overview() {
                 )}
                 <button
                   onClick={() => navigate("/user-dashboard?tab=tutorials")}
-                  className="mt-2 text-xs px-2 py-1 border rounded"
+                  className="mt-2 text-xs px-2 py-1 shadow rounded"
                 >
                   Open
                 </button>

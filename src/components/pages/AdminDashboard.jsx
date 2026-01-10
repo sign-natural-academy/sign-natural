@@ -91,7 +91,7 @@ export default function AdminDashboard() {
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold capitalize">{title}</h2>
-            <div className="text-sm text-gray-500">Admin controls</div>
+            <div className="text-sm text-gray-500"></div>
           </div>
 
           {/* Active panel */}

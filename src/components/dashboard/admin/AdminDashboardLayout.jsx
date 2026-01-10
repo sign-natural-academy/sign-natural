@@ -49,7 +49,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
                 signOut();
                 window.location.href = "/";
               }}
-              className="px-4 py-2 border rounded"
+              className="px-4 py-2 shadow rounded"
             >
               Sign out
             </button>
@@ -122,14 +122,14 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
               {/* Home link: full label on sm+, icon-only on xs */}
               <Link
                 to="/"
-                className="hidden sm:inline-flex items-center gap-2 px-3 py-1 border rounded text-sm hover:bg-gray-50"
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-1 shadow rounded text-sm hover:bg-gray-50"
                 title="home"
               >
                 Home
               </Link>
               <Link
                 to="/"
-                className="inline-flex sm:hidden items-center justify-center w-9 h-9 border rounded hover:bg-gray-50"
+                className="inline-flex sm:hidden items-center justify-center w-9 h-9 shadow rounded hover:bg-gray-50"
                 title="Home"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -149,8 +149,8 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
 
               {/* Role display: hide on tiny screens */}
               <div className="hidden sm:flex flex-col text-right mr-2">
-                <span className="text-sm">Signed in as</span>
-                <span className="text-xs text-gray-600 font-medium">{roleStr ?? "Admin"}</span>
+                <span className="text-sm"></span>
+                <span className="text-xs  text-gray-600 font-medium">{roleStr ?? "Admin"}</span>
               </div>
 
               <div className="sm:hidden text-sm px-2 py-1 rounded text-gray-700">{role ? role.replace(/^./, r => r.toUpperCase()) : "Admin"}</div>
@@ -161,7 +161,7 @@ export default function AdminDashboardLayout({ children, title = "Admin Dashboar
                   signOut();
                   navigate("/");
                 }}
-                className="px-3 py-1 border rounded text-sm hover:bg-gray-50 flex items-center gap-2"
+                className="px-3 py-1 shadow rounded text-sm hover:bg-gray-50 flex items-center gap-2"
                 title="Sign out"
               >
                 <span className="hidden sm:inline">Sign out</span>
